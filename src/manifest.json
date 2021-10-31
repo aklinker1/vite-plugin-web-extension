@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+  "name": "Test",
+  "version": "1.0.0",
+  "description": "Test Vite Plugin Extension",
+  "icons": {
+    "16": "assets/icon/16.png",
+    "48": "assets/icon/48.png",
+    "128": "assets/icon/128.png"
+  },
+  "browser_action": {
+    "default_icon": "assets/icon/128.png",
+    "default_popup": "popup/index.html"
+  },
+  "options_ui": {
+    "page": "options/index.html",
+    "open_in_tab": true,
+    "chrome_style": false
+  },
+  "background": {
+    "scripts": "background/index.ts"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": [
+        "content-scripts/script1/index.ts",
+        "content-scripts/script2/index.ts"
+      ]
+    },
+    {
+      "matches": ["*://*/*"],
+      "js": ["content-scripts/script2/index.ts"]
+    }
+  ],
+  "permissions": ["<all_urls>"]
+}

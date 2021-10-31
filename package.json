@@ -1,0 +1,19 @@
+{
+  "name": "vite-extension-builder",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "validate": "web-ext lint -s dist"
+  },
+  "dependencies": {
+    "rollup-plugin-copy": "^3.4.0",
+    "vite": "^2.6.13"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.6",
+    "typescript": "^4.4.4",
+    "web-ext": "^6.5.0"
+  }
+}
