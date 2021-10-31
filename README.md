@@ -41,7 +41,8 @@ npm i -D vite-plugin-web-extension
 
 - [x] Build for production &emsp; :tada: `v0.1.0` :tada:
 - [x] CSS inputs & generated files :tada: `v0.2.0` :tada:
-- [ ] Dev mode with hot reload
+- [ ] Dev mode with automatic reload
+- [ ] HMR
 
 ## Setup and Usage
 
