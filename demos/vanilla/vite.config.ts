@@ -1,6 +1,6 @@
 import path from "path";
 import { defineConfig } from "vite";
-import browserExtension from "vite-plugin-browser-extension";
+import browserExtension from "vite-plugin-web-extension";
 
 export default defineConfig({
   root: "src",

@@ -1,5 +1,5 @@
 {
-  "name": "vite-plugin-browser-extension",
+  "name": "vite-plugin-web-extension",
   "version": "0.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

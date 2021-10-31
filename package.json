@@ -1,5 +1,4 @@
 {
-  "name": "vite-extension-builder",
   "private": true,
   "scripts": {
     "dev": "vite",

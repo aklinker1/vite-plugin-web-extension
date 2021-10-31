@@ -9,12 +9,12 @@ importers:
     specifiers:
       typescript: ^4.4.4
       vite: ^2.6.13
-      vite-plugin-browser-extension: workspace:*
+      vite-plugin-web-extension: workspace:*
     dependencies:
       vite: 2.6.13
     devDependencies:
       typescript: 4.4.4
-      vite-plugin-browser-extension: link:../../lib
+      vite-plugin-web-extension: link:../../lib
 
   lib:
     specifiers:
