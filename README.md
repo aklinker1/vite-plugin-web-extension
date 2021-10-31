@@ -173,8 +173,6 @@ For HTML entry points like popups or the options page, css is automatically outp
 
 #### Manifest `content_scripts`
 
-TODO, but here's the plan:
-
 For content scripts listed in your `manifest.json`, its a little more difficult. There are two ways to include CSS files:
 
 1. You have a CSS file in your project
@@ -212,8 +210,6 @@ In the content script section of your `manifest.json`, add add the path to this 
 This will tell the plugin that the file is already being generated for us, but that we still need it in our manifest so it is injected.
 
 #### Browser API `tabs.executeScripts`
-
-TODO, but here's the plan:
 
 For content scripts injected programmatically, include path in the plugin's [`additionalInputs` option](#additional-inputs)
 
