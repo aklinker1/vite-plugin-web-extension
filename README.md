@@ -1,17 +1,22 @@
-# Vite Plugin Browser Extension
+# Vite Plugin Web Extension
 
 An all in one plugin for developing browser extensions using [Vite](https://vitejs.dev/). It supports:
 
-- Javascript
-- Typescript
-- Vue
-- React
-- Svelte
-- And anything else with a plugin for Vite!
+- Browsers
+  - Chrome
+  - Firefox
+- Languages
+  - Javascript
+  - Typescript
+- Frameworks
+  - Vue
+  - React
+  - Svelte
+  - And anything else with a plugin for Vite!
 
 ```ts
 // vite.config.ts
-import browserExtension from "vite-plugin-browser-extension";
+import browserExtension from "vite-plugin-web-extension";
 
 export default defineConfig({
   plugins: [
@@ -26,12 +31,13 @@ export default defineConfig({
 And that's it! All entry points are read from the `manifest.json` (or the [`additionalInputs`](#additional-inputs) option)
 
 ```bash
-npm i -D vite-plugin-browser-extension
+npm i -D vite-plugin-web-extension
 ```
 
 ## Roadmap
 
 - [x] Build for production &emsp; :tada: `v0.1.0` :tada:
+- [ ] CSS inputs & generated files
 - [ ] Dev mode with hot reload
 
 ## Setup and Usage
@@ -62,7 +68,7 @@ In this example, we set our it to `"src"`. In the `vite.config.ts` file, the onl
 
 ```ts
 // vite.config.ts
-import browserExtension from "vite-plugin-browser-extension";
+import browserExtension from "vite-plugin-web-extension";
 
 export default defineConfig({
   root: "src",
@@ -134,7 +140,7 @@ The paths should be relative to the Vite's `root`, just like the `assets` option
 
 ```ts
 // vite.config.ts
-import browserExtension from "vite-plugin-browser-extension";
+import browserExtension from "vite-plugin-web-extension";
 
 export default defineConfig({
   root: "src",
@@ -159,6 +165,8 @@ export default defineConfig({
 For HTML entry points like popups or the options page, css is automatically output and refrenced in the built HTML. There's nothing you need to do!
 
 #### Manifest `content_scripts`
+
+TODO, but here's the plan:
 
 For content scripts listed in your `manifest.json`, its a little more difficult. There are two ways to include CSS files:
 
@@ -198,4 +206,10 @@ This will tell the plugin that the file is already being generated for us, but t
 
 #### Browser API `tabs.executeScripts`
 
+TODO, but here's the plan:
+
 For content scripts injected programmatically, include path in the plugin's [`additionalInputs` option](#additional-inputs)
+
+### Browser Specific Manifest Fields
+
+TODO
