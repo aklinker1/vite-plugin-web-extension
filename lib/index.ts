@@ -100,7 +100,6 @@ export default function browserExtension<T>(
 
     const transformStylesheets = (object: any, key: string) => {
       const value = object?.[key];
-      console.log("css:", value);
       if (value == null) return;
       const styles: string[] = typeof value === "string" ? [value] : value;
       const compiledAssets: string[] = [];
