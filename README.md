@@ -103,7 +103,7 @@ The manifest has a bit more. You should use relative paths for all entry points 
     "128": "assets/icon-128.png"
   },
   "browser_action": {
-    "default_icon": "assets/icon/128.png",
+    "default_icon": "assets/icon-128.png",
     "default_popup": "popup/index.html"
   },
   "background": {
@@ -111,6 +111,10 @@ The manifest has a bit more. You should use relative paths for all entry points 
   }
 }
 ```
+
+:sparkler: And there you go!
+
+Run `vite build` and you should see a fully compiled and working browser extension in your `dist/` directory!
 
 ### Adding Frontend Framewoks
 
