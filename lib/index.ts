@@ -105,7 +105,7 @@ export default function browserExtension<T>(
 
     // JS inputs
     transformScripts(transformedManifest.background, "scripts");
-    transformedManifest.content_scripts.forEach((contentScript) => {
+    transformedManifest.content_scripts.forEach((contentScript: string) => {
       transformScripts(contentScript, "js");
     });
     transformScripts(transformedManifest.user_scripts, "api_script");
@@ -122,7 +122,7 @@ export default function browserExtension<T>(
     log("Searching for assets in:", options.assets);
     const assets: string[] = [];
     while (queue.length > 0) {
-      const folderName = queue.shift();
+      const folderName = queue.shift()!;
       const folderPath = path.resolve(moduleRoot, folderName);
       const children = readdirSync(folderPath).map((filename) =>
         path.join(folderName, filename)
@@ -179,7 +179,6 @@ export default function browserExtension<T>(
         transformManifestInputs(manifestWithTs);
       rollupOptions.input = {
         ...rollupOptions.input,
-        ...options.additionalInputs,
         ...generatedInputs,
       };
 
@@ -194,6 +193,7 @@ export default function browserExtension<T>(
       });
 
       // Ignore vite's default of looking for a <root>/index.html
+      // @ts-expect-error: doesn't want me to delete
       delete rollupOptions.input["0"];
 
       // Add stuff to the bundle

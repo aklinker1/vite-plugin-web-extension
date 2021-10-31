@@ -1,6 +1,6 @@
 import path from "path";
 import { defineConfig } from "vite";
-import browserExtension from "./vite-plugin-browser-extension";
+import browserExtension from "vite-plugin-browser-extension";
 
 export default defineConfig({
   root: "src",
@@ -11,7 +11,6 @@ export default defineConfig({
   plugins: [
     browserExtension({
       manifest: () => require("./src/manifest.json"),
-      verbose: true,
       assets: "assets",
       additionalInputs: ["content-scripts/script3/index.ts"],
     }),

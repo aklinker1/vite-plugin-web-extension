@@ -1,0 +1,18 @@
+{
+  "name": "vite-plugin-browser-extension",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "compile": "tsc --noEmit",
+    "build": "tsup index.ts && tsc",
+    "prepare": "pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.6",
+    "tsup": "^5.5.0",
+    "typescript": "^4.4.4",
+    "vite": "^2.6.13",
+    "web-ext": "^6.5.0"
+  }
+}

@@ -1,12 +1,17 @@
 {
   "name": "vite-extension-builder",
-  "private": true,
+  "version": "0.0.0",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "validate": "web-ext lint -s dist"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "vite": "^2.6.13"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.4",
+    "vite-plugin-browser-extension": "workspace:*"
+  }
 }
