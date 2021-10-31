@@ -65,18 +65,20 @@ export default function browserExtension<T>(
   function transformManifestInputs(manifestWithTs: any): {
     transformedManifest: any;
     generatedInputs: Record<string, string>;
+    styleAssets: string[];
   } {
     const generatedInputs: Record<string, string> = {};
     const transformedManifest = JSON.parse(JSON.stringify(manifestWithTs));
+    const styleAssets: string[] = [];
 
     const filenameToInput = (filename: string) =>
-      filename.replace(/.(html|js|ts)$/, "");
+      filename.substring(0, filename.lastIndexOf("."));
 
     const filenameToPath = (filename: string) =>
       path.resolve(moduleRoot, filename);
 
     const filenameToCompiledFilename = (filename: string) =>
-      filename.replace(/.ts$/, ".js");
+      filename.replace(/.(ts)$/, ".js").replace(/.(scss)$/, ".css");
 
     const transformHtml = (manifestKey: string, htmlKey: string) => {
       const filename = transformedManifest[manifestKey]?.[htmlKey];
@@ -96,6 +98,39 @@ export default function browserExtension<T>(
       object[key] = compiledScripts;
     };
 
+    const transformStylesheets = (object: any, key: string) => {
+      const value = object?.[key];
+      console.log("css:", value);
+      if (value == null) return;
+      const styles: string[] = typeof value === "string" ? [value] : value;
+      const compiledAssets: string[] = [];
+      styles.forEach((style) => {
+        if (style.startsWith("generated:")) {
+          log("Skipping generated asset:", style);
+          return;
+        }
+        styleAssets.push(style);
+        compiledAssets.push(filenameToCompiledFilename(style));
+      });
+      object[key] = compiledAssets;
+    };
+
+    const scriptExtensions = [".ts", ".js"];
+    const additionalInputTypes = options.additionalInputs?.reduce(
+      (mapping, input) => {
+        if (scriptExtensions.find((ext) => input.endsWith(ext))) {
+          mapping.scripts.push(input);
+        } else {
+          mapping.assets.push(input);
+        }
+        return mapping;
+      },
+      {
+        scripts: [] as string[],
+        assets: [] as string[],
+      }
+    );
+
     // Html inputs
     transformHtml("browser_action", "default_popup");
     transformHtml("page_action", "default_popup");
@@ -109,11 +144,18 @@ export default function browserExtension<T>(
       transformScripts(contentScript, "js");
     });
     transformScripts(transformedManifest.user_scripts, "api_script");
-    transformScripts(options, "additionalInputs");
+    transformScripts(additionalInputTypes, "scripts");
+
+    // CSS inputs
+    transformedManifest.content_scripts.forEach((contentScript: string) => {
+      transformStylesheets(contentScript, "css");
+    });
+    transformStylesheets(additionalInputTypes, "assets");
 
     return {
       generatedInputs,
       transformedManifest,
+      styleAssets,
     };
   }
 
@@ -175,7 +217,7 @@ export default function browserExtension<T>(
       log("Generated manifest:", manifestWithTs);
 
       // Generate inputs
-      const { transformedManifest, generatedInputs } =
+      const { transformedManifest, generatedInputs, styleAssets } =
         transformManifestInputs(manifestWithTs);
       rollupOptions.input = {
         ...rollupOptions.input,
@@ -183,7 +225,7 @@ export default function browserExtension<T>(
       };
 
       // Assets
-      const assets = getAllAssets();
+      const assets = [...styleAssets, ...getAllAssets()];
       assets.forEach((asset) => {
         this.emitFile({
           type: "asset",

@@ -12,7 +12,7 @@ export default defineConfig({
     browserExtension({
       manifest: () => require("./src/manifest.json"),
       assets: "assets",
-      additionalInputs: ["content-scripts/script3/index.ts"],
+      additionalInputs: ["content-scripts/script1/index.ts"],
     }),
   ],
 });
