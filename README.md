@@ -41,7 +41,7 @@ npm i -D vite-plugin-web-extension
 
 - [x] Build for production &emsp; :tada: `v0.1.0` :tada:
 - [x] CSS inputs & generated files &emsp; :tada: `v0.2.0` :tada:
-- [ ] Dev mode with automatic reload
+- [x] Dev mode with automatic reload &emsp; :tada: `v0.3.0` :tada:
 - [ ] HMR
 
 ## Setup and Usage
@@ -72,7 +72,7 @@ In this example, we set our it to `"src"`. In the `vite.config.ts` file, the onl
 
 ```ts
 // vite.config.ts
-import browserExtension from "vite-plugin-web-extension";
+import browserExtension, { readJsonFile } from "vite-plugin-web-extension";
 
 export default defineConfig({
   root: "src",
@@ -83,14 +83,15 @@ export default defineConfig({
   },
   plugins: [
     browserExtension({
-      manifest: () => require("./src/manifest.json"),
+      manifest: () =>
+        readJsonFile(path.resolve(__dirname, "src/manifest.json")),
       assets: "assets",
     }),
   ],
 });
 ```
 
-> The manifest `require` is just a plain JS import. There are no special rules for relative paths
+> `readJsonFile` is important for watch mode. If you do `require("./src/manifest.json")`, the value will be cached and changes won't show up
 
 The manifest has a bit more. You should use relative paths for all entry points (HTML, JS, or TS), such as `browser_action.default_popup` or `background.scripts`.
 
@@ -139,6 +140,38 @@ export default defineConfig({
 > The plugin order doesn't matter
 
 ## Advanced Features
+
+### Watch Mode
+
+To reload the extension when a file changes, run vite with the `--watch` flag
+
+```bash
+vite build --watch
+```
+
+To reload when you update your `manifest.json`, or any other files that aren't triggering reloads pass the `watchFilePaths` option. Use absolute paths for this
+
+```ts
+import path from "path";
+
+export default defineConfig({
+  ...
+  plugins: [
+    browserExtension({
+      watchFilePaths: [
+        path.resolve(__dirname, "src/manifest.json")
+      ]
+    }),
+  ],
+});
+```
+
+Do not run the dev server. It won't work until HMR is implemented:
+
+```bash
+# Don't do this! You'll get a warning and nothing will work
+vite
+```
 
 ### Additional Inputs
 

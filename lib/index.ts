@@ -1,6 +1,7 @@
 import path from "path";
 import { defineConfig, Plugin, mergeConfig } from "vite";
 import { readdirSync, lstatSync, readFileSync } from "fs";
+const webExt = require("web-ext");
 
 type Manifest = any;
 
@@ -44,6 +45,16 @@ interface BrowserExtensionPluginOptions {
    * `manifest.json`. Paths should be relative to Vite's `root` (or `process.cwd()` if not set)
    */
   additionalInputs?: string[];
+
+  /**
+   * See [`web-ext` docs](https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code) for options to configure how `web-ext` runs
+   */
+  webExtConfig?: any;
+
+  /**
+   * **Absolute paths** to files to watch.
+   */
+  watchFilePaths?: string[];
 }
 
 export default function browserExtension<T>(
@@ -181,7 +192,10 @@ export default function browserExtension<T>(
     return assets;
   }
 
+  let outDir: string;
   let moduleRoot: string;
+  let webExtRunner: any;
+  let isWatching: boolean;
 
   return {
     name: "web-ext-manifest",
@@ -208,6 +222,8 @@ export default function browserExtension<T>(
 
     configResolved(viteConfig) {
       moduleRoot = viteConfig.root;
+      outDir = viteConfig.build.outDir;
+      isWatching = viteConfig.inlineConfig.build?.watch === true;
     },
 
     async buildStart(rollupOptions) {
@@ -247,6 +263,37 @@ export default function browserExtension<T>(
       });
       log("Final manifest:", manifestContent);
       log("Final rollup inputs:", rollupOptions.input);
+
+      if (isWatching) {
+        options.watchFilePaths?.forEach((file) => this.addWatchFile(file));
+        assets.forEach((asset) =>
+          this.addWatchFile(path.resolve(moduleRoot, asset))
+        );
+      }
+    },
+
+    async closeBundle() {
+      if (!isWatching) return;
+
+      if (webExtRunner == null) {
+        // https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code
+        webExtRunner = await webExt.cmd.run(
+          {
+            ...options.webExtConfig,
+            // No touch - can't exit the terminal if these are changed, so they cannot be overridden
+            sourceDir: outDir,
+            noReload: false,
+            noInput: true,
+          },
+          { shouldExitProgram: true }
+        );
+      } else {
+        webExtRunner.reloadAllExtensions();
+      }
     },
   };
+}
+
+export function readJsonFile(absolutePath: string) {
+  return JSON.parse(readFileSync(absolutePath, { encoding: "utf-8" }));
 }

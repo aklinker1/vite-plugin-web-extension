@@ -1,10 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "validate": "web-ext lint -s dist"
+    "clean": "rm -rf node_modules **/node_modules"
   },
   "dependencies": {},
   "devDependencies": {}

@@ -2,9 +2,8 @@
   "name": "vite-extension-builder",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
+    "dev": "pnpm install && tsc && vite build --watch",
+    "build": "pnpm install && tsc && vite build",
     "validate": "web-ext lint -s dist"
   },
   "dependencies": {
