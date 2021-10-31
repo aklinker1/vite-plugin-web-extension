@@ -2,9 +2,6 @@
 
 An all in one plugin for developing browser extensions using [Vite](https://vitejs.dev/). It supports:
 
-- Browsers
-  - Chrome
-  - Firefox
 - Languages
   - Javascript
   - Typescript
@@ -13,6 +10,12 @@ An all in one plugin for developing browser extensions using [Vite](https://vite
   - React
   - Svelte
   - And anything else with a plugin for Vite!
+- Features
+  - 0 config setup
+  - Lightning fast production builds
+  - Chrome & Firefox support
+  - TODO: Html page HMR
+  - TODO: Background/content script reloading
 
 ```ts
 // vite.config.ts
