@@ -150,14 +150,14 @@ export default function browserExtension<T>(
 
     // JS inputs
     transformScripts(transformedManifest.background, "scripts");
-    transformedManifest.content_scripts.forEach((contentScript: string) => {
+    transformedManifest.content_scripts?.forEach((contentScript: string) => {
       transformScripts(contentScript, "js");
     });
     transformScripts(transformedManifest.user_scripts, "api_script");
     transformScripts(additionalInputTypes, "scripts");
 
     // CSS inputs
-    transformedManifest.content_scripts.forEach((contentScript: string) => {
+    transformedManifest.content_scripts?.forEach((contentScript: string) => {
       transformStylesheets(contentScript, "css");
     });
     transformStylesheets(additionalInputTypes, "assets");
