@@ -109,7 +109,18 @@ export default function browserExtension<T>(
         generatedInputs[filenameToInput(script)] = filenameToPath(script);
         compiledScripts.push(filenameToCompiledFilename(script));
       });
-      object[key] = compiledScripts;
+
+      switch (compiledScripts.length) {
+        case 0:
+          object[key] = undefined;
+          break;
+        case 1:
+          object[key] = compiledScripts[0];
+          break;
+        default:
+          object[key] = compiledScripts;
+          break;
+      }
     };
 
     const transformStylesheets = (object: any, key: string) => {
