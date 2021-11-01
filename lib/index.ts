@@ -137,12 +137,14 @@ export default function browserExtension<T>(
       const styles: string[] = typeof value === "string" ? [value] : value;
       const compiledAssets: string[] = [];
       styles.forEach((style) => {
-        if (style.startsWith("generated:")) {
-          log("Skipping generated asset:", style);
+        if (!style.startsWith("generated:")) {
+          styleAssets.push(style);
+          log("Skip generated asset:", style);
           return;
         }
-        styleAssets.push(style);
-        compiledAssets.push(filenameToCompiledFilename(style));
+        compiledAssets.push(
+          filenameToCompiledFilename(style).replace("generated:", "")
+        );
       });
       object[key] = compiledAssets;
     };
