@@ -144,12 +144,14 @@ export default function browserExtension<T>(
     // Html inputs
     transformHtml("browser_action", "default_popup");
     transformHtml("page_action", "default_popup");
+    transformHtml("action", "default_popup"); // Manifest V3
     transformHtml("options_ui", "page");
     transformHtml("background", "page");
     transformHtml("sidebar_action", "default_panel");
 
     // JS inputs
     transformScripts(transformedManifest.background, "scripts");
+    transformScripts(transformedManifest.background, "service_worker"); // Manifest V3
     transformedManifest.content_scripts?.forEach((contentScript: string) => {
       transformScripts(contentScript, "js");
     });
