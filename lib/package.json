@@ -16,6 +16,11 @@
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/index.js",
+    "dist/index.d.ts",
+    "index.ts"
+  ],
   "scripts": {
     "compile": "tsc --noEmit",
     "build": "tsup index.ts && tsc",
