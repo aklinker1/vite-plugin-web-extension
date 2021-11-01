@@ -100,7 +100,11 @@ export default function browserExtension<T>(
       generatedInputs[filenameToInput(filename)] = filenameToPath(filename);
     };
 
-    const transformScripts = (object: any, key: string) => {
+    const transformScripts = (
+      object: any,
+      key: string,
+      forceArrayInManifest = false
+    ) => {
       const value = object?.[key];
       if (value == null) return;
       const scripts: string[] = typeof value === "string" ? [value] : value;
@@ -110,16 +114,20 @@ export default function browserExtension<T>(
         compiledScripts.push(filenameToCompiledFilename(script));
       });
 
-      switch (compiledScripts.length) {
-        case 0:
-          object[key] = undefined;
-          break;
-        case 1:
-          object[key] = compiledScripts[0];
-          break;
-        default:
-          object[key] = compiledScripts;
-          break;
+      if (forceArrayInManifest) {
+        object[key] = compiledScripts;
+      } else {
+        switch (compiledScripts.length) {
+          case 0:
+            object[key] = undefined;
+            break;
+          case 1:
+            object[key] = compiledScripts[0];
+            break;
+          default:
+            object[key] = compiledScripts;
+            break;
+        }
       }
     };
 
@@ -168,7 +176,7 @@ export default function browserExtension<T>(
     transformScripts(transformedManifest.background, "scripts");
     transformScripts(transformedManifest.background, "service_worker"); // Manifest V3
     transformedManifest.content_scripts?.forEach((contentScript: string) => {
-      transformScripts(contentScript, "js");
+      transformScripts(contentScript, "js", true);
     });
     transformScripts(transformedManifest.user_scripts, "api_script");
     transformScripts(additionalInputTypes, "scripts");
