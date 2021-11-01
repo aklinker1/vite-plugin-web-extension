@@ -1,5 +1,6 @@
 {
   "private": true,
+  "license": "MIT",
   "scripts": {
     "clean": "rm -rf node_modules **/node_modules"
   },

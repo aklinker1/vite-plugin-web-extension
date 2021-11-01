@@ -1,6 +1,7 @@
 {
   "name": "vite-plugin-web-extension",
   "version": "0.3.1",
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
