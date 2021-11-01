@@ -91,8 +91,11 @@ export default function browserExtension<T>(
     const filenameToCompiledFilename = (filename: string) =>
       filename.replace(/.(ts)$/, ".js").replace(/.(scss)$/, ".css");
 
-    const transformHtml = (manifestKey: string, htmlKey: string) => {
-      const filename = transformedManifest[manifestKey]?.[htmlKey];
+    const transformHtml = (...manifestPath: string[]) => {
+      const filename = manifestPath.reduce(
+        (parent, path) => parent?.[path],
+        transformedManifest
+      );
       if (filename == null) return;
       generatedInputs[filenameToInput(filename)] = filenameToPath(filename);
     };
@@ -145,6 +148,7 @@ export default function browserExtension<T>(
     transformHtml("browser_action", "default_popup");
     transformHtml("page_action", "default_popup");
     transformHtml("action", "default_popup"); // Manifest V3
+    transformHtml("options_page");
     transformHtml("options_ui", "page");
     transformHtml("background", "page");
     transformHtml("sidebar_action", "default_panel");
