@@ -2,6 +2,18 @@
   "name": "vite-plugin-web-extension",
   "version": "0.3.2",
   "license": "MIT",
+  "homepage": "https://github.com/aklinker1/vite-plugin-web-extension",
+  "repository": {
+    "url": "https://github.com/aklinker1/vite-plugin-web-extension"
+  },
+  "categories": [
+    "Vite",
+    "Plugin",
+    "Browser",
+    "Extension",
+    "Chrome",
+    "Firefox"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
