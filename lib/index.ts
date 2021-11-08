@@ -236,8 +236,6 @@ export default function browserExtension<T>(
           },
           rollupOptions: {
             output: {
-              // Turn off chunking
-              manualChunks: undefined,
               // Remove hashes from output filenames for consistent builds
               entryFileNames: "[name].js",
               chunkFileNames: "[name].js",

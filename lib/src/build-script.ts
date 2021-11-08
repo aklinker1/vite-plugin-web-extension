@@ -22,6 +22,7 @@ export async function buildScript(config: BuildScriptConfig) {
         plugin &&
         (!("name" in plugin) || plugin.name !== "vite-plugin-web-extension")
     ),
+    define: config.vite.define,
     build: {
       emptyOutDir: false,
       outDir,
