@@ -8,13 +8,13 @@ type Manifest = any;
 
 interface BrowserExtensionPluginOptions {
   /**
-   * A function that returns your manifest as a JS object. It's a function so that the manifest can
-   * be updated on hot reload!
+   * The path to your manifest.json or a  function that returns your manifest as a JS object. It's a
+   * function that returns a generated or dynamic javascript object representing the manifest
    *
    * @example
-   * () => require("./path/to/manifest.json")
+   * () => readJsonFile("./path/to/manifest.json")
    */
-  manifest: (() => Manifest) | (() => Promise<Manifest>);
+  manifest: string | (() => Manifest) | (() => Promise<Manifest>);
 
   /**
    * This path is where the manifest will be written to, and it is relative to Vite's output path
@@ -73,7 +73,7 @@ export default function browserExtension<T>(
   async function getManifest(): Promise<Manifest> {
     return typeof options.manifest === "function"
       ? options.manifest()
-      : options.manifest;
+      : readJsonFile(options.manifest);
   }
 
   function transformManifestInputs(manifestWithTs: any): {

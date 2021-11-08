@@ -14,7 +14,7 @@ export default defineConfig({
   },
   plugins: [
     browserExtension({
-      manifest: () => readJsonFile(root("src/manifest.json")),
+      manifest: root("src/manifest.json"),
       assets: "assets",
       additionalInputs: ["content-scripts/script1/index.ts"],
       watchFilePaths: [root("src/manifest.json")],
