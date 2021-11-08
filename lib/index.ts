@@ -222,7 +222,7 @@ export default function browserExtension<T>(
   let webExtRunner: any;
   let isWatching: boolean;
   let finalConfig: UserConfig;
-  let scriptInputs: BuildScriptCache[];
+  let scriptInputs: BuildScriptCache[] | undefined;
 
   return {
     name: "vite-plugin-web-extension",
@@ -320,7 +320,7 @@ export default function browserExtension<T>(
 
     async closeBundle() {
       log("Content scripts to build in lib mode:", scriptInputs);
-      for (const input of scriptInputs) {
+      for (const input of scriptInputs ?? []) {
         await buildScript({
           ...input,
           vite: finalConfig,
