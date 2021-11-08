@@ -1,21 +1,6 @@
-# Vite Plugin Web Extension
+<h1 align="center">Vite Plugin Web Extension</h1>
 
-A nearly 0 config plugin for developing browser extensions using [Vite](https://vitejs.dev/). It supports:
-
-- Languages
-  - Javascript
-  - Typescript
-- Frameworks
-  - Vue
-  - React
-  - Svelte
-  - And anything else with a plugin for Vite!
-- Features
-  - Build based on your `manifest.json`
-  - Lightning fast production builds
-  - Chrome & Firefox support
-  - TODO: HTML page HMR
-  - TODO: Background/content script reloading
+<p align="center">A simple plugin with powerful options for developing browser extensions using <a href="https://vitejs.dev/">Vite</a></p>
 
 ```ts
 // vite.config.ts
@@ -24,14 +9,22 @@ import browserExtension from "vite-plugin-web-extension";
 export default defineConfig({
   plugins: [
     browserExtension({
-      manifest: () => require("./manifest.json"),
+      manifest: path.resolve(__dirname, "manifest.json"),
       assets: "assets",
     }),
   ],
 });
 ```
 
-And that's it! All entry points are read from the `manifest.json` (or the [`additionalInputs`](#additional-inputs) option)
+## Features
+
+- :wrench: Builds based on your `manifest.json`
+- :zap: Super fast watch mode that automatically reloads your extension
+- :globe_with_meridians: Chrome and Firefox support
+- :fire: Frontend frameworks for the popup, options page, and content scripts!
+- :robot: Typescript support out of the box!
+
+## Installation
 
 ```bash
 npm i -D vite-plugin-web-extension
@@ -43,8 +36,8 @@ npm i -D vite-plugin-web-extension
 - [x] CSS inputs & generated files &emsp; :tada: `v0.2.0` :tada:
 - [x] Dev mode with automatic reload &emsp; :tada: `v0.3.0` :tada:
 - [x] Manifest V3 support &emsp; :tada: `v0.5.0` :tada:
+- [x] Frontend framework support in content scripts &emsp; :tada: `v0.6.0` :tada:
 - [ ] Browser specific flags in the manifest
-- [ ] HMR
 
 ## Setup and Usage
 
@@ -85,8 +78,7 @@ export default defineConfig({
   },
   plugins: [
     browserExtension({
-      manifest: () =>
-        readJsonFile(path.resolve(__dirname, "src/manifest.json")),
+      manifest: path.resolve(__dirname, "src/manifest.json"),
       assets: "assets",
     }),
   ],
@@ -119,9 +111,11 @@ The manifest has a bit more. You should use relative paths for all entry points 
 }
 ```
 
-:sparkler: And there you go!
+And there you go!
 
 Run `vite build` and you should see a fully compiled and working browser extension in your `dist/` directory!
+
+> Any script inputs, with the exception of `background.service_worker`, are built in [Library Mode](https://vitejs.dev/guide/build.html#library-mode)
 
 ### Adding Frontend Framewoks
 
@@ -140,6 +134,8 @@ export default defineConfig({
 ```
 
 > The plugin order doesn't matter
+
+You can now use the framework in your popup, options page, or content scripts!
 
 ## Advanced Features
 
@@ -168,18 +164,15 @@ export default defineConfig({
 });
 ```
 
-Do not run the dev server. It won't work until HMR is implemented:
-
-```bash
-# Don't do this! You'll get a warning and nothing will work
-vite
-```
+> Watch mode will not reload properly when permissions change. Restart the `vite build --watch` command to get new permission changes
 
 ### Additional Inputs
 
 If you have have files that need to be included, but aren't listed in your `manifest.json`, you can add them via the `additionalInputs` option.
 
 The paths should be relative to the Vite's `root`, just like the `assets` option.
+
+Any files listed here will be built in [Library Mode](https://vitejs.dev/guide/build.html#library-mode)
 
 ```ts
 // vite.config.ts
@@ -249,6 +242,31 @@ This will tell the plugin that the file is already being generated for us, but t
 
 For content scripts injected programmatically, include path in the plugin's [`additionalInputs` option](#additional-inputs)
 
-### Browser Specific Manifest Fields
+### Dynamic Manifests
+
+The `manifest` option also accepts a function. This function should return a javascript object containing the same content as the `manifest.json`. It should include the source paths (with `.ts` extension if using typescript), as well as any browser specific flags (see next section).
+
+Often times this is used to pull in details from your `package.json` like the version so they only have to be maintained in a single place
+
+```ts
+export default defineConfig({
+  plugins: [
+    browserExtension({
+      manifest: () => {
+        // Generate your manifest
+        const packageJson = require("./package.json");
+        return {
+          ...require("./manifest.json"),
+          name: packageJson.name,
+          version: packageJson.version,
+        };
+      },
+      assets: "assets",
+    }),
+  ],
+});
+```
+
+#### Browser Specific Manifest Fields
 
 TODO

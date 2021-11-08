@@ -7,9 +7,11 @@
     "validate": "web-ext lint -s dist"
   },
   "dependencies": {
+    "lodash.debounce": "^4.0.8",
     "vite": "^2.6.13"
   },
   "devDependencies": {
+    "@types/lodash.debounce": "^4.0.6",
     "typescript": "^4.4.4",
     "vite-plugin-web-extension": "workspace:*"
   }

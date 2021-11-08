@@ -18,7 +18,7 @@
     "chrome_style": false
   },
   "background": {
-    "scripts": "background/index.ts"
+    "scripts": ["background/index.ts"]
   },
   "content_scripts": [
     {
@@ -27,7 +27,7 @@
         "content-scripts/script3/some-script.ts",
         "content-scripts/script2/index.ts"
       ],
-      "css": ["generated:content-scripts/script3/index.css"]
+      "css": ["generated:content-scripts/script3/style.css"]
     },
     {
       "matches": ["*://*/*"],

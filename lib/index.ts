@@ -1,7 +1,8 @@
 import path from "path";
-import { defineConfig, Plugin, mergeConfig } from "vite";
+import { defineConfig, Plugin, mergeConfig, UserConfig } from "vite";
 import { readdirSync, lstatSync, readFileSync } from "fs";
 const webExt = require("web-ext");
+import { buildScript, BuildScriptConfig } from "./src/build-script";
 
 type Manifest = any;
 
@@ -57,6 +58,8 @@ interface BrowserExtensionPluginOptions {
   watchFilePaths?: string[];
 }
 
+type BuildScriptCache = Omit<BuildScriptConfig, "vite" | "watch">;
+
 export default function browserExtension<T>(
   options: BrowserExtensionPluginOptions
 ): Plugin {
@@ -77,8 +80,10 @@ export default function browserExtension<T>(
     transformedManifest: any;
     generatedInputs: Record<string, string>;
     styleAssets: string[];
+    generatedScriptInputs: BuildScriptCache[];
   } {
     const generatedInputs: Record<string, string> = {};
+    const generatedScriptInputs: BuildScriptCache[] = [];
     const transformedManifest = JSON.parse(JSON.stringify(manifestWithTs));
     const styleAssets: string[] = [];
 
@@ -100,35 +105,27 @@ export default function browserExtension<T>(
       generatedInputs[filenameToInput(filename)] = filenameToPath(filename);
     };
 
-    const transformScripts = (
-      object: any,
-      key: string,
-      forceArrayInManifest = false
-    ) => {
+    const transformScripts = (object: any, key: string) => {
       const value = object?.[key];
       if (value == null) return;
       const scripts: string[] = typeof value === "string" ? [value] : value;
       const compiledScripts: string[] = [];
       scripts.forEach((script) => {
-        generatedInputs[filenameToInput(script)] = filenameToPath(script);
+        generatedScriptInputs.push({
+          inputAbsPath: filenameToPath(script),
+          outputRelPath: filenameToInput(script),
+        });
         compiledScripts.push(filenameToCompiledFilename(script));
       });
 
-      if (forceArrayInManifest) {
-        object[key] = compiledScripts;
-      } else {
-        switch (compiledScripts.length) {
-          case 0:
-            object[key] = undefined;
-            break;
-          case 1:
-            object[key] = compiledScripts[0];
-            break;
-          default:
-            object[key] = compiledScripts;
-            break;
-        }
-      }
+      object[key] = compiledScripts;
+    };
+
+    const transformModule = (object: any, key: string) => {
+      const input = object?.[key];
+      if (input == null) return;
+      generatedInputs[filenameToInput(input)] = filenameToPath(input);
+      object[key] = filenameToCompiledFilename(input);
     };
 
     const transformStylesheets = (object: any, key: string) => {
@@ -176,9 +173,9 @@ export default function browserExtension<T>(
 
     // JS inputs
     transformScripts(transformedManifest.background, "scripts");
-    transformScripts(transformedManifest.background, "service_worker"); // Manifest V3
+    transformModule(transformedManifest.background, "service_worker"); // Manifest V3
     transformedManifest.content_scripts?.forEach((contentScript: string) => {
-      transformScripts(contentScript, "js", true);
+      transformScripts(contentScript, "js");
     });
     transformScripts(transformedManifest.user_scripts, "api_script");
     transformScripts(additionalInputTypes, "scripts");
@@ -192,6 +189,7 @@ export default function browserExtension<T>(
     return {
       generatedInputs,
       transformedManifest,
+      generatedScriptInputs,
       styleAssets,
     };
   }
@@ -223,9 +221,11 @@ export default function browserExtension<T>(
   let moduleRoot: string;
   let webExtRunner: any;
   let isWatching: boolean;
+  let finalConfig: UserConfig;
+  let scriptInputs: BuildScriptCache[];
 
   return {
-    name: "web-ext-manifest",
+    name: "vite-plugin-web-extension",
 
     config(viteConfig) {
       const webExtConfig = defineConfig({
@@ -236,6 +236,8 @@ export default function browserExtension<T>(
           },
           rollupOptions: {
             output: {
+              // Turn off chunking
+              manualChunks: undefined,
               // Remove hashes from output filenames for consistent builds
               entryFileNames: "[name].js",
               chunkFileNames: "[name].js",
@@ -244,7 +246,8 @@ export default function browserExtension<T>(
           },
         },
       });
-      return mergeConfig(webExtConfig, viteConfig, true);
+      finalConfig = mergeConfig(webExtConfig, viteConfig, true);
+      return finalConfig;
     },
 
     configResolved(viteConfig) {
@@ -259,12 +262,17 @@ export default function browserExtension<T>(
       log("Generated manifest:", manifestWithTs);
 
       // Generate inputs
-      const { transformedManifest, generatedInputs, styleAssets } =
-        transformManifestInputs(manifestWithTs);
+      const {
+        transformedManifest,
+        generatedInputs,
+        generatedScriptInputs,
+        styleAssets,
+      } = transformManifestInputs(manifestWithTs);
       rollupOptions.input = {
         ...rollupOptions.input,
         ...generatedInputs,
       };
+      scriptInputs = generatedScriptInputs;
 
       // Assets
       const assets = [...styleAssets, ...getAllAssets()];
@@ -299,7 +307,30 @@ export default function browserExtension<T>(
       }
     },
 
+    async buildEnd(err) {
+      console.log("buildEnd");
+      if (err != null) {
+        log("Skipping script builds because of error", err);
+        return;
+      }
+      log("Content scripts to build in lib mode:", scriptInputs);
+
+      // for (const input of scriptInputs) {
+      //   await build(input, finalConfig);
+      // }
+    },
+
     async closeBundle() {
+      log("Content scripts to build in lib mode:", scriptInputs);
+      for (const input of scriptInputs) {
+        await buildScript({
+          ...input,
+          vite: finalConfig,
+          watch: isWatching,
+        });
+      }
+      // await build(scriptInputs[0], finalConfig);
+
       if (!isWatching) return;
 
       if (webExtRunner == null) {
