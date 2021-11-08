@@ -306,7 +306,6 @@ export default function browserExtension<T>(
     },
 
     async buildEnd(err) {
-      console.log("buildEnd");
       if (err != null) {
         log("Skipping script builds because of error", err);
         return;
