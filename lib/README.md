@@ -1,6 +1,6 @@
-# Vite Plugin Web Extension
+<h1 align="center">Vite Plugin Web Extension</h1>
 
-See the [docs](https://github.com/aklinker1/vite-plugin-web-extension/blob/main/README.md) to get started:
+A simple plugin with powerful options for developing browser extensions using [Vite](https://vitejs.dev/)
 
 ```bash
 npm i -D vite-plugin-web-extension
@@ -13,9 +13,11 @@ import browserExtension from "vite-plugin-web-extension";
 export default defineConfig({
   plugins: [
     browserExtension({
-      manifest: () => require("./manifest.json"),
+      manifest: path.resolve(__dirname, "manifest.json"),
       assets: "assets",
     }),
   ],
 });
 ```
+
+Head over to [GitHub](https://github.com/aklinker1/vite-plugin-web-extension/blob/main/README.md) to see the full docs and advanced options
