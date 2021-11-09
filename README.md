@@ -32,13 +32,13 @@ npm i -D vite-plugin-web-extension
 
 ## Roadmap
 
-- [x] Build for production &emsp; :tada: `v0.1.0` :tada:
-- [x] CSS inputs & generated files &emsp; :tada: `v0.2.0` :tada:
-- [x] Dev mode with automatic reload &emsp; :tada: `v0.3.0` :tada:
-- [x] Manifest V3 support &emsp; :tada: `v0.5.0` :tada:
-- [x] Frontend framework support in content scripts &emsp; :tada: `v0.6.0` :tada:
-- [x] Browser specific flags in the manifest &emsp; :tada: `v0.7.0` :tada:
-- HMR for html pages???
+- [x] `v0.1.0` ~~Build for production~~
+- [x] `v0.2.0` ~~CSS inputs & generated files~~
+- [x] `v0.3.0` ~~Dev mode with automatic reload~~
+- [x] `v0.5.0` ~~Manifest V3 support~~
+- [x] `v0.6.0` ~~Frontend framework support in content scripts~~
+- [x] `v0.7.0` ~~Browser specific flags in the manifest~~
+- [ ] HMR for html pages
 
 ## Setup and Usage
 
