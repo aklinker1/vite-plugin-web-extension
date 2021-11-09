@@ -1,6 +1,6 @@
 <h1 align="center">Vite Plugin Web Extension</h1>
 
-<p align="center">A simple plugin with powerful options for developing browser extensions using <a href="https://vitejs.dev/">Vite</a></p>
+<p align="center">A simple but powerful <a href="https://vitejs.dev/">Vite</a> plugin for developing browser extensions</p>
 
 ```ts
 // vite.config.ts
@@ -18,10 +18,10 @@ export default defineConfig({
 
 ## Features
 
-- :wrench: Builds based on your `manifest.json`
+- :wrench: Automatically build inputs from in your `manifest.json`
 - :zap: Super fast watch mode that automatically reloads your extension
 - :globe_with_meridians: Chrome and Firefox support
-- :fire: Frontend frameworks for the popup, options page, and content scripts!
+- :fire: Frontend frameworks for the popup, options page, _**and content scripts**_!
 - :robot: Typescript support out of the box!
 
 ## Installation
