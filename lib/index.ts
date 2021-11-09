@@ -3,6 +3,7 @@ import { defineConfig, Plugin, mergeConfig, UserConfig } from "vite";
 import { readdirSync, lstatSync, readFileSync } from "fs";
 const webExt = require("web-ext");
 import { buildScript, BuildScriptConfig } from "./src/build-script";
+import { resolveBrowserTagsInObject } from "./src/resolve-browser-flags";
 
 type Manifest = any;
 
@@ -56,6 +57,11 @@ interface BrowserExtensionPluginOptions {
    * **Absolute paths** to files to watch.
    */
   watchFilePaths?: string[];
+
+  /**
+   * The browser to target, defaulting to chrome.
+   */
+  browser?: string;
 }
 
 type BuildScriptCache = Omit<BuildScriptConfig, "vite" | "watch">;
@@ -249,6 +255,7 @@ export default function browserExtension<T>(
     },
 
     configResolved(viteConfig) {
+      log("vite config", viteConfig);
       moduleRoot = viteConfig.root;
       outDir = viteConfig.build.outDir;
       isWatching = viteConfig.inlineConfig.build?.watch === true;
@@ -256,8 +263,13 @@ export default function browserExtension<T>(
 
     async buildStart(rollupOptions) {
       // Generate manifest
-      const manifestWithTs = await getManifest();
-      log("Generated manifest:", manifestWithTs);
+      const manifestWithBrowserTags = await getManifest();
+      log("Manifest before browser transform:", manifestWithBrowserTags);
+      const manifestWithTs = resolveBrowserTagsInObject(
+        process.env.TARGET || "chrome",
+        manifestWithBrowserTags
+      );
+      log("Manifest after browser transform:", manifestWithTs);
 
       // Generate inputs
       const {
@@ -311,10 +323,6 @@ export default function browserExtension<T>(
         return;
       }
       log("Content scripts to build in lib mode:", scriptInputs);
-
-      // for (const input of scriptInputs) {
-      //   await build(input, finalConfig);
-      // }
     },
 
     async closeBundle() {

@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "pnpm install && tsc && vite build --watch",
+    "dev:firefox": "pnpm install && tsc && TARGET=firefox vite build --watch",
     "build": "pnpm install && tsc && vite build",
+    "build:firefox": "pnpm install && tsc && TARGET=firefox vite build",
     "validate": "web-ext lint -s dist"
   },
   "dependencies": {

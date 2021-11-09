@@ -37,7 +37,8 @@ npm i -D vite-plugin-web-extension
 - [x] Dev mode with automatic reload &emsp; :tada: `v0.3.0` :tada:
 - [x] Manifest V3 support &emsp; :tada: `v0.5.0` :tada:
 - [x] Frontend framework support in content scripts &emsp; :tada: `v0.6.0` :tada:
-- [ ] Browser specific flags in the manifest
+- [x] Browser specific flags in the manifest &emsp; :tada: `v0.7.0` :tada:
+- HMR for html pages???
 
 ## Setup and Usage
 
@@ -269,4 +270,45 @@ export default defineConfig({
 
 #### Browser Specific Manifest Fields
 
-TODO
+Either the file or object returned by the `manifest` option can include flags that specify certain fields for certain browsers, and the plugin will strip out any values that aren't for a specific browser
+
+Here's an example: Firefox doesn't support manifest V3 yet, but chrome does!
+
+```jsonc
+{
+  "{{chrome}}.manifest_version": 3,
+  "{{firefox}}.manifest_version": 2,
+  "{{chrome}}.action": {
+    "default_popup": "index.html"
+  },
+  "{{firefox}}.browser_action": {
+    "default_popup": "index.html",
+    "browser_style": false
+  },
+  "options_page": "options.html",
+  "permissions": ["activeTab", "{{firefox}}.<all_urls>"]
+}
+```
+
+To build for a specific browser, simply pass the `browser` option and prefix any **field name** or **string value** with `{{some-browser}}.`. This is not limited to just `chrome` and `firefox`, you can use any string inside the double curly braces.
+
+> Fields without a prefix will never be removed
+
+You can configure this option in a multitude of ways. Here's one way via environment variables!
+
+```bash
+# In package.json or via CLI
+cross-env TARGET_BROWSER=chrome vite build
+```
+
+```ts
+export default defineConfig({
+  plugins: [
+    browserExtension({
+      manifest: "manifest.json",
+      assets: "assets",
+      browser: process.env.TARGET_BROWSER,
+    }),
+  ],
+});
+```

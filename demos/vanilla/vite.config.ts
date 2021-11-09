@@ -18,6 +18,7 @@ export default defineConfig({
       assets: "assets",
       additionalInputs: ["content-scripts/script1/index.ts"],
       watchFilePaths: [root("src/manifest.json")],
+      verbose: true,
     }),
   ],
 });

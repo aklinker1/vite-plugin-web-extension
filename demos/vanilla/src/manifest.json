@@ -1,5 +1,6 @@
 {
-  "manifest_version": 2,
+  "{{chrome}}.manifest_version": 3,
+  "{{firefox}}.manifest_version": 2,
   "name": "Test",
   "version": "1.0.0",
   "description": "Test Vite Plugin Extension",
@@ -8,8 +9,10 @@
     "48": "assets/icon/48.png",
     "128": "assets/icon/128.png"
   },
-  "browser_action": {
-    "default_icon": "assets/icon/128.png",
+  "{{chrome}}.action": {
+    "default_popup": "popup/index.html"
+  },
+  "{{firefox}}.browser_action": {
     "default_popup": "popup/index.html"
   },
   "options_ui": {
