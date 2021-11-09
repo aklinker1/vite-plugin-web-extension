@@ -1,6 +1,6 @@
 <h1 align="center">Vite Plugin Web Extension</h1>
 
-A simple plugin with powerful options for developing browser extensions using [Vite](https://vitejs.dev/)
+A simple but powerful Vite plugin for developing browser extensions
 
 ```bash
 npm i -D vite-plugin-web-extension
