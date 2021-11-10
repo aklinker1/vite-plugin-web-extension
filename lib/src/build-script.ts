@@ -17,6 +17,8 @@ export async function buildScript(config: BuildScriptConfig) {
   await Vite.build({
     root: config.vite.root,
     clearScreen: false,
+    mode: config.vite.mode,
+    resolve: config.vite.resolve,
     plugins: config.vite.plugins?.filter(
       (plugin) =>
         plugin &&
@@ -24,6 +26,7 @@ export async function buildScript(config: BuildScriptConfig) {
     ),
     define: config.vite.define,
     build: {
+      ...config.vite.build,
       emptyOutDir: false,
       outDir,
       watch: config.watch
