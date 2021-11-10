@@ -88,10 +88,11 @@ export default function browserExtension<T>(
     styleAssets: string[];
     generatedScriptInputs: BuildScriptCache[];
   } {
+    const inputIncludedMap: Record<string, boolean> = {};
     const generatedInputs: Record<string, string> = {};
     const generatedScriptInputs: BuildScriptCache[] = [];
     const transformedManifest = JSON.parse(JSON.stringify(manifestWithTs));
-    const styleAssets: string[] = [];
+    const styleAssets = new Set<string>();
 
     const filenameToInput = (filename: string) =>
       filename.substring(0, filename.lastIndexOf("."));
@@ -117,11 +118,14 @@ export default function browserExtension<T>(
       const scripts: string[] = typeof value === "string" ? [value] : value;
       const compiledScripts: string[] = [];
       scripts.forEach((script) => {
-        generatedScriptInputs.push({
-          inputAbsPath: filenameToPath(script),
-          outputRelPath: filenameToInput(script),
-        });
+        if (!inputIncludedMap[script]) {
+          generatedScriptInputs.push({
+            inputAbsPath: filenameToPath(script),
+            outputRelPath: filenameToInput(script),
+          });
+        }
         compiledScripts.push(filenameToCompiledFilename(script));
+        inputIncludedMap[script] = true;
       });
 
       object[key] = compiledScripts;
@@ -141,7 +145,7 @@ export default function browserExtension<T>(
       const compiledAssets: string[] = [];
       styles.forEach((style) => {
         if (!style.startsWith("generated:")) {
-          styleAssets.push(style);
+          styleAssets.add(style);
           log("Skip generated asset:", style);
           return;
         }
@@ -196,7 +200,7 @@ export default function browserExtension<T>(
       generatedInputs,
       transformedManifest,
       generatedScriptInputs,
-      styleAssets,
+      styleAssets: Array.from(styleAssets.values()),
     };
   }
 
