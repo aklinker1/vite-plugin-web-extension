@@ -1,0 +1,23 @@
+{
+  "name": "vite-extension-builder",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "pnpm install && tsc && vite build --watch",
+    "dev:firefox": "pnpm install && tsc && TARGET=firefox vite build --watch",
+    "build": "pnpm install && tsc && vite build",
+    "build:firefox": "pnpm install && tsc && TARGET=firefox vite build",
+    "validate": "web-ext lint -s dist"
+  },
+  "dependencies": {
+    "lodash.debounce": "^4.0.8",
+    "vite": "^2.6.13"
+  },
+  "devDependencies": {
+    "@types/lodash.debounce": "^4.0.6",
+    "@vitejs/plugin-vue": "^1.9.4",
+    "@vue/compiler-sfc": "^3.2.21",
+    "typescript": "^4.4.4",
+    "vite-plugin-web-extension": "workspace:*",
+    "vue": "^3.2.21"
+  }
+}
