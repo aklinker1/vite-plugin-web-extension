@@ -227,6 +227,7 @@ export default function browserExtension<T>(
     return assets;
   }
 
+  const browser = options.browser ?? "chrome";
   let outDir: string;
   let moduleRoot: string;
   let webExtRunner: any;
@@ -259,7 +260,7 @@ export default function browserExtension<T>(
     },
 
     configResolved(viteConfig) {
-      log("vite config", viteConfig);
+      log("Building for browser:", browser);
       moduleRoot = viteConfig.root;
       outDir = viteConfig.build.outDir;
       isWatching = viteConfig.inlineConfig.build?.watch === true;
@@ -270,7 +271,7 @@ export default function browserExtension<T>(
       const manifestWithBrowserTags = await getManifest();
       log("Manifest before browser transform:", manifestWithBrowserTags);
       const manifestWithTs = resolveBrowserTagsInObject(
-        process.env.TARGET || "chrome",
+        browser,
         manifestWithBrowserTags
       );
       log("Manifest after browser transform:", manifestWithTs);
@@ -326,7 +327,6 @@ export default function browserExtension<T>(
         log("Skipping script builds because of error", err);
         return;
       }
-      log("Content scripts to build in lib mode:", scriptInputs);
     },
 
     async closeBundle() {

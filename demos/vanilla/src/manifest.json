@@ -42,5 +42,5 @@
       "css": ["content-scripts/script4/index.css"]
     }
   ],
-  "permissions": ["<all_urls>"]
+  "permissions": ["tabs", "{{firefox}}.<all_urls>", "{{chrome}}.activeTab"]
 }
