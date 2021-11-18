@@ -19,6 +19,7 @@ export default defineConfig({
       additionalInputs: ["content-scripts/script1/index.ts"],
       watchFilePaths: [root("src/manifest.json")],
       verbose: true,
+      browser: process.env.TARGET || "chrome",
     }),
   ],
 });
