@@ -4,6 +4,7 @@ import { readdirSync, lstatSync, readFileSync } from "fs";
 const webExt = require("web-ext");
 import { buildScript, BuildScriptConfig } from "./src/build-script";
 import { resolveBrowserTagsInObject } from "./src/resolve-browser-flags";
+import { validateManifest } from "./src/validation";
 
 type Manifest = any;
 
@@ -62,6 +63,11 @@ interface BrowserExtensionPluginOptions {
    * The browser to target, defaulting to chrome.
    */
   browser?: string;
+
+  /**
+   * Do not validate your manifest to make sure it can be loaded by browsers
+   */
+  skipManifestValidation?: boolean;
 }
 
 type BuildScriptCache = Omit<BuildScriptConfig, "vite" | "watch">;
@@ -283,6 +289,10 @@ export default function browserExtension<T>(
         generatedScriptInputs,
         styleAssets,
       } = transformManifestInputs(manifestWithTs);
+
+      if (!options.skipManifestValidation)
+        await validateManifest(this, transformedManifest);
+
       rollupOptions.input = {
         ...rollupOptions.input,
         ...generatedInputs,

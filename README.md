@@ -23,6 +23,7 @@ export default defineConfig({
 - :globe_with_meridians: Chrome and Firefox support
 - :fire: Frontend frameworks for the popup, options page, _**and content scripts**_!
 - :robot: Typescript support out of the box!
+- :white_check_mark: Manifest validation
 
 ## Installation
 
@@ -302,6 +303,22 @@ export default defineConfig({
       manifest: "manifest.json",
       assets: "assets",
       browser: process.env.TARGET_BROWSER,
+    }),
+  ],
+});
+```
+
+### Manifest Validation
+
+Whenever your manifest is generated, it gets validated against some known JSON schemas. Right now, only Manifest V2 is supported because it is the only version with an official JSON schema: https://json.schemastore.org/chrome-manifest
+
+To disable validation, pass the `skipManifestValidation` option:
+
+```ts
+export default defineConfig({
+  plugins: [
+    browserExtension({
+      skipManifestValidation: true,
     }),
   ],
 });
