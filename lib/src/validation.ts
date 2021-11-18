@@ -25,9 +25,11 @@ export async function validateManifest(
   const schemaUrl = manifestSchemas[manifestVersion];
   if (!schemaUrl) {
     plugin.warn(
-      `Cannot validate manifest v${manifestVersion}, that version does not support validation (supported: ${Object.keys(
+      `Cannot validate manifest v${manifestVersion}, that version does not have an official schema (supported: ${Object.keys(
         manifestSchemas
-      ).join(",")})`
+      )
+        .map((v) => `v${v}`)
+        .join(",")})`
     );
     return;
   }
