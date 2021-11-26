@@ -240,6 +240,7 @@ export default function browserExtension<T>(
   let isWatching: boolean;
   let finalConfig: UserConfig;
   let scriptInputs: BuildScriptCache[] | undefined;
+  let hasBuiltOnce = false;
 
   return {
     name: "vite-plugin-web-extension",
@@ -340,15 +341,16 @@ export default function browserExtension<T>(
     },
 
     async closeBundle() {
-      log("Content scripts to build in lib mode:", scriptInputs);
-      for (const input of scriptInputs ?? []) {
-        await buildScript({
-          ...input,
-          vite: finalConfig,
-          watch: isWatching,
-        });
+      if (!hasBuiltOnce) {
+        log("Content scripts to build in lib mode:", scriptInputs);
+        for (const input of scriptInputs ?? []) {
+          await buildScript({
+            ...input,
+            vite: finalConfig,
+            watch: isWatching,
+          });
+        }
       }
-      // await build(scriptInputs[0], finalConfig);
 
       if (!isWatching) return;
 
@@ -367,6 +369,8 @@ export default function browserExtension<T>(
       } else {
         webExtRunner.reloadAllExtensions();
       }
+
+      hasBuiltOnce = true;
     },
   };
 }
