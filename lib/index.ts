@@ -148,18 +148,19 @@ export default function browserExtension<T>(
       const value = object?.[key];
       if (value == null) return;
       const styles: string[] = typeof value === "string" ? [value] : value;
-      const compiledAssets: string[] = [];
+      const onManifest: string[] = [];
       styles.forEach((style) => {
-        if (!style.startsWith("generated:")) {
-          styleAssets.add(style);
+        if (style.startsWith("generated:")) {
           log("Skip generated asset:", style);
-          return;
+          onManifest.push(
+            filenameToCompiledFilename(style).replace("generated:", "")
+          );
+        } else {
+          styleAssets.add(style);
+          onManifest.push(filenameToCompiledFilename(style));
         }
-        compiledAssets.push(
-          filenameToCompiledFilename(style).replace("generated:", "")
-        );
       });
-      object[key] = compiledAssets;
+      object[key] = onManifest;
     };
 
     const scriptExtensions = [".ts", ".js"];
