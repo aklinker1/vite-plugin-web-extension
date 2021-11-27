@@ -358,6 +358,10 @@ export default function browserExtension<T>(
         // https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code
         webExtRunner = await webExt.cmd.run(
           {
+            target:
+              options.browser === null || options.browser === "firefox"
+                ? options.browser
+                : "chromium",
             ...options.webExtConfig,
             // No touch - can't exit the terminal if these are changed, so they cannot be overridden
             sourceDir: outDir,
