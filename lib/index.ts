@@ -5,6 +5,7 @@ const webExt = require("web-ext");
 import { buildScript, BuildScriptConfig } from "./src/build-script";
 import { resolveBrowserTagsInObject } from "./src/resolve-browser-flags";
 import { validateManifest } from "./src/validation";
+import { HookWaiter } from "./src/hook-waiter";
 
 type Manifest = any;
 
@@ -182,7 +183,7 @@ export default function browserExtension<T>(
     // Html inputs
     transformHtml("browser_action", "default_popup");
     transformHtml("page_action", "default_popup");
-    transformHtml("action", "default_popup"); // Manifest V3
+    transformHtml("action", "default_popup");
     transformHtml("options_page");
     transformHtml("options_ui", "page");
     transformHtml("background", "page");
@@ -190,7 +191,7 @@ export default function browserExtension<T>(
 
     // JS inputs
     transformScripts(transformedManifest.background, "scripts");
-    transformModule(transformedManifest.background, "service_worker"); // Manifest V3
+    transformModule(transformedManifest.background, "service_worker");
     transformedManifest.content_scripts?.forEach((contentScript: string) => {
       transformScripts(contentScript, "js");
     });
@@ -242,6 +243,7 @@ export default function browserExtension<T>(
   let finalConfig: UserConfig;
   let scriptInputs: BuildScriptCache[] | undefined;
   let hasBuiltOnce = false;
+  const hookWaiter = new HookWaiter("closeBundle");
 
   return {
     name: "vite-plugin-web-extension",
@@ -351,13 +353,17 @@ export default function browserExtension<T>(
       if (!hasBuiltOnce) {
         log("Content scripts to build in lib mode:", scriptInputs);
         for (const input of scriptInputs ?? []) {
-          await buildScript({
-            ...input,
-            vite: finalConfig,
-            watch: isWatching,
-          });
+          await buildScript(
+            {
+              ...input,
+              vite: finalConfig,
+              watch: isWatching,
+            },
+            hookWaiter
+          );
         }
       }
+      await hookWaiter.waitForAll();
 
       if (!isWatching) return;
 
