@@ -277,12 +277,18 @@ export default function browserExtension<T>(
     async buildStart(rollupOptions) {
       // Generate manifest
       const manifestWithBrowserTags = await getManifest();
-      log("Manifest before browser transform:", manifestWithBrowserTags);
+      log(
+        "Manifest before browser transform:",
+        JSON.stringify(manifestWithBrowserTags, null, 2)
+      );
       const manifestWithTs = resolveBrowserTagsInObject(
         browser,
         manifestWithBrowserTags
       );
-      log("Manifest after browser transform:", manifestWithTs);
+      log(
+        "Manifest after browser transform:",
+        JSON.stringify(manifestWithTs, null, 2)
+      );
 
       // Generate inputs
       const {
@@ -356,21 +362,23 @@ export default function browserExtension<T>(
       if (!isWatching) return;
 
       if (webExtRunner == null) {
+        const config = {
+          target:
+            options.browser === null || options.browser === "firefox"
+              ? options.browser
+              : "chromium",
+          ...options.webExtConfig,
+          // No touch - can't exit the terminal if these are changed, so they cannot be overridden
+          sourceDir: outDir,
+          noReload: false,
+          noInput: true,
+        };
+        log("Passed web-ext run config:", options.webExtConfig);
+        log("Final web-ext run config:", config);
         // https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code
-        webExtRunner = await webExt.cmd.run(
-          {
-            target:
-              options.browser === null || options.browser === "firefox"
-                ? options.browser
-                : "chromium",
-            ...options.webExtConfig,
-            // No touch - can't exit the terminal if these are changed, so they cannot be overridden
-            sourceDir: outDir,
-            noReload: false,
-            noInput: true,
-          },
-          { shouldExitProgram: true }
-        );
+        webExtRunner = await webExt.cmd.run(config, {
+          shouldExitProgram: true,
+        });
       } else {
         webExtRunner.reloadAllExtensions();
       }
