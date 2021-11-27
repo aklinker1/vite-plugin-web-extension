@@ -371,7 +371,7 @@ export default function browserExtension<T>(
         const config = {
           target:
             options.browser === null || options.browser === "firefox"
-              ? options.browser
+              ? null
               : "chromium",
           ...options.webExtConfig,
           // No touch - can't exit the terminal if these are changed, so they cannot be overridden
