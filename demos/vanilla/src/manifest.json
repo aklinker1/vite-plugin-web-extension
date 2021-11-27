@@ -18,10 +18,11 @@
   "options_ui": {
     "page": "options/index.html",
     "open_in_tab": true,
-    "chrome_style": false
+    "{{firefox}}.chrome_style": false
   },
   "background": {
-    "scripts": ["background/index.ts"]
+    "{{chrome}}.service_worker": "background/index.ts",
+    "{{firefox}}.scripts": ["background/index.ts"]
   },
   "content_scripts": [
     {
