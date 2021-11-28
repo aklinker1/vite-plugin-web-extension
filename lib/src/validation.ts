@@ -35,7 +35,13 @@ export async function validateManifest(
   }
   const schema = await get(schemaUrl);
   if (!ajv.validate(schema, manifest)) {
-    throw Error("Invalid manifest: " + JSON.stringify(ajv.errors, null, 2));
+    throw Error(
+      [
+        "Invalid manifest:",
+        JSON.stringify(manifest, null, 2),
+        JSON.stringify(ajv.errors, null, 2),
+      ].join("\n")
+    );
   }
 }
 
