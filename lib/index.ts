@@ -164,10 +164,13 @@ export default function browserExtension<T>(
       object[key] = onManifest;
     };
 
+    const htmlExtensions = [".html"];
     const scriptExtensions = [".ts", ".js"];
     const additionalInputTypes = options.additionalInputs?.reduce(
       (mapping, input) => {
-        if (scriptExtensions.find((ext) => input.endsWith(ext))) {
+        if (htmlExtensions.find((ext) => input.endsWith(ext))) {
+          generatedInputs[filenameToInput(input)] = filenameToPath(input);
+        } else if (scriptExtensions.find((ext) => input.endsWith(ext))) {
           mapping.scripts.push(input);
         } else {
           mapping.assets.push(input);
