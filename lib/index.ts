@@ -169,7 +169,7 @@ export default function browserExtension<T>(
     const additionalInputTypes = options.additionalInputs?.reduce(
       (mapping, input) => {
         if (htmlExtensions.find((ext) => input.endsWith(ext))) {
-          generatedInputs[filenameToInput(input)] = filenameToPath(input);
+          mapping.html.push(input);
         } else if (scriptExtensions.find((ext) => input.endsWith(ext))) {
           mapping.scripts.push(input);
         } else {
@@ -178,6 +178,7 @@ export default function browserExtension<T>(
         return mapping;
       },
       {
+        html: [] as string[],
         scripts: [] as string[],
         assets: [] as string[],
       }
@@ -191,6 +192,9 @@ export default function browserExtension<T>(
     transformHtml("options_ui", "page");
     transformHtml("background", "page");
     transformHtml("sidebar_action", "default_panel");
+    additionalInputTypes?.html.forEach((filename) => {
+      generatedInputs[filenameToInput(filename)] = filenameToPath(filename);
+    });
 
     // JS inputs
     transformScripts(transformedManifest.background, "scripts");
@@ -298,6 +302,9 @@ export default function browserExtension<T>(
           JSON.stringify(manifestWithTs, null, 2)
         );
 
+        if (!options.skipManifestValidation)
+          await validateManifest(log, manifestWithTs);
+
         // Generate inputs
         const {
           transformedManifest,
@@ -305,9 +312,6 @@ export default function browserExtension<T>(
           generatedScriptInputs,
           styleAssets,
         } = transformManifestInputs(manifestWithTs);
-
-      if (!options.skipManifestValidation)
-        await validateManifest(this, transformedManifest);
 
         rollupOptions.input = {
           ...rollupOptions.input,
