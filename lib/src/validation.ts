@@ -1,9 +1,7 @@
-import Ajv from "ajv-draft-04";
+import Ajv from "ajv";
 import https from "https";
 
-const manifestSchemas: Record<string, string> = {
-  "2": "https://json.schemastore.org/chrome-manifest",
-};
+const SCHEMA_URL = "https://json.schemastore.org/chrome-manifest";
 
 // Validate
 
@@ -21,19 +19,7 @@ export async function validateManifest(
   if (typeof manifest !== "object")
     throw Error(`Manifest must be an object, got ${typeof manifest}`);
 
-  const manifestVersion = manifest.manifest_version;
-  const schemaUrl = manifestSchemas[manifestVersion];
-  if (!schemaUrl) {
-    plugin.warn(
-      `Cannot validate manifest v${manifestVersion}, that version does not have an official schema (supported: ${Object.keys(
-        manifestSchemas
-      )
-        .map((v) => `v${v}`)
-        .join(",")})`
-    );
-    return;
-  }
-  const schema = await get(schemaUrl);
+  const schema = await get(SCHEMA_URL);
   if (!ajv.validate(schema, manifest)) {
     throw Error(
       [

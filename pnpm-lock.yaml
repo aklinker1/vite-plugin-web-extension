@@ -45,14 +45,12 @@ importers:
     specifiers:
       '@types/node': ^16.11.6
       ajv: ^8.8.1
-      ajv-draft-04: ^1.0.0
       tsup: ^5.5.0
       typescript: ^4.4.4
       vite: ^2.6.13
       web-ext: ^6.5.0
     dependencies:
       ajv: 8.8.1
-      ajv-draft-04: 1.0.0_ajv@8.8.1
       vite: 2.6.13
       web-ext: 6.5.0
     devDependencies:
@@ -408,17 +406,6 @@ packages:
   /adm-zip/0.5.9:
     resolution: {integrity: sha512-s+3fXLkeeLjZ2kLjCBwQufpI5fuN+kIGBxu6530nVQZGVol0d7Y/M88/xw9HGGUcJjKf8LutN3VPRUBq6N7Ajg==}
     engines: {node: '>=6.0'}
-    dev: false
-
-  /ajv-draft-04/1.0.0_ajv@8.8.1:
-    resolution: {integrity: sha512-mv00Te6nmYbRp5DCwclxtt7yV/joXJPGS7nM+97GdxvuttCOfgI3K4U25zboyeX0O+myI8ERluxQe5wljMmVIw==}
-    peerDependencies:
-      ajv: ^8.5.0
-    peerDependenciesMeta:
-      ajv:
-        optional: true
-    dependencies:
-      ajv: 8.8.1
     dev: false
 
   /ajv-merge-patch/4.1.0_ajv@6.12.6:
