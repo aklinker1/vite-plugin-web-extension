@@ -247,6 +247,7 @@ export default function browserExtension<T>(
   let scriptInputs: BuildScriptCache[] | undefined;
   let hasBuiltOnce = false;
   const hookWaiter = new HookWaiter("closeBundle");
+  let isError = false;
 
   return {
     name: "vite-plugin-web-extension",
@@ -280,68 +281,74 @@ export default function browserExtension<T>(
     },
 
     async buildStart(rollupOptions) {
-      // Generate manifest
-      const manifestWithBrowserTags = await getManifest();
-      log(
-        "Manifest before browser transform:",
-        JSON.stringify(manifestWithBrowserTags, null, 2)
-      );
-      const manifestWithTs = resolveBrowserTagsInObject(
-        browser,
-        manifestWithBrowserTags
-      );
-      log(
-        "Manifest after browser transform:",
-        JSON.stringify(manifestWithTs, null, 2)
-      );
+      isError = false;
+      try {
+        // Generate manifest
+        const manifestWithBrowserTags = await getManifest();
+        log(
+          "Manifest before browser transform:",
+          JSON.stringify(manifestWithBrowserTags, null, 2)
+        );
+        const manifestWithTs = resolveBrowserTagsInObject(
+          browser,
+          manifestWithBrowserTags
+        );
+        log(
+          "Manifest after browser transform:",
+          JSON.stringify(manifestWithTs, null, 2)
+        );
 
-      // Generate inputs
-      const {
-        transformedManifest,
-        generatedInputs,
-        generatedScriptInputs,
-        styleAssets,
-      } = transformManifestInputs(manifestWithTs);
+        // Generate inputs
+        const {
+          transformedManifest,
+          generatedInputs,
+          generatedScriptInputs,
+          styleAssets,
+        } = transformManifestInputs(manifestWithTs);
 
       if (!options.skipManifestValidation)
         await validateManifest(this, transformedManifest);
 
-      rollupOptions.input = {
-        ...rollupOptions.input,
-        ...generatedInputs,
-      };
-      scriptInputs = generatedScriptInputs;
+        rollupOptions.input = {
+          ...rollupOptions.input,
+          ...generatedInputs,
+        };
+        scriptInputs = generatedScriptInputs;
 
-      // Assets
-      const assets = [...styleAssets, ...getAllAssets()];
-      assets.forEach((asset) => {
+        // Assets
+        const assets = [...styleAssets, ...getAllAssets()];
+        assets.forEach((asset) => {
+          this.emitFile({
+            type: "asset",
+            fileName: asset,
+            source: readFileSync(path.resolve(moduleRoot, asset)),
+          });
+        });
+
+        // Ignore vite's default of looking for a <root>/index.html
+        // @ts-expect-error: doesn't want me to delete
+        delete rollupOptions.input["0"];
+
+        // Add stuff to the bundle
+        const manifestContent = JSON.stringify(transformedManifest, null, 2);
         this.emitFile({
           type: "asset",
-          fileName: asset,
-          source: readFileSync(path.resolve(moduleRoot, asset)),
+          fileName: options?.writeManifestTo ?? "manifest.json",
+          name: "manifest.json",
+          source: manifestContent,
         });
-      });
+        log("Final manifest:", manifestContent);
+        log("Final rollup inputs:", rollupOptions.input);
 
-      // Ignore vite's default of looking for a <root>/index.html
-      // @ts-expect-error: doesn't want me to delete
-      delete rollupOptions.input["0"];
-
-      // Add stuff to the bundle
-      const manifestContent = JSON.stringify(transformedManifest, null, 2);
-      this.emitFile({
-        type: "asset",
-        fileName: options?.writeManifestTo ?? "manifest.json",
-        name: "manifest.json",
-        source: manifestContent,
-      });
-      log("Final manifest:", manifestContent);
-      log("Final rollup inputs:", rollupOptions.input);
-
-      if (isWatching) {
-        options.watchFilePaths?.forEach((file) => this.addWatchFile(file));
-        assets.forEach((asset) =>
-          this.addWatchFile(path.resolve(moduleRoot, asset))
-        );
+        if (isWatching) {
+          options.watchFilePaths?.forEach((file) => this.addWatchFile(file));
+          assets.forEach((asset) =>
+            this.addWatchFile(path.resolve(moduleRoot, asset))
+          );
+        }
+      } catch (err) {
+        isError = true;
+        throw err;
       }
     },
 
@@ -353,6 +360,8 @@ export default function browserExtension<T>(
     },
 
     async closeBundle() {
+      if (isError) return;
+
       if (!hasBuiltOnce) {
         log("Content scripts to build in lib mode:", scriptInputs);
         for (const input of scriptInputs ?? []) {
