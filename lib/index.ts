@@ -363,8 +363,11 @@ export default function browserExtension<T>(
       if (isError) return;
 
       if (!hasBuiltOnce) {
-        log("Content scripts to build in lib mode:", scriptInputs);
         for (const input of scriptInputs ?? []) {
+          log(
+            "Building in lib mode:",
+            path.relative(process.cwd(), input.inputAbsPath)
+          );
           await buildScript(
             {
               ...input,

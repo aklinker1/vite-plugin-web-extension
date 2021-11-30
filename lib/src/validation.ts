@@ -5,29 +5,32 @@ const SCHEMA_URL = "https://json.schemastore.org/chrome-manifest";
 
 // Validate
 
-const ajv = new Ajv();
-ajv.addFormat("match-pattern", /.*/);
-ajv.addFormat("glob-pattern", /.*/);
-ajv.addFormat("content-security-policy", /.*/);
-ajv.addFormat("mime-type", /.*/);
-ajv.addFormat("permission", /.*/);
-
 export async function validateManifest(
-  plugin: any,
+  log: typeof console.log,
   manifest: any
 ): Promise<void> {
+  const ajv = new Ajv();
+  ajv.addFormat("permission", /.*/);
+  ajv.addFormat("content-security-policy", /.*/);
+  ajv.addFormat("glob-pattern", /.*/);
+  ajv.addFormat("match-pattern", /.*/);
+  ajv.addFormat("mime-type", /.*/);
+
   if (typeof manifest !== "object")
     throw Error(`Manifest must be an object, got ${typeof manifest}`);
 
   const schema = await get(SCHEMA_URL);
-  if (!ajv.validate(schema, manifest)) {
-    throw Error(
-      [
-        "Invalid manifest:",
-        JSON.stringify(manifest, null, 2),
-        JSON.stringify(ajv.errors, null, 2),
-      ].join("\n")
-    );
+  const data = ajv.validate(schema, manifest);
+  if (!data) {
+    log(JSON.stringify(manifest, null, 2));
+    const errors = (ajv.errors ?? [])
+      ?.filter((err) => !!err.instancePath)
+      .map(
+        (err) =>
+          `- manifest${err.instancePath.replace(/\//g, ".")} ${err.message}`
+      )
+      .join("\n");
+    throw Error(`Invalid manifest:\n${errors}`);
   }
 }
 
