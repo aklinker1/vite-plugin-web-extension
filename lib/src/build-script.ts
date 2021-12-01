@@ -5,6 +5,7 @@ import { HookWaiter } from "./hook-waiter";
 export interface BuildScriptConfig {
   inputAbsPath: string;
   outputRelPath: string;
+  basePath?: string;
   vite: Vite.UserConfig;
   watch: boolean;
 }
@@ -32,6 +33,7 @@ export async function buildScript(
     resolve: config.vite.resolve,
     plugins,
     define: config.vite.define,
+    base: config.basePath,
     build: {
       ...config.vite.build,
       emptyOutDir: false,

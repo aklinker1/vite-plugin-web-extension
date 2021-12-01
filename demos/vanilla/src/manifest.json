@@ -25,7 +25,7 @@
     "{{firefox}}.scripts": ["background/index.ts"]
   },
   "sandbox": {
-    "pages": ["test/test.html", "page2/page2.html"]
+    "pages": ["sandbox/test.html", "sandbox/page2.html"]
   },
   "content_scripts": [
     {

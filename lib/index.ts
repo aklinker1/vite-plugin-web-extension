@@ -136,15 +136,17 @@ export default function browserExtension<T>(
     };
 
     const transformSandboxedHtml = (filename: string) => {
+      const base = "sandbox";
       generatedScriptInputs.push({
         inputAbsPath: filenameToPath(filename),
         outputRelPath: path.join(
-          "sandbox",
+          base,
           filename.substring(
             filename.lastIndexOf("/") + 1,
             filename.lastIndexOf(".")
           )
         ),
+        basePath: `/${base}/`,
       });
     };
 
