@@ -135,6 +135,13 @@ export default function browserExtension<T>(
       generatedInputs[filenameToInput(filename)] = filenameToPath(filename);
     };
 
+    const transformSandboxedHtml = (filename: string) => {
+      generatedScriptInputs.push({
+        inputAbsPath: filenameToPath(filename),
+        outputRelPath: filenameToInput(filename),
+      });
+    };
+
     const transformScripts = (object: any, key: string) => {
       const value = object?.[key];
       if (value == null) return;
@@ -213,6 +220,7 @@ export default function browserExtension<T>(
     additionalInputTypes?.html.forEach((filename) => {
       generatedInputs[filenameToInput(filename)] = filenameToPath(filename);
     });
+    transformedManifest.sandbox?.pages?.forEach(transformSandboxedHtml);
 
     // JS inputs
     transformScripts(transformedManifest.background, "scripts");

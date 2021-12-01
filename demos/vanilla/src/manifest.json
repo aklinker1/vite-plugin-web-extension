@@ -24,6 +24,9 @@
     "{{chrome}}.service_worker": "background/index.ts",
     "{{firefox}}.scripts": ["background/index.ts"]
   },
+  "sandbox": {
+    "pages": ["sandbox.html"]
+  },
   "content_scripts": [
     {
       "matches": ["*://*/*"],
