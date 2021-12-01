@@ -277,8 +277,12 @@ export default function browserExtension<T>(
     name: "vite-plugin-web-extension",
 
     config(viteConfig) {
-      const webExtConfig = defineConfig({
+      if (!hasBuiltOnce) {
+      }
+      const isFirstBuild = !hasBuiltOnce;
+      const extensionConfig = defineConfig({
         build: {
+          emptyOutDir: isFirstBuild && viteConfig.build?.emptyOutDir,
           terserOptions: {
             // As per chrome policy
             mangle: false,
@@ -293,7 +297,7 @@ export default function browserExtension<T>(
           },
         },
       });
-      finalConfig = mergeConfig(webExtConfig, viteConfig, true);
+      finalConfig = mergeConfig(extensionConfig, viteConfig, true);
       return finalConfig;
     },
 
