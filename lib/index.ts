@@ -69,6 +69,22 @@ interface BrowserExtensionPluginOptions {
    * Do not validate your manifest to make sure it can be loaded by browsers
    */
   skipManifestValidation?: boolean;
+
+  /**
+   * How the `background.service_worker` is built. This setting does nothing if you don't have a
+   * service worker.
+   *
+   * - If it's `"module"`, the service worker is treated as apart of the initial multi-page build, and
+   * you should set `background.module` to `true`.
+   * - If it's `"standalone"`, the service worker will be treated as an `additionalInput` and be
+   * bundled in an individual build process.
+   *
+   * @default "module"
+   *
+   * It can be useful to switch to `"standalone"` when there are issues with your chunks, like
+   * `window` being used when it's not available in a service worker
+   */
+  serviceWorkerType?: "module" | "standalone";
 }
 
 type BuildScriptCache = Omit<BuildScriptConfig, "vite" | "watch">;
@@ -122,7 +138,8 @@ export default function browserExtension<T>(
     const transformScripts = (object: any, key: string) => {
       const value = object?.[key];
       if (value == null) return;
-      const scripts: string[] = typeof value === "string" ? [value] : value;
+      const isSingleString = typeof value === "string";
+      const scripts: string[] = isSingleString ? [value] : value;
       const compiledScripts: string[] = [];
       scripts.forEach((script) => {
         if (!inputIncludedMap[script]) {
@@ -135,7 +152,8 @@ export default function browserExtension<T>(
         inputIncludedMap[script] = true;
       });
 
-      object[key] = compiledScripts;
+      if (isSingleString) object[key] = compiledScripts[0];
+      else object[key] = compiledScripts;
     };
 
     const transformModule = (object: any, key: string) => {
@@ -198,7 +216,9 @@ export default function browserExtension<T>(
 
     // JS inputs
     transformScripts(transformedManifest.background, "scripts");
-    transformModule(transformedManifest.background, "service_worker");
+    if (options.serviceWorkerType === "standalone")
+      transformScripts(transformedManifest.background, "service_worker");
+    else transformModule(transformedManifest.background, "service_worker");
     transformedManifest.content_scripts?.forEach((contentScript: string) => {
       transformScripts(contentScript, "js");
     });
