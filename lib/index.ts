@@ -146,7 +146,6 @@ export default function browserExtension<T>(
           )
         ),
       });
-      console.log(generatedScriptInputs[generatedScriptInputs.length - 1]);
     };
 
     const transformScripts = (object: any, key: string) => {
