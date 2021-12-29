@@ -71,6 +71,9 @@ interface BrowserExtensionPluginOptions {
   skipManifestValidation?: boolean;
 
   /**
+   * @deprecated This field no longer has any effect. Background scripts are always built in lib
+   *             mode
+   *
    * How the `background.service_worker` is built. This setting does nothing if you don't have a
    * service worker.
    *
@@ -113,6 +116,12 @@ export default function browserExtension<T>(
   function warn(message: string) {
     console.log(
       `\x1b[0m\x1b[1m\x1b[33m[vite-plugin-web-extension]\x1b[0m \x1b[33m${message}\x1b[0m`
+    );
+  }
+
+  if (options.serviceWorkerType) {
+    warn(
+      "serviceWorkerType has been removed, service workers are always built in lib mode now. Remove this option"
     );
   }
 
@@ -249,9 +258,7 @@ export default function browserExtension<T>(
 
     // JS inputs
     transformScripts(transformedManifest.background, "scripts");
-    if (options.serviceWorkerType === "standalone")
-      transformScripts(transformedManifest.background, "service_worker");
-    else transformModule(transformedManifest.background, "service_worker");
+    transformScripts(transformedManifest.background, "service_worker");
     transformedManifest.content_scripts?.forEach((contentScript: string) => {
       transformScripts(contentScript, "js");
     });
