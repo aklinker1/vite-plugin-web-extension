@@ -353,10 +353,7 @@ export default function browserExtension<T>(
           styleAssets,
         } = transformManifestInputs(manifestWithTs);
 
-        rollupOptions.input = {
-          ...rollupOptions.input,
-          ...generatedInputs,
-        };
+        rollupOptions.input = generatedInputs;
         scriptInputs = generatedScriptInputs;
 
         // Assets
@@ -368,10 +365,6 @@ export default function browserExtension<T>(
             source: readFileSync(path.resolve(moduleRoot, asset)),
           });
         });
-
-        // Ignore vite's default of looking for a <root>/index.html
-        // @ts-expect-error: doesn't want me to delete
-        delete rollupOptions.input["0"];
 
         // Add stuff to the bundle
         const manifestContent = JSON.stringify(transformedManifest, null, 2);

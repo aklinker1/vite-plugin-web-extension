@@ -26,7 +26,8 @@ export async function buildScript(
         (!("name" in plugin) || plugin.name !== "vite-plugin-web-extension")
     ) ?? [];
   plugins.push(hookWaiter.plugin());
-  await Vite.build({
+
+  const buildConfig: Vite.InlineConfig = {
     root: config.vite.root,
     clearScreen: false,
     mode: config.vite.mode,
@@ -36,6 +37,8 @@ export async function buildScript(
     base: config.basePath,
     build: {
       ...config.vite.build,
+      // Exclude <root>/index.html from inputs
+      rollupOptions: {},
       emptyOutDir: false,
       outDir,
       watch: config.watch
@@ -50,5 +53,6 @@ export async function buildScript(
         fileName: () => filename + ".js",
       },
     },
-  });
+  };
+  await Vite.build(buildConfig);
 }
