@@ -1,6 +1,6 @@
 import path from "path";
 import { defineConfig } from "vite";
-import browserExtension, { readJsonFile } from "vite-plugin-web-extension";
+import browserExtension from "vite-plugin-web-extension";
 
 function root(...paths: string[]): string {
   return path.resolve(__dirname, ...paths);

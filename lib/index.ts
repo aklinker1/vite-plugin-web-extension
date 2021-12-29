@@ -85,6 +85,13 @@ interface BrowserExtensionPluginOptions {
    * `window` being used when it's not available in a service worker
    */
   serviceWorkerType?: "module" | "standalone";
+
+  /**
+   * Whether or not to print the summary block showing what files are being used as entrypoints
+   *
+   * @default true
+   */
+  printSummary?: boolean;
 }
 
 type BuildScriptCache = Omit<BuildScriptConfig, "vite" | "watch">;
@@ -94,9 +101,19 @@ export default function browserExtension<T>(
 ): Plugin {
   function log(...args: any[]) {
     process.stdout.write("\x1b[0m\x1b[2m");
-    if (options?.verbose)
-      console.log("[vite-plugin-web-ext-manifest]", ...args);
+    if (options?.verbose) console.log("[vite-plugin-web-extension]", ...args);
     process.stdout.write("\x1b[0m");
+  }
+  function info(...args: any[]) {
+    console.log(
+      "\x1b[0m\x1b[1m\x1b[32m[vite-plugin-web-extension]\x1b[0m",
+      ...args
+    );
+  }
+  function warn(message: string) {
+    console.log(
+      `\x1b[0m\x1b[1m\x1b[33m[vite-plugin-web-extension]\x1b[0m \x1b[33m${message}\x1b[0m`
+    );
   }
 
   async function getManifest(): Promise<Manifest> {
@@ -377,6 +394,33 @@ export default function browserExtension<T>(
         log("Final manifest:", manifestContent);
         log("Final rollup inputs:", rollupOptions.input);
 
+        if (options.printSummary !== false && !hasBuiltOnce) {
+          const noneDisplay = "\x1b[0m\x1b[2m    • (none)\x1b[0m";
+          process.stdout.write("\n");
+          const summary = [""];
+          summary.push("  Building HTML Pages in Multi-Page Mode:");
+          summary.push(
+            Object.values(rollupOptions.input)
+              .map((input) => {
+                const listItem = path.relative(process.cwd(), input);
+                return `\x1b[0m\x1b[2m    • ${listItem}\x1b[0m`;
+              })
+              .join("\n") || noneDisplay
+          );
+          summary.push("  Building in Lib Mode:");
+          summary.push(
+            scriptInputs
+              .map(({ inputAbsPath }) => {
+                const listItem = path.relative(process.cwd(), inputAbsPath);
+                return `\x1b[0m\x1b[2m    • ${listItem}\x1b[0m`;
+              })
+              .join("\n") || noneDisplay
+          );
+          info(summary.join("\n"));
+        }
+        process.stdout.write("\n");
+        info("Building HTML Pages in Multi-Page Mode");
+
         if (isWatching) {
           options.watchFilePaths?.forEach((file) => this.addWatchFile(file));
           assets.forEach((asset) =>
@@ -392,6 +436,7 @@ export default function browserExtension<T>(
     async buildEnd(err) {
       if (err != null) {
         log("Skipping script builds because of error", err);
+        isError = true;
         return;
       }
     },
@@ -401,9 +446,12 @@ export default function browserExtension<T>(
 
       if (!hasBuiltOnce) {
         for (const input of scriptInputs ?? []) {
-          log(
-            "Building in lib mode:",
-            path.relative(process.cwd(), input.inputAbsPath)
+          process.stdout.write("\n");
+          info(
+            `Building \x1b[96m${path.relative(
+              process.cwd(),
+              input.inputAbsPath
+            )}\x1b[0m in Lib Mode`
           );
           await buildScript(
             {
@@ -411,9 +459,11 @@ export default function browserExtension<T>(
               vite: finalConfig,
               watch: isWatching,
             },
-            hookWaiter
+            hookWaiter,
+            log
           );
         }
+        process.stdout.write("\n");
       }
       await hookWaiter.waitForAll();
 
@@ -439,6 +489,7 @@ export default function browserExtension<T>(
         });
       } else {
         webExtRunner.reloadAllExtensions();
+        process.stdout.write("\n\n");
       }
 
       hasBuiltOnce = true;

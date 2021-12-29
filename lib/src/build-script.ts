@@ -12,8 +12,10 @@ export interface BuildScriptConfig {
 
 export async function buildScript(
   config: BuildScriptConfig,
-  hookWaiter: HookWaiter
+  hookWaiter: HookWaiter,
+  log: Function
 ) {
+  log("Building in lib mode:", JSON.stringify(config, null, 2));
   const filename = path.basename(config.outputRelPath);
   const outDir = path.resolve(
     config.vite.build?.outDir ?? process.cwd(),
@@ -54,5 +56,6 @@ export async function buildScript(
       },
     },
   };
+  log("Final config:", JSON.stringify(buildConfig, null, 2));
   await Vite.build(buildConfig);
 }
