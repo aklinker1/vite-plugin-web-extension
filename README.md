@@ -4,11 +4,11 @@
 
 ```ts
 // vite.config.ts
-import browserExtension from "vite-plugin-web-extension";
+import webExtension from "vite-plugin-web-extension";
 
 export default defineConfig({
   plugins: [
-    browserExtension({
+    webExtension({
       manifest: path.resolve(__dirname, "manifest.json"),
       assets: "assets",
     }),
@@ -67,7 +67,7 @@ Here's the minimal setup required:
 
 ```ts
 // vite.config.ts
-import browserExtension from "vite-plugin-web-extension";
+import webExtension from "vite-plugin-web-extension";
 
 export default defineConfig({
   root: "src",
@@ -76,9 +76,9 @@ export default defineConfig({
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
   },
-  // Add the browserExtension plugin
+  // Add the webExtension plugin
   plugins: [
-    browserExtension({
+    webExtension({
       manifest: path.resolve(__dirname, "src/manifest.json"),
       assets: "assets",
     }),
@@ -140,7 +140,7 @@ export default defineConfig({
   ...
   plugins: [
     vue(),
-    browserExtension({ ... }),
+    webExtension({ ... }),
   ],
 });
 ```
@@ -167,7 +167,7 @@ import path from "path";
 export default defineConfig({
   ...
   plugins: [
-    browserExtension({
+    webExtension({
       watchFilePaths: [
         path.resolve(__dirname, "tailwind.config.js")
       ]
@@ -189,7 +189,7 @@ The paths should be relative to the Vite's `root`, just like the `assets` option
 ```ts
 export default defineConfig({
   plugins: [
-    browserExtension({
+    webExtension({
       ...
       additionalInputs: [
         "onboarding/index.html",
@@ -251,11 +251,11 @@ The `manifest` option also accepts a function. This function should return a jav
 Often times this is used to pull in details from your `package.json` like the version so they only have to be maintained in a single place
 
 ```ts
-import browserExtension from "vite-plugin-web-extension";
+import webExtension from "vite-plugin-web-extension";
 
 export default defineConfig({
   plugins: [
-    browserExtension({
+    webExtension({
       manifest: () => {
         // Generate your manifest
         const packageJson = require("./package.json");
@@ -308,7 +308,7 @@ cross-env TARGET_BROWSER=chrome vite build
 ```ts
 export default defineConfig({
   plugins: [
-    browserExtension({
+    webExtension({
       manifest: "manifest.json",
       assets: "assets",
       browser: process.env.TARGET_BROWSER,
@@ -326,7 +326,7 @@ To disable validation, pass the `skipManifestValidation` option:
 ```ts
 export default defineConfig({
   plugins: [
-    browserExtension({
+    webExtension({
       skipManifestValidation: true,
     }),
   ],
