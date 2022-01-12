@@ -293,12 +293,9 @@ Here's an example: Firefox doesn't support manifest V3 yet, but chrome does!
 }
 ```
 
-To build for a specific browser, simply pass the `browser` option and prefix any **field name** or **string value** with `{{browser-name}}.`. This is not limited to just `chrome` and `firefox`, you can use any string inside the double curly braces as long as your pass it into the plugin
-s `browser` option.
+To build for a specific browser, simply pass the `browser` option and prefix any **field name** or **string value** with `{{browser-name}}.`. This is not limited to just `chrome` and `firefox`, you can use any string inside the double curly braces as long as your pass it into the plugin's `browser` option.
 
-> Fields without a prefix will be present for all browsers
-
-You can configure this option in a multitude of ways. Here's one way via environment variables!
+You can pass this option in a multitude of ways. Here's one way via environment variables!
 
 ```bash
 # In package.json or via CLI
