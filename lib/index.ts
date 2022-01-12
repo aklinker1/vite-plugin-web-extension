@@ -90,7 +90,7 @@ interface BrowserExtensionPluginOptions {
   serviceWorkerType?: "module" | "standalone";
 
   /**
-   * Whether or not to print the summary block showing what files are being used as entrypoints
+   * Whether or not to print the summary block showing what files are being used as entry-points
    *
    * @default true
    */

@@ -20,7 +20,7 @@ export default defineConfig({
 
 - :wrench: Automatically build inputs from in your `manifest.json`
 - :zap: Super fast watch mode that automatically reloads your extension
-- :globe_with_meridians: Chrome and Firefox support
+- :globe_with_meridians: Supports all browsers
 - :fire: Frontend frameworks for the popup, options page, _**and content scripts**_!
 - :robot: Typescript support out of the box!
 - :white_check_mark: Manifest validation
@@ -63,21 +63,20 @@ Lets say your project looks like this:
 <i>...</i>
 </pre>
 
-In your `vite.config.ts` and `src/manifest.json`, **make sure all paths are relative to your Vite `root`**!
-
-In this example, we set our it to `"src"`. In the `vite.config.ts` file, the only field that is relative to the root is your `assets` directory.
+Here's the minimal setup required:
 
 ```ts
 // vite.config.ts
-import browserExtension, { readJsonFile } from "vite-plugin-web-extension";
+import browserExtension from "vite-plugin-web-extension";
 
 export default defineConfig({
   root: "src",
+  // Configure our outputs - nothing special, this is normal vite config
   build: {
-    // Configure our outputs - nothing special, this is normal vite config
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
   },
+  // Add the browserExtension plugin
   plugins: [
     browserExtension({
       manifest: path.resolve(__dirname, "src/manifest.json"),
@@ -87,17 +86,18 @@ export default defineConfig({
 });
 ```
 
-> `readJsonFile` is important for watch mode. If you do `require("./src/manifest.json")`, the value will be cached and changes won't show up
+> Note that the `assets` option is relative to your Vite `root`. In this case, it's pointing to `src/assets`, not just `assets`.
 
-For the manifest, you should use relative paths for all entry points, such as `browser_action.default_popup` or `background.scripts`.
+> You don't need to specify a `root` if you don't want to. When excluded, it defaults to the directory your `vite.config.ts` is in.
 
-**Your relative paths should also be the real file extension**! If you're using typescript, have any scripts end with their usual `.ts` extension. The plugin will transform the file extensions for you.
+For the input `manifest` option, all paths should use their real file extension and the paths should be relative to your vite `root`.
 
 ```jsonc
 // src/manifest.json
 {
   "name": "Example",
   "version": "1.0.0",
+  "manifest_version": "2",
   "icons": {
     // Relative to "src"
     "16": "assets/icon-16.png",
@@ -120,11 +120,18 @@ And there you go!
 
 Run `vite build` and you should see a fully compiled and working browser extension in your `dist/` directory!
 
-> Any script inputs, with the exception of `background.service_worker`, are built in [Library Mode](https://vitejs.dev/guide/build.html#library-mode)
+## How does this work?
 
-### Adding Frontend Framewoks
+The build process happens in 2 steps:
 
-If you want to add a framework like Vue or React, just add their plugin!
+1. Bundle all the HTML entry-points as a [multi-page app](https://vitejs.dev/guide/build.html#multi-page-app)
+2. Bundle everything else (background scripts/service worker, content scripts, etc) individually in [library mode](https://vitejs.dev/guide/build.html#library-mode)
+
+Scripts have to be bundled individually, separate from each other and the HTML entry-points, because they cannot import additional JS files. Each entry-point needs to have everything it needs inside that one file listed in the final manifest.
+
+## Adding Frontend Frameworks
+
+If you want to add a framework like Vue or React, just add their Vite plugin!
 
 ```ts
 import vue from '@vitejs/plugin-vue'
@@ -132,15 +139,15 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   ...
   plugins: [
-    browserExtension({ ... }),
     vue(),
+    browserExtension({ ... }),
   ],
 });
 ```
 
-> The plugin order doesn't matter
+You can now use the framework anywhere! In your popup, options page, content scripts, etc.
 
-You can now use the framework in your popup, options page, or content scripts!
+See `demos/vue` for a full example.
 
 ## Advanced Features
 
@@ -152,7 +159,7 @@ To reload the extension when a file changes, run vite with the `--watch` flag
 vite build --watch
 ```
 
-To reload when you update your `manifest.json` (or any other files that aren't triggering reloads) pass the `watchFilePaths` option. Use absolute paths for this option:
+To reload when you update files other than source files (config files like `tailwind.config.js`) pass the `watchFilePaths` option. Use **absolute paths** for this option:
 
 ```ts
 import path from "path";
@@ -162,22 +169,22 @@ export default defineConfig({
   plugins: [
     browserExtension({
       watchFilePaths: [
-        path.resolve(__dirname, "src/manifest.json")
+        path.resolve(__dirname, "tailwind.config.js")
       ]
     }),
   ],
 });
 ```
 
-> Watch mode will not reload properly when permissions change. Restart the `vite build --watch` command to get new permission changes
+> Watch mode will not reload properly when the manifest changes. You'll need to restart the `vite build --watch` command use the updated manifest.
+>
+> This is a limitation of [`web-ext`](https://www.npmjs.com/package/web-ext)
 
 ### Additional Inputs
 
-If you have have files that need to be included, but aren't listed in your `manifest.json`, you can add them via the `additionalInputs` option.
+If you have have HTML or JS files that need to be built, but aren't listed in your `manifest.json`, you can add them via the `additionalInputs` option.
 
 The paths should be relative to the Vite's `root`, just like the `assets` option.
-
-> Any scripts listed here will be built in [Library Mode](https://vitejs.dev/guide/build.html#library-mode), and any stylesheets will just be copied over to the output directory
 
 ```ts
 export default defineConfig({
@@ -185,6 +192,7 @@ export default defineConfig({
     browserExtension({
       ...
       additionalInputs: [
+        "onboarding/index.html",
         "content-scripts/injected-from-background.ts",
       ]
     }),
@@ -194,31 +202,29 @@ export default defineConfig({
 
 ### CSS
 
-For HTML entry points like popups or the options page, css is automatically output and refrenced in the built HTML. There's nothing you need to do!
+For HTML entry points like popups or the options page, css is automatically output and referenced in the built HTML. There's nothing you need to do!
 
 #### Manifest `content_scripts`
 
-For content scripts listed in your `manifest.json`, its a little more difficult. There are two ways to include CSS files:
+For content scripts listed in your `manifest.json`, it's a little more difficult. There are two ways to include CSS files:
 
 1. You have a CSS file in your project
 1. The stylesheet is generated by a framework like Vue or React or is imported by the code
 
-For the first case, that's simple! Make sure you have the relevant plugin installed to parse your stylesheet, and you're good!
+For the first case, it's simple! Make sure you have the relevant plugin installed to parse your stylesheet (like scss), then list the file in your `manifest.json`. The plugin will look at the `css` array and output all inputs as plain CSS.
 
 ```json
 {
   "content_scripts": [
     {
       "matches": [...],
-      "css": "content-scripts/some-style.css"
+      "css": ["content-scripts/some-style.scss"]
     }
   ]
 }
 ```
 
-For the second case, it's a little more involved. Say your content script is at `content-scripts/overlay.ts` and is responsible for binding a Vue/React app to a webpage. When Vite compiles it, it will output two files: `dist/content-scripts/overlay.js` and `dist/content-scripts/overlay.css`. Check what is output, then update your manifest to point towards the output files
-
-In the content script section of your `manifest.json`, add the path to this output stylesheet but prefix it with `generated:*`
+For the second case, it's a little more involved. Say your content script is at `content-scripts/overlay.ts` and is responsible for binding a Vue/React app to a webpage. When Vite compiles it, it will output two files: `dist/content-scripts/overlay.js` and `dist/content-scripts/overlay.css`. Check what is output, then update your manifest to point towards the output files, prefixed with `generated:`.
 
 ```json
 {
@@ -226,31 +232,33 @@ In the content script section of your `manifest.json`, add the path to this outp
     {
       "matches": [...],
       "scripts": "content-scripts/overlay.ts",
-      "css": "generated:content-scripts/overlay.css"
+      "css": ["generated:content-scripts/overlay.css"]
     }
   ]
 }
 ```
 
-This will tell the plugin that the file is already being generated for us, but that we still need it in our manifest so it is injected.
+This will tell the plugin that the file is already being generated for us, but that we still need it in the final manifest.
 
 #### Browser API `tabs.executeScripts`
 
-For content scripts injected programmatically, include path in the plugin's [`additionalInputs` option](#additional-inputs)
+For content scripts injected programmatically, include the script's path in the plugin's [`additionalInputs` option](#additional-inputs)
 
 ### Dynamic Manifests
 
-The `manifest` option also accepts a function. This function should return a javascript object containing the same content as the `manifest.json`. It should include the source paths (with `.ts` extension if using typescript), as well as any browser specific flags (see next section).
+The `manifest` option also accepts a function. This function should return a javascript object containing the same thing as `manifest.json`. It should include real file paths, as well as any browser specific flags (see next section).
 
 Often times this is used to pull in details from your `package.json` like the version so they only have to be maintained in a single place
 
 ```ts
+import browserExtension from "vite-plugin-web-extension";
+
 export default defineConfig({
   plugins: [
     browserExtension({
       manifest: () => {
         // Generate your manifest
-        const packageJson = readJsonFile("package.json");
+        const packageJson = require("./package.json");
         return {
           ...require("./manifest.json"),
           name: packageJson.name,
@@ -285,9 +293,10 @@ Here's an example: Firefox doesn't support manifest V3 yet, but chrome does!
 }
 ```
 
-To build for a specific browser, simply pass the `browser` option and prefix any **field name** or **string value** with `{{some-browser}}.`. This is not limited to just `chrome` and `firefox`, you can use any string inside the double curly braces.
+To build for a specific browser, simply pass the `browser` option and prefix any **field name** or **string value** with `{{browser-name}}.`. This is not limited to just `chrome` and `firefox`, you can use any string inside the double curly braces as long as your pass it into the plugin
+s `browser` option.
 
-> Fields without a prefix will never be removed
+> Fields without a prefix will be present for all browsers
 
 You can configure this option in a multitude of ways. Here's one way via environment variables!
 
@@ -310,7 +319,7 @@ export default defineConfig({
 
 ### Manifest Validation
 
-Whenever your manifest is generated, it gets validated against some known JSON schemas. Right now, only Manifest V2 is supported because it is the only version with an official JSON schema: https://json.schemastore.org/chrome-manifest
+Whenever your manifest is generated, it gets validated against Google's JSON schema: https://json.schemastore.org/chrome-manifest
 
 To disable validation, pass the `skipManifestValidation` option:
 
