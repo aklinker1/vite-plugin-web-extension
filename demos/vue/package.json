@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8",
-    "vite": "^2.6.13"
+    "vite": "^2.7.9"
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.6",

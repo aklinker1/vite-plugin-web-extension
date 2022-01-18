@@ -20,7 +20,7 @@ export default defineConfig({
       assets: "assets",
       browser: "firefox",
       webExtConfig: {
-        firefox: "firefoxdeveloperedition",
+        firefox: "firefox",
       },
       verbose: true,
     }),
