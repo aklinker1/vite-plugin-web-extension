@@ -1,6 +1,6 @@
 import path from "path";
 import { defineConfig, Plugin, mergeConfig, UserConfig } from "vite";
-import { readdirSync, lstatSync, readFileSync } from "fs";
+import { readdirSync, rmdirSync, lstatSync, readFileSync } from "fs";
 const webExt = require("web-ext");
 import { buildScript, BuildScriptConfig } from "./src/build-script";
 import { resolveBrowserTagsInObject } from "./src/resolve-browser-flags";
@@ -305,17 +305,17 @@ export default function browserExtension<T>(
   let hasBuiltOnce = false;
   const hookWaiter = new HookWaiter("closeBundle");
   let isError = false;
+  let shouldEmptyOutDir = false;
 
   return {
     name: "vite-plugin-web-extension",
 
     config(viteConfig) {
-      if (!hasBuiltOnce) {
-      }
-      const isFirstBuild = !hasBuiltOnce;
+      shouldEmptyOutDir = !!viteConfig.build?.emptyOutDir;
+
       const extensionConfig = defineConfig({
         build: {
-          emptyOutDir: isFirstBuild && viteConfig.build?.emptyOutDir,
+          emptyOutDir: false,
           terserOptions: {
             // As per chrome policy
             mangle: false,
@@ -330,21 +330,26 @@ export default function browserExtension<T>(
           },
         },
       });
-      finalConfig = mergeConfig(extensionConfig, viteConfig, true);
-      log("Resolved config:", JSON.stringify(finalConfig, null, 2));
+      finalConfig = mergeConfig(viteConfig, extensionConfig, true);
       return finalConfig;
     },
 
     configResolved(viteConfig) {
-      log("Building for browser:", browser);
       moduleRoot = viteConfig.root;
       outDir = viteConfig.build.outDir;
+
       isWatching = viteConfig.inlineConfig.build?.watch === true;
     },
 
     async buildStart(rollupOptions) {
+      log("Building for browser:", browser);
+      log("Building with vite config:", JSON.stringify(finalConfig, null, 2));
       isError = false;
       try {
+        if (!hasBuiltOnce && shouldEmptyOutDir) {
+          rmdirSync(outDir, { recursive: true });
+        }
+
         // Generate manifest
         const manifestWithBrowserTags = await getManifest();
         log(
