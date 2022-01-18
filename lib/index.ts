@@ -331,6 +331,7 @@ export default function browserExtension<T>(
         },
       });
       finalConfig = mergeConfig(extensionConfig, viteConfig, true);
+      log("Resolved config:", JSON.stringify(finalConfig, null, 2));
       return finalConfig;
     },
 
@@ -481,8 +482,8 @@ export default function browserExtension<T>(
           noReload: false,
           noInput: true,
         };
-        log("Passed web-ext run config:", options.webExtConfig);
-        log("Final web-ext run config:", config);
+        log("Passed web-ext run config:", JSON.stringify(options.webExtConfig));
+        log("Final web-ext run config:", JSON.stringify(config));
         // https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code
         webExtRunner = await webExt.cmd.run(config, {
           shouldExitProgram: true,
