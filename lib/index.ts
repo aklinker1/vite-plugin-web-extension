@@ -197,13 +197,6 @@ export default function browserExtension<T>(
       else object[key] = compiledScripts;
     };
 
-    const transformModule = (object: any, key: string) => {
-      const input = object?.[key];
-      if (input == null) return;
-      generatedInputs[filenameToInput(input)] = filenameToPath(input);
-      object[key] = filenameToCompiledFilename(input);
-    };
-
     const transformStylesheets = (object: any, key: string) => {
       const value = object?.[key];
       if (value == null) return;
