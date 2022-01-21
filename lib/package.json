@@ -6,13 +6,18 @@
   "repository": {
     "url": "https://github.com/aklinker1/vite-plugin-web-extension"
   },
-  "categories": [
-    "Vite",
-    "Plugin",
-    "Browser",
-    "Extension",
-    "Chrome",
-    "Firefox"
+  "keywords": [
+    "vite-plugin",
+    "web",
+    "webext",
+    "chrome-extension",
+    "web-extension",
+    "browser-extension",
+    "extension",
+    "chrome",
+    "firefox",
+    "addon",
+    "browser"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
