@@ -27,13 +27,7 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Compile
-        working-directory: lib
-        run: pnpm compile
-
-      - name: Build
-        working-directory: lib
-        run: pnpm build
+      # Compile and build are ran on install
 
       - name: E2E Tests
         working-directory: tests
