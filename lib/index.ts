@@ -1,6 +1,6 @@
 import path from "path";
 import { defineConfig, Plugin, mergeConfig, UserConfig } from "vite";
-import { readdirSync, rmdirSync, lstatSync, readFileSync } from "fs";
+import { readdirSync, rmSync, lstatSync, readFileSync } from "fs";
 const webExt = require("web-ext");
 import { buildScript, BuildScriptConfig } from "./src/build-script";
 import { resolveBrowserTagsInObject } from "./src/resolve-browser-flags";
@@ -347,7 +347,7 @@ export default function browserExtension<T>(
       isError = false;
       try {
         if (!hasBuiltOnce && shouldEmptyOutDir) {
-          rmdirSync(outDir, { recursive: true });
+          rmSync(outDir, { recursive: true, force: true });
         }
 
         // Generate manifest
