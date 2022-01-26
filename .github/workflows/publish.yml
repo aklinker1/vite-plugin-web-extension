@@ -10,31 +10,42 @@ jobs:
       - name: Install Node 14
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: "14.x"
+
       - name: Checkout Repo
         uses: actions/checkout@v2
+
       - name: Cache .pnpm-store
         uses: actions/cache@v1
         with:
           path: ~/.pnpm-store
           key: ${{ runner.os }}-node14-${{ hashFiles('**/pnpm-lock.yaml') }}
+
       - name: Install pnpm
         run: curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@6
+
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Install Dependencies
+        working-directory: tests
+        run: pnpm test
+
       - name: Create Changelog
         id: changelog
         uses: TriPSs/conventional-changelog-action@v3
         with:
           github-token: ${{ secrets.github_token }}
-          output-file: 'false'
+          output-file: "false"
           version-file: ./lib/package.json
+
       - name: Publish to NPM
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         working-directory: lib
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
           yarn publish --non-interactive
+
       - name: Create Release
         uses: actions/create-release@v1
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
