@@ -114,7 +114,9 @@ describe("Vite Plugin Web Extension", () => {
         fs.mkdirSync(DIST_DIRECTORY);
         expect(fs.lstatSync(DIST_DIRECTORY).isDirectory()).toBe(true);
       } else {
-        expect(() => fs.lstatSync(DIST_DIRECTORY)).toThrowError("test");
+        expect(() => fs.lstatSync(DIST_DIRECTORY)).toThrowError(
+          "ENOENT: no such file or directory"
+        );
       }
       await expectBuildToMatchSnapshot(
         {
