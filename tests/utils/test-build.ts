@@ -8,6 +8,8 @@ export async function testBuild(config: InlineConfig) {
     };
     const spies: jest.SpyInstance[] = [
       jest.spyOn(console, "log").mockImplementation(logCollector),
+      jest.spyOn(console, "info").mockImplementation(logCollector),
+      jest.spyOn(console, "debug").mockImplementation(logCollector),
       jest.spyOn(console, "warn").mockImplementation(logCollector),
       jest.spyOn(console, "error").mockImplementation(logCollector),
     ];

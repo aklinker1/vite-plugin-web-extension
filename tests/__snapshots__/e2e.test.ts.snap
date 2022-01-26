@@ -9,8 +9,10 @@ exports[`Vite Plugin Web Extension should build a extension with both html pages
     • extension/script1.js
     • extension/script2.ts
 [vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"page1\\"
+rendering chunks...
 ../dist/assets/128.png   3.52 KiB
 ../dist/assets/16.png    0.52 KiB
 ../dist/assets/48.png    1.45 KiB
@@ -18,13 +20,17 @@ Generated an empty chunk: \\"page1\\"
 ../dist/page1.html       0.26 KiB
 [vite-plugin-web-extension] Building extension/script1.js in Lib Mode
 vite v2.7.9 building for production...
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"script1\\"
+rendering chunks...
 ../dist/script1.js   0.09 KiB / gzip: 0.09 KiB
 [vite-plugin-web-extension] Building extension/script2.ts in Lib Mode
 vite v2.7.9 building for production...
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"script2\\"
+rendering chunks...
 ../dist/script2.js   0.09 KiB / gzip: 0.09 KiB"
 `;
 
@@ -49,8 +55,10 @@ exports[`Vite Plugin Web Extension should build a simple popup extension 1`] = `
   Building in Lib Mode:
     • (none)
 [vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"page1\\"
+rendering chunks...
 ../dist/assets/128.png   3.52 KiB
 ../dist/assets/16.png    0.52 KiB
 ../dist/assets/48.png    1.45 KiB
@@ -67,8 +75,10 @@ exports[`Vite Plugin Web Extension should build additional inputs along side the
     • extension/script1.js
     • extension/script2.ts
 [vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"page1\\"
+rendering chunks...
 ../dist/assets/128.png   3.52 KiB
 ../dist/assets/16.png    0.52 KiB
 ../dist/assets/48.png    1.45 KiB
@@ -76,13 +86,17 @@ Generated an empty chunk: \\"page1\\"
 ../dist/page1.html       0.26 KiB
 [vite-plugin-web-extension] Building extension/script1.js in Lib Mode
 vite v2.7.9 building for production...
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"script1\\"
+rendering chunks...
 ../dist/script1.js   0.09 KiB / gzip: 0.09 KiB
 [vite-plugin-web-extension] Building extension/script2.ts in Lib Mode
 vite v2.7.9 building for production...
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"script2\\"
+rendering chunks...
 ../dist/script2.js   0.09 KiB / gzip: 0.09 KiB"
 `;
 
@@ -94,8 +108,10 @@ exports[`Vite Plugin Web Extension should not fail when emptyOutDir=false and th
   Building in Lib Mode:
     • (none)
 [vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"page1\\"
+rendering chunks...
 ../dist/assets/128.png   3.52 KiB
 ../dist/assets/16.png    0.52 KiB
 ../dist/assets/48.png    1.45 KiB
@@ -111,8 +127,10 @@ exports[`Vite Plugin Web Extension should not fail when emptyOutDir=false and th
   Building in Lib Mode:
     • (none)
 [vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"page1\\"
+rendering chunks...
 ../dist/assets/128.png   3.52 KiB
 ../dist/assets/16.png    0.52 KiB
 ../dist/assets/48.png    1.45 KiB
@@ -128,8 +146,10 @@ exports[`Vite Plugin Web Extension should not fail when emptyOutDir=true and the
   Building in Lib Mode:
     • (none)
 [vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"page1\\"
+rendering chunks...
 ../dist/assets/128.png   3.52 KiB
 ../dist/assets/16.png    0.52 KiB
 ../dist/assets/48.png    1.45 KiB
@@ -145,8 +165,10 @@ exports[`Vite Plugin Web Extension should not fail when emptyOutDir=true and the
   Building in Lib Mode:
     • (none)
 [vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"page1\\"
+rendering chunks...
 ../dist/assets/128.png   3.52 KiB
 ../dist/assets/16.png    0.52 KiB
 ../dist/assets/48.png    1.45 KiB
@@ -162,8 +184,10 @@ exports[`Vite Plugin Web Extension should respect the browser flags, removing fi
   Building in Lib Mode:
     • extension/script1.js
 [vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"page1\\"
+rendering chunks...
 ../dist/assets/128.png   3.52 KiB
 ../dist/assets/16.png    0.52 KiB
 ../dist/assets/48.png    1.45 KiB
@@ -171,8 +195,10 @@ Generated an empty chunk: \\"page1\\"
 ../dist/page1.html       0.26 KiB
 [vite-plugin-web-extension] Building extension/script1.js in Lib Mode
 vite v2.7.9 building for production...
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"script1\\"
+rendering chunks...
 ../dist/script1.js   0.09 KiB / gzip: 0.09 KiB"
 `;
 
@@ -184,8 +210,10 @@ exports[`Vite Plugin Web Extension should respect the browser flags, removing fi
   Building in Lib Mode:
     • extension/script1.js
 [vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"page1\\"
+rendering chunks...
 ../dist/assets/128.png   3.52 KiB
 ../dist/assets/16.png    0.52 KiB
 ../dist/assets/48.png    1.45 KiB
@@ -193,8 +221,10 @@ Generated an empty chunk: \\"page1\\"
 ../dist/page1.html       0.26 KiB
 [vite-plugin-web-extension] Building extension/script1.js in Lib Mode
 vite v2.7.9 building for production...
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"script1\\"
+rendering chunks...
 ../dist/script1.js   0.09 KiB / gzip: 0.09 KiB"
 `;
 
@@ -206,8 +236,10 @@ exports[`Vite Plugin Web Extension should respect the browser flags, removing fi
   Building in Lib Mode:
     • extension/script1.js
 [vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"page1\\"
+rendering chunks...
 ../dist/assets/128.png   3.52 KiB
 ../dist/assets/16.png    0.52 KiB
 ../dist/assets/48.png    1.45 KiB
@@ -215,8 +247,10 @@ Generated an empty chunk: \\"page1\\"
 ../dist/page1.html       0.26 KiB
 [vite-plugin-web-extension] Building extension/script1.js in Lib Mode
 vite v2.7.9 building for production...
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"script1\\"
+rendering chunks...
 ../dist/script1.js   0.09 KiB / gzip: 0.09 KiB"
 `;
 
@@ -228,8 +262,10 @@ exports[`Vite Plugin Web Extension should work when the vite root is not specifi
   Building in Lib Mode:
     • (none)
 [vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
 ✓ 1 modules transformed.
 Generated an empty chunk: \\"extension/page1\\"
+rendering chunks...
 dist/extension/assets/128.png   3.52 KiB
 dist/extension/assets/16.png    0.52 KiB
 dist/extension/assets/48.png    1.45 KiB
