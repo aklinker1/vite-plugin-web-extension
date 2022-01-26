@@ -27,7 +27,7 @@
     "index.ts"
   ],
   "scripts": {
-    "compile": "tsc --noEmit",
+    "compile": "tsc",
     "build": "tsup index.ts && tsc",
     "prepare": "pnpm build"
   },
