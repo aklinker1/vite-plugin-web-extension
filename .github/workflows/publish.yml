@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Dependencies
+      - name: E2E Tests
         working-directory: tests
         run: pnpm test
 

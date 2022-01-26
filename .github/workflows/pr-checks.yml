@@ -1,0 +1,40 @@
+name: PR Checks
+on:
+  push:
+
+jobs:
+  verify-pr:
+    name: Verify PR
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install Node 14
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Cache .pnpm-store
+        uses: actions/cache@v1
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-node14-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install pnpm
+        run: curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@6
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Compile
+        working-directory: lib
+        run: pnpm compile
+
+      - name: Build
+        working-directory: lib
+        run: pnpm build
+
+      - name: E2E Tests
+        working-directory: tests
+        run: pnpm test
