@@ -56,6 +56,11 @@ interface BrowserExtensionPluginOptions {
   webExtConfig?: any;
 
   /**
+   * Used to disable auto-installing the extension when in watch mode. Default value is `false`.
+   */
+  skipAutoInstall?: boolean;
+
+  /**
    * **Absolute paths** to files to watch.
    */
   watchFilePaths?: string[];
@@ -296,6 +301,7 @@ export default function browserExtension<T>(
   }
 
   const browser = options.browser ?? "chrome";
+  const skipAutoInstall = options.skipAutoInstall ?? false;
   let outDir: string;
   let moduleRoot: string;
   let webExtRunner: any;
@@ -475,27 +481,29 @@ export default function browserExtension<T>(
 
       if (!isWatching) return;
 
-      if (webExtRunner == null) {
-        const config = {
-          target:
-            options.browser === null || options.browser === "firefox"
-              ? null
-              : "chromium",
-          ...options.webExtConfig,
-          // No touch - can't exit the terminal if these are changed, so they cannot be overridden
-          sourceDir: outDir,
-          noReload: false,
-          noInput: true,
-        };
-        log("Passed web-ext run config:", JSON.stringify(options.webExtConfig));
-        log("Final web-ext run config:", JSON.stringify(config));
-        // https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code
-        webExtRunner = await webExt.cmd.run(config, {
-          shouldExitProgram: true,
-        });
-      } else {
-        webExtRunner.reloadAllExtensions();
-        process.stdout.write("\n\n");
+      if (!skipAutoInstall) {
+        if (webExtRunner == null) {
+          const config = {
+            target:
+              options.browser === null || options.browser === "firefox"
+                ? null
+                : "chromium",
+            ...options.webExtConfig,
+            // No touch - can't exit the terminal if these are changed, so they cannot be overridden
+            sourceDir: outDir,
+            noReload: false,
+            noInput: true,
+          };
+          log("Passed web-ext run config:", JSON.stringify(options.webExtConfig));
+          log("Final web-ext run config:", JSON.stringify(config));
+          // https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code
+          webExtRunner = await webExt.cmd.run(config, {
+            shouldExitProgram: true,
+          });
+        } else {
+          webExtRunner.reloadAllExtensions();
+          process.stdout.write("\n\n");
+        }
       }
 
       hasBuiltOnce = true;
