@@ -25,6 +25,15 @@ export default defineConfig({
 - :robot: Typescript support out of the box!
 - :white_check_mark: Manifest validation
 
+## Contributing
+
+Special thanks to the contributors!
+
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
+
+See the [contributing docs](CONTRIBUTING.md) to setup the project for development.
+
 ## Installation
 
 ```bash
