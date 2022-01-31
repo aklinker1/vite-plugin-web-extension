@@ -30,6 +30,23 @@ export default defineConfig({
 Special thanks to the contributors!
 
 <!-- readme: contributors -start -->
+<table>
+<tr>
+    <td align="center">
+        <a href="https://github.com/aklinker1">
+            <img src="https://avatars.githubusercontent.com/u/10101283?v=4" width="100;" alt="aklinker1"/>
+            <br />
+            <sub><b>Aaron Klinker</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/r2dev2">
+            <img src="https://avatars.githubusercontent.com/u/50760816?v=4" width="100;" alt="r2dev2"/>
+            <br />
+            <sub><b>Ronak Badhe</b></sub>
+        </a>
+    </td></tr>
+</table>
 <!-- readme: contributors -end -->
 
 See the [contributing docs](CONTRIBUTING.md) to setup the project for development.
