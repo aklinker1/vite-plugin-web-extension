@@ -40,6 +40,13 @@ Special thanks to the contributors!
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/KentoNishi">
+            <img src="https://avatars.githubusercontent.com/u/38841491?v=4" width="100;" alt="KentoNishi"/>
+            <br />
+            <sub><b>Kento Nishi</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/r2dev2">
             <img src="https://avatars.githubusercontent.com/u/50760816?v=4" width="100;" alt="r2dev2"/>
             <br />
