@@ -1,6 +1,15 @@
 import path from "path";
 import { defineConfig, Plugin, mergeConfig, UserConfig } from "vite";
-import { readdirSync, rmSync, lstatSync, readFileSync, existsSync } from "fs";
+import type { EmittedFile, PluginContext } from "rollup";
+import {
+  readdirSync,
+  rmSync,
+  lstatSync,
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  existsSync,
+} from "fs";
 const webExt = require("web-ext");
 import { buildScript, BuildScriptConfig } from "./src/build-script";
 import { resolveBrowserTagsInObject } from "./src/resolve-browser-flags";
@@ -107,7 +116,7 @@ interface BrowserExtensionPluginOptions {
 
 type BuildScriptCache = Omit<BuildScriptConfig, "vite" | "watch">;
 
-export default function browserExtension<T>(
+export default function browserExtension(
   options: BrowserExtensionPluginOptions
 ): Plugin {
   function log(...args: any[]) {
@@ -281,6 +290,23 @@ export default function browserExtension<T>(
     });
     transformAssets(additionalInputTypes, "assets");
 
+    if (isDevServer) {
+      transformedManifest.permissions.push("http://localhost/*");
+      const CSP = "script-src 'self' http://localhost:3000; object-src 'self'";
+      if (transformedManifest.content_security_policy != null) {
+        // TODO: "merge" CSPs automatically
+        warn(
+          "Could not automatically add CSP to manifest to allow extension to run against dev server. Update the CSP yourself in dev mode following this guide: TODO link"
+        );
+      } else if (transformedManifest.manifest_version === 2) {
+        transformedManifest.content_security_policy = CSP;
+      } else if (transformedManifest.manifest_version === 3) {
+        transformedManifest.content_security_policy = {
+          extension_pages: CSP,
+        };
+      }
+    }
+
     return {
       htmlInputs,
       transformedManifest,
@@ -343,6 +369,110 @@ export default function browserExtension<T>(
     copyDirSync(publicDir, outDir);
   }
 
+  async function viteBuildScripts() {
+    if (!hasBuiltOnce) {
+      for (const input of scriptInputs ?? []) {
+        process.stdout.write("\n");
+        info(
+          `Building \x1b[96m${path.relative(
+            process.cwd(),
+            input.inputAbsPath
+          )}\x1b[0m in Lib Mode`
+        );
+        await buildScript(
+          {
+            ...input,
+            vite: finalConfig,
+            watch: isWatching || isDevServer,
+          },
+          hookWaiter,
+          log
+        );
+      }
+      process.stdout.write("\n");
+    }
+    await hookWaiter.waitForAll();
+  }
+
+  async function launchBrowserAndInstall() {
+    if (!isWatching && !isDevServer) return;
+    if (disableAutoLaunch) return;
+
+    if (webExtRunner == null) {
+      const config = {
+        target:
+          options.browser === null || options.browser === "firefox"
+            ? null
+            : "chromium",
+        ...options.webExtConfig,
+        // No touch - can't exit the terminal if these are changed, so they cannot be overridden
+        sourceDir: outDir,
+        noReload: false,
+        noInput: true,
+      };
+      log("Passed web-ext run config:", JSON.stringify(options.webExtConfig));
+      log("Final web-ext run config:", JSON.stringify(config));
+      // https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code
+      webExtRunner = await webExt.cmd.run(config, {
+        shouldExitProgram: true,
+      });
+    } else {
+      webExtRunner.reloadAllExtensions();
+      process.stdout.write("\n\n");
+    }
+  }
+
+  async function onBuildEnd() {
+    await viteBuildScripts();
+    await launchBrowserAndInstall();
+    hasBuiltOnce = true;
+  }
+
+  function pointScriptsToDevServer(htmlContent: string): string {
+    console.log("replacing", htmlContent);
+    return htmlContent;
+  }
+
+  let customEmitFileUnbound = function (
+    this: PluginContext,
+    file: EmittedFile
+  ) {
+    if (!isDevServer) {
+      return this.emitFile(file);
+    }
+    if (file.type !== "asset") {
+      throw Error(
+        "File type not supported in dev mode " + JSON.stringify(file, null, 2)
+      );
+    }
+
+    if (file.fileName == null)
+      throw Error(
+        "Asset filename was missing. This is an internal error, please open an issue on GitHub"
+      );
+    if (file.source == null)
+      throw Error(
+        "Asset source was missing. This is an internal error, please open an issue on GitHub"
+      );
+
+    const outFile = path.resolve(outDir, file.fileName);
+    mkdirSync(path.dirname(outFile), { recursive: true });
+    let content: any;
+    if (file.fileName.endsWith(".html")) {
+      if (typeof file.source !== "string")
+        throw Error(
+          "HTML not passed as string. This is an internal error, please open an issue on GitHub"
+        );
+      content = pointScriptsToDevServer(file.source);
+    } else {
+      content = file.source;
+    }
+    writeFileSync(outFile, content);
+    const hash = "";
+    return hash;
+  };
+  let customEmitFile: PluginContext["emitFile"];
+
   const browser = options.browser ?? "chrome";
   const disableAutoLaunch = options.disableAutoLaunch ?? false;
   let outDir: string;
@@ -355,14 +485,25 @@ export default function browserExtension<T>(
   const hookWaiter = new HookWaiter("closeBundle");
   let isError = false;
   let shouldEmptyOutDir = false;
+  let isDevServer = false;
 
   return {
     name: "vite-plugin-web-extension",
 
-    config(viteConfig) {
+    config(viteConfig, { command }) {
       shouldEmptyOutDir = !!viteConfig.build?.emptyOutDir;
+      const port = viteConfig.server?.port ?? 3000;
+      isDevServer = command === "serve";
 
       const extensionConfig = defineConfig({
+        base: isDevServer ? `http://localhost:${port}/` : undefined,
+        server: {
+          port,
+          hmr: {
+            host: "localhost",
+          },
+        },
+        clearScreen: false,
         build: {
           emptyOutDir: false,
           terserOptions: {
@@ -378,6 +519,7 @@ export default function browserExtension<T>(
             },
           },
         },
+        plugins: isDevServer ? [] : [],
       });
       finalConfig = mergeConfig(viteConfig, extensionConfig, true);
       return finalConfig;
@@ -428,10 +570,24 @@ export default function browserExtension<T>(
         rollupOptions.input = { ...generatedInputs, ...assetInputs };
         scriptInputs = generatedScriptInputs;
 
+        customEmitFile = customEmitFileUnbound.bind(this);
+
+        // Emit modified html files in dev mode that point to localhost
+        if (isDevServer) {
+          // TODO: Add a file watcher here to reload the extension when an html file is changed
+          Object.entries(rollupOptions.input).forEach(([name, inputPath]) => {
+            customEmitFile({
+              type: "asset",
+              fileName: `${name}.html`,
+              source: readFileSync(inputPath, "utf-8"),
+            });
+          });
+        }
+
         // Assets
         const assets = getAllAssets();
         assets.forEach((asset) => {
-          this.emitFile({
+          customEmitFile({
             type: "asset",
             fileName: asset,
             source: readFileSync(path.resolve(moduleRoot, asset)),
@@ -443,13 +599,14 @@ export default function browserExtension<T>(
 
         // Add stuff to the bundle
         const manifestContent = JSON.stringify(transformedManifest, null, 2);
-        this.emitFile({
+        customEmitFile({
           type: "asset",
           fileName: options?.writeManifestTo ?? "manifest.json",
           name: "manifest.json",
           source: manifestContent,
         });
         log("Final manifest:", manifestContent);
+
         log("Final rollup inputs:", rollupOptions.input);
 
         if (options.printSummary !== false && !hasBuiltOnce) {
@@ -479,11 +636,16 @@ export default function browserExtension<T>(
         process.stdout.write("\n");
         info("Building HTML Pages in Multi-Page Mode");
 
-        if (isWatching) {
+        if (isWatching || isDevServer) {
           options.watchFilePaths?.forEach((file) => this.addWatchFile(file));
           assets.forEach((asset) =>
             this.addWatchFile(path.resolve(moduleRoot, asset))
           );
+        }
+
+        if (isDevServer) {
+          await new Promise((res) => setTimeout(res, 1000));
+          await onBuildEnd();
         }
       } catch (err) {
         isError = true;
@@ -501,61 +663,7 @@ export default function browserExtension<T>(
 
     async closeBundle() {
       if (isError) return;
-
-      if (!hasBuiltOnce) {
-        for (const input of scriptInputs ?? []) {
-          process.stdout.write("\n");
-          info(
-            `Building \x1b[96m${path.relative(
-              process.cwd(),
-              input.inputAbsPath
-            )}\x1b[0m in Lib Mode`
-          );
-          await buildScript(
-            {
-              ...input,
-              vite: finalConfig,
-              watch: isWatching,
-            },
-            hookWaiter,
-            log
-          );
-        }
-        process.stdout.write("\n");
-      }
-      await hookWaiter.waitForAll();
-
-      if (!isWatching) return;
-
-      if (!disableAutoLaunch) {
-        if (webExtRunner == null) {
-          const config = {
-            target:
-              options.browser === null || options.browser === "firefox"
-                ? null
-                : "chromium",
-            ...options.webExtConfig,
-            // No touch - can't exit the terminal if these are changed, so they cannot be overridden
-            sourceDir: outDir,
-            noReload: false,
-            noInput: true,
-          };
-          log(
-            "Passed web-ext run config:",
-            JSON.stringify(options.webExtConfig)
-          );
-          log("Final web-ext run config:", JSON.stringify(config));
-          // https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code
-          webExtRunner = await webExt.cmd.run(config, {
-            shouldExitProgram: true,
-          });
-        } else {
-          webExtRunner.reloadAllExtensions();
-          process.stdout.write("\n\n");
-        }
-      }
-
-      hasBuiltOnce = true;
+      await onBuildEnd();
     },
   };
 }

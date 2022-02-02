@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@types/node": "^16.11.6",
+    "rollup": "^2.62.0",
     "tsup": "^5.5.0",
     "typescript": "^4.4.4",
     "vite": "^2.7.9"

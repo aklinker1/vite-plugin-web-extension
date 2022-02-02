@@ -57,6 +57,7 @@ importers:
     specifiers:
       '@types/node': ^16.11.6
       ajv: ^8.8.1
+      rollup: ^2.62.0
       tsup: ^5.5.0
       typescript: ^4.4.4
       vite: ^2.7.9
@@ -66,6 +67,7 @@ importers:
       web-ext: 6.5.0
     devDependencies:
       '@types/node': 16.11.6
+      rollup: 2.62.0
       tsup: 5.5.0_typescript@4.4.4
       typescript: 4.4.4
       vite: 2.7.9
@@ -4629,14 +4631,6 @@ packages:
     dependencies:
       glob: 7.2.0
 
-  /rollup/2.58.3:
-    resolution: {integrity: sha512-ei27MSw1KhRur4p87Q0/Va2NAYqMXOX++FNEumMBcdreIRLURKy+cE2wcDJKBn0nfmhP2ZGrJkP1XPO+G8FJQw==}
-    engines: {node: '>=10.0.0'}
-    hasBin: true
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: true
-
   /rollup/2.62.0:
     resolution: {integrity: sha512-cJEQq2gwB0GWMD3rYImefQTSjrPYaC6s4J9pYqnstVLJ1CHa/aZNVkD4Epuvg4iLeMA4KRiq7UM7awKK6j7jcw==}
     engines: {node: '>=10.0.0'}
@@ -5163,7 +5157,7 @@ packages:
       joycon: 3.0.1
       postcss-load-config: 3.1.0
       resolve-from: 5.0.0
-      rollup: 2.58.3
+      rollup: 2.62.0
       sucrase: 3.20.3
       tree-kill: 1.2.2
       typescript: 4.4.4
