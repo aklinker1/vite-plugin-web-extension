@@ -301,9 +301,9 @@ export default function browserExtension(
       } else if (transformedManifest.manifest_version === 2) {
         transformedManifest.content_security_policy = CSP;
       } else if (transformedManifest.manifest_version === 3) {
-        transformedManifest.content_security_policy = {
-          extension_pages: CSP,
-        };
+        throw Error(
+          "Dev server does not work for Manifest V3 because of a Chrome Bug: https://github.com/samrum/manifest-v3-csp-bug-ex"
+        );
       }
     }
 
