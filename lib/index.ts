@@ -58,7 +58,7 @@ interface BrowserExtensionPluginOptions {
   /**
    * Used to disable auto-installing the extension when in watch mode. Default value is `false`.
    */
-  skipAutoInstall?: boolean;
+  disableAutoLaunch?: boolean;
 
   /**
    * **Absolute paths** to files to watch.
@@ -301,7 +301,7 @@ export default function browserExtension<T>(
   }
 
   const browser = options.browser ?? "chrome";
-  const skipAutoInstall = options.skipAutoInstall ?? false;
+  const disableAutoLaunch = options.disableAutoLaunch ?? false;
   let outDir: string;
   let moduleRoot: string;
   let webExtRunner: any;
@@ -481,7 +481,7 @@ export default function browserExtension<T>(
 
       if (!isWatching) return;
 
-      if (!skipAutoInstall) {
+      if (!disableAutoLaunch) {
         if (webExtRunner == null) {
           const config = {
             target:
