@@ -3,7 +3,7 @@
   "private": "true",
   "scripts": {
     "pretest": "pnpm install",
-    "test": "cross-env CI=true jest --runInBand",
+    "test": "cross-env CI=true jest --runInBand --colors",
     "test:update": "pnpm test -- -u"
   },
   "devDependencies": {
