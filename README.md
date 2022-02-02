@@ -196,7 +196,8 @@ export default defineConfig({
     webExtension({
       watchFilePaths: [
         path.resolve(__dirname, "tailwind.config.js")
-      ]
+      ],
+      disableAutoLaunch: false // default is false
     }),
   ],
 });
@@ -205,6 +206,8 @@ export default defineConfig({
 > Watch mode will not reload properly when the manifest changes. You'll need to restart the `vite build --watch` command use the updated manifest.
 >
 > This is a limitation of [`web-ext`](https://www.npmjs.com/package/web-ext)
+
+Set `disableAutoLaunch` to `true` to skip the automatic installation of the extension.
 
 ### Additional Inputs
 
