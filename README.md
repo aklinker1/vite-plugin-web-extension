@@ -238,7 +238,7 @@ export default defineConfig({
 
 ### CSS
 
-For HTML entry points like popups or the options page, css is automatically output and referenced in the built HTML. There's nothing you need to do!
+For HTML entry points like the popup or options page, css is automatically output and referenced in the built HTML. There's nothing you need to do!
 
 #### Manifest `content_scripts`
 
