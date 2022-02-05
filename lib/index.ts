@@ -1,5 +1,11 @@
 import path from "path";
-import { defineConfig, Plugin, mergeConfig, UserConfig } from "vite";
+import {
+  defineConfig,
+  Plugin,
+  mergeConfig,
+  UserConfig,
+  normalizePath,
+} from "vite";
 import type { EmittedFile, PluginContext } from "rollup";
 import {
   readdirSync,
@@ -16,6 +22,7 @@ import { resolveBrowserTagsInObject } from "./src/resolve-browser-flags";
 import { validateManifest } from "./src/validation";
 import { HookWaiter } from "./src/hook-waiter";
 import { copyDirSync } from "./src/copy-dir";
+import md5 from "md5";
 
 const GENERATED_PREFIX = "generated:";
 
@@ -302,7 +309,7 @@ export default function browserExtension(
         transformedManifest.content_security_policy = CSP;
       } else if (transformedManifest.manifest_version === 3) {
         throw Error(
-          "Dev server does not work for Manifest V3 because of a Chrome Bug: https://github.com/samrum/manifest-v3-csp-bug-ex"
+          "Dev server does not work for Manifest V3 because of a Chrome Bug: https://bugs.chromium.org/p/chromium/issues/detail?id=1290188"
         );
       }
     }
@@ -428,9 +435,60 @@ export default function browserExtension(
     hasBuiltOnce = true;
   }
 
-  function pointScriptsToDevServer(htmlContent: string): string {
+  function pointScriptsToDevServer(
+    htmlPath: string,
+    htmlContent: string
+  ): string {
+    let newHtmlContent = htmlContent;
+    const htmlFolder = path.dirname(htmlPath);
     console.log("replacing", htmlContent);
-    return htmlContent;
+    const scriptSrcRegex =
+      /(<script\s+?type="module"\s+?src="(.*?)".*?>|<script\s+?src="(.*?)"\s+?type="module".*?>)/g;
+    let match: RegExpExecArray | null;
+    while ((match = scriptSrcRegex.exec(htmlContent)) !== null) {
+      if (match.index === scriptSrcRegex.lastIndex) {
+        scriptSrcRegex.lastIndex++;
+      }
+      const [existingScriptTag, _, src1, src2] = match;
+      const src = src1 || src2;
+      console.log({ existingScriptTag, src });
+      let newSrc: string;
+      if (src.startsWith("/")) {
+        newSrc = `http://localhost:3000${src}`;
+      } else if (src.startsWith("./")) {
+        newSrc = `http://localhost:3000/${normalizePath(
+          path.join(htmlFolder, src.replace("./", ""))
+        )}`;
+      } else {
+        const aliases = (finalConfig.alias ??
+          finalConfig.resolve?.alias ??
+          {}) as Record<string, string | undefined> | undefined;
+        log("Aliases:", aliases);
+        const alias = src.substring(
+          0,
+          src.includes("/") ? src.indexOf("/") : src.length
+        );
+        const matchedPath = aliases?.[alias] ?? aliases?.[alias + "/"];
+        if (!matchedPath) {
+          warn(
+            `Failed to resolve script src alias: ${existingScriptTag}, ${src}`
+          );
+          newSrc = src;
+        } else {
+          const filePath = src.replace(alias, matchedPath);
+          const relativePath = path.relative(
+            finalConfig.root ?? process.cwd(),
+            filePath
+          );
+          newSrc = `http://localhost:3000/${normalizePath(relativePath)}`;
+        }
+      }
+      const newScriptTag = existingScriptTag.replace(src, newSrc);
+      log("Old script: " + existingScriptTag);
+      log("Dev server script: " + newScriptTag);
+      newHtmlContent = newHtmlContent.replace(existingScriptTag, newScriptTag);
+    }
+    return newHtmlContent;
   }
 
   let customEmitFileUnbound = function (
@@ -463,13 +521,12 @@ export default function browserExtension(
         throw Error(
           "HTML not passed as string. This is an internal error, please open an issue on GitHub"
         );
-      content = pointScriptsToDevServer(file.source);
+      content = pointScriptsToDevServer(file.fileName, file.source);
     } else {
       content = file.source;
     }
     writeFileSync(outFile, content);
-    const hash = "";
-    return hash;
+    return md5(content);
   };
   let customEmitFile: PluginContext["emitFile"];
 

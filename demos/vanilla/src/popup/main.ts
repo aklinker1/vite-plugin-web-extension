@@ -1,1 +1,1 @@
-console.log("Loaded popup/main.ts 2");
+console.log("Loaded popup/main.ts");

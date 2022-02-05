@@ -18,7 +18,7 @@ export default defineConfig({
     browserExtension({
       manifest: root("src/manifest.json"),
       assets: "assets",
-      browser: "firefox",
+      browser: process.env.TARGET,
       webExtConfig: {
         firefox: "firefox",
       },
