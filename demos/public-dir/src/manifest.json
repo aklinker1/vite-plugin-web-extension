@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "Test",
+  "version": "1.0.0",
+  "description": "Test Public Directory",
+  "icons": {
+    "16": "assets/16.png",
+    "48": "assets/48.png",
+    "128": "assets/128.png"
+  },
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": ["background/index.ts"]
+  }
+}

@@ -5,6 +5,16 @@ importers:
   .:
     specifiers: {}
 
+  demos/public-dir:
+    specifiers:
+      typescript: ^4.4.4
+      vite: ^2.7.9
+      vite-plugin-web-extension: workspace:*
+    devDependencies:
+      typescript: 4.4.4
+      vite: 2.7.9
+      vite-plugin-web-extension: link:../../lib
+
   demos/vanilla:
     specifiers:
       '@types/lodash.debounce': ^4.0.6

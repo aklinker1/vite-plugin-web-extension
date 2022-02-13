@@ -37,6 +37,7 @@ export async function buildScript(
     plugins,
     define: config.vite.define,
     base: config.basePath,
+    publicDir: false,
     build: {
       ...config.vite.build,
       // Exclude <root>/index.html from inputs
