@@ -16,7 +16,6 @@ export default defineConfig({
     browserExtension({
       manifest: root("src/manifest.json"),
       assets: "assets",
-      watchFilePaths: [root("src/manifest.json")],
     }),
   ],
 });
