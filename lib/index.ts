@@ -1,11 +1,12 @@
 import path from "path";
 import { defineConfig, Plugin, mergeConfig, UserConfig } from "vite";
-import { readdirSync, rmSync, lstatSync, readFileSync } from "fs";
+import { readdirSync, rmSync, lstatSync, readFileSync, existsSync } from "fs";
 const webExt = require("web-ext");
 import { buildScript, BuildScriptConfig } from "./src/build-script";
 import { resolveBrowserTagsInObject } from "./src/resolve-browser-flags";
 import { validateManifest } from "./src/validation";
 import { HookWaiter } from "./src/hook-waiter";
+import { copyDirSync } from "./src/copy-dir";
 
 type Manifest = any;
 
@@ -300,6 +301,37 @@ export default function browserExtension<T>(
     return assets;
   }
 
+  function getPublicDir(): string | undefined {
+    if (finalConfig.publicDir === false) {
+      return;
+    } else if (
+      finalConfig.publicDir &&
+      path.isAbsolute(finalConfig.publicDir)
+    ) {
+      return finalConfig.publicDir;
+    } else {
+      return path.join(moduleRoot, finalConfig.publicDir ?? "public");
+    }
+  }
+
+  function copyPublicDir() {
+    const publicDir = getPublicDir();
+    // Don't copy anything if the public dir isn't found
+    if (publicDir == null) return;
+    log("publicDir:", publicDir);
+    if (!existsSync(publicDir)) return;
+
+    // Make sure it's a directory
+    const info = lstatSync(publicDir);
+    if (!info.isDirectory()) {
+      warn(publicDir + " is not a directory, skipping");
+      return;
+    }
+
+    // Copy all files over
+    copyDirSync(publicDir, outDir);
+  }
+
   const browser = options.browser ?? "chrome";
   const disableAutoLaunch = options.disableAutoLaunch ?? false;
   let outDir: string;
@@ -394,6 +426,9 @@ export default function browserExtension<T>(
             source: readFileSync(path.resolve(moduleRoot, asset)),
           });
         });
+
+        // Copy public dir - only in watch mode because vite doesn't do it for some reason...
+        if (isWatching) copyPublicDir();
 
         // Add stuff to the bundle
         const manifestContent = JSON.stringify(transformedManifest, null, 2);
@@ -494,7 +529,10 @@ export default function browserExtension<T>(
             noReload: false,
             noInput: true,
           };
-          log("Passed web-ext run config:", JSON.stringify(options.webExtConfig));
+          log(
+            "Passed web-ext run config:",
+            JSON.stringify(options.webExtConfig)
+          );
           log("Final web-ext run config:", JSON.stringify(config));
           // https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code
           webExtRunner = await webExt.cmd.run(config, {

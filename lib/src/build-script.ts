@@ -37,6 +37,8 @@ export async function buildScript(
     plugins,
     define: config.vite.define,
     base: config.basePath,
+    // Don't copy static assets for the lib builds - already done during multi-page builds
+    publicDir: false,
     build: {
       ...config.vite.build,
       // Exclude <root>/index.html from inputs

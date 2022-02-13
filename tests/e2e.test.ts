@@ -280,4 +280,26 @@ describe("Vite Plugin Web Extension", () => {
       expectManifest(expectedManifest);
     }
   );
+
+  it("should include assets from the publicDir", () =>
+    expectBuildToMatchSnapshot(
+      {
+        build: {
+          outDir: DIST_DIRECTORY,
+          emptyOutDir: true,
+        },
+        publicDir: "extension/assets",
+        plugins: [
+          WebExtension({
+            assets: "extension/assets",
+            manifest: manifest({
+              browser_action: {
+                default_popup: "extension/page1.html",
+              },
+            }),
+          }),
+        ],
+      },
+      ["dist/16.png", "dist/48.png", "dist/128.png"]
+    ));
 });
