@@ -1,8 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Test",
+  "name": "__MSG_appName__",
+  "description": "__MSG_appDesc__",
+  "default_locale": "en",
   "version": "1.0.0",
-  "description": "Test Public Directory",
   "icons": {
     "16": "assets/16.png",
     "48": "assets/48.png",

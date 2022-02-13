@@ -310,10 +310,7 @@ export default function browserExtension<T>(
     ) {
       return finalConfig.publicDir;
     } else {
-      return path.join(
-        finalConfig.root ?? process.cwd(),
-        finalConfig.publicDir ?? "public"
-      );
+      return path.join(moduleRoot, finalConfig.publicDir ?? "public");
     }
   }
 

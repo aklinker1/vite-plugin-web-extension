@@ -5,7 +5,7 @@ importers:
   .:
     specifiers: {}
 
-  demos/public-dir:
+  demos/localization:
     specifiers:
       typescript: ^4.4.4
       vite: ^2.7.9

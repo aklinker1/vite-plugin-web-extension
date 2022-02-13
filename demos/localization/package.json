@@ -1,5 +1,5 @@
 {
-  "name": "public-dir-demo",
+  "name": "localization-demo",
   "version": "0.0.0",
   "scripts": {
     "dev": "pnpm install && tsc && vite build --watch",
