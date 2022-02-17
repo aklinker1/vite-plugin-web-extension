@@ -38,7 +38,10 @@
     },
     {
       "matches": ["*://*/*"],
-      "js": ["content-scripts/script2/index.ts"],
+      "js": [
+        "generated:assets/generated.js",
+        "content-scripts/script2/index.ts"
+      ],
       "css": ["content-scripts/script2/style.css"]
     },
     {
