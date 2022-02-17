@@ -8,6 +8,8 @@ import { validateManifest } from "./src/validation";
 import { HookWaiter } from "./src/hook-waiter";
 import { copyDirSync } from "./src/copy-dir";
 
+const GENERATED_PREFIX = "generated:";
+
 type Manifest = any;
 
 interface BrowserExtensionPluginOptions {
@@ -143,7 +145,7 @@ export default function browserExtension<T>(
     styleAssets: string[];
     generatedScriptInputs: BuildScriptCache[];
   } {
-    const inputIncludedMap: Record<string, boolean> = {};
+    const previouslyIncludedMap: Record<string, boolean> = {};
     const generatedInputs: Record<string, string> = {};
     const generatedScriptInputs: BuildScriptCache[] = [];
     const transformedManifest = JSON.parse(JSON.stringify(manifestWithTs));
@@ -189,14 +191,21 @@ export default function browserExtension<T>(
       const scripts: string[] = isSingleString ? [value] : value;
       const compiledScripts: string[] = [];
       scripts.forEach((script) => {
-        if (!inputIncludedMap[script]) {
-          generatedScriptInputs.push({
-            inputAbsPath: filenameToPath(script),
-            outputRelPath: filenameToInput(script),
-          });
+        if (script.startsWith(GENERATED_PREFIX)) {
+          log("Skip generated script:", script);
+          compiledScripts.push(
+            filenameToCompiledFilename(script).replace(GENERATED_PREFIX, "")
+          );
+        } else {
+          if (!previouslyIncludedMap[script]) {
+            generatedScriptInputs.push({
+              inputAbsPath: filenameToPath(script),
+              outputRelPath: filenameToInput(script),
+            });
+          }
+          compiledScripts.push(filenameToCompiledFilename(script));
         }
-        compiledScripts.push(filenameToCompiledFilename(script));
-        inputIncludedMap[script] = true;
+        previouslyIncludedMap[script] = true;
       });
 
       if (isSingleString) object[key] = compiledScripts[0];
@@ -209,10 +218,10 @@ export default function browserExtension<T>(
       const styles: string[] = typeof value === "string" ? [value] : value;
       const onManifest: string[] = [];
       styles.forEach((style) => {
-        if (style.startsWith("generated:")) {
+        if (style.startsWith(GENERATED_PREFIX)) {
           log("Skip generated asset:", style);
           onManifest.push(
-            filenameToCompiledFilename(style).replace("generated:", "")
+            filenameToCompiledFilename(style).replace(GENERATED_PREFIX, "")
           );
         } else {
           styleAssets.add(style);
