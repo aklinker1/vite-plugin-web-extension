@@ -34,7 +34,7 @@
         "content-scripts/script3/some-script.ts",
         "content-scripts/script2/index.ts"
       ],
-      "css": ["generated:content-scripts/script3/style.css"]
+      "css": ["generated:content-scripts/script3/style.css", "test.scss"]
     },
     {
       "matches": ["*://*/*"],

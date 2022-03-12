@@ -141,15 +141,15 @@ export default function browserExtension<T>(
 
   function transformManifestInputs(manifestWithTs: any): {
     transformedManifest: any;
-    generatedInputs: Record<string, string>;
-    styleAssets: string[];
+    htmlInputs: Record<string, string>;
+    assetInputs: Record<string, string>;
     generatedScriptInputs: BuildScriptCache[];
   } {
     const previouslyIncludedMap: Record<string, boolean> = {};
-    const generatedInputs: Record<string, string> = {};
+    const htmlInputs: Record<string, string> = {};
     const generatedScriptInputs: BuildScriptCache[] = [];
     const transformedManifest = JSON.parse(JSON.stringify(manifestWithTs));
-    const styleAssets = new Set<string>();
+    const assetInputs: Record<string, string> = {};
 
     const filenameToInput = (filename: string) =>
       filename.substring(0, filename.lastIndexOf("."));
@@ -158,7 +158,9 @@ export default function browserExtension<T>(
       path.resolve(moduleRoot, filename);
 
     const filenameToCompiledFilename = (filename: string) =>
-      filename.replace(/.(ts)$/, ".js").replace(/.(scss)$/, ".css");
+      filename
+        .replace(/.(ts)$/, ".js")
+        .replace(/.(scss|sass|less|stylus)$/, ".css");
 
     const transformHtml = (...manifestPath: string[]) => {
       const filename = manifestPath.reduce(
@@ -166,7 +168,7 @@ export default function browserExtension<T>(
         transformedManifest
       );
       if (filename == null) return;
-      generatedInputs[filenameToInput(filename)] = filenameToPath(filename);
+      htmlInputs[filenameToInput(filename)] = filenameToPath(filename);
     };
 
     const transformSandboxedHtml = (filename: string) => {
@@ -212,20 +214,20 @@ export default function browserExtension<T>(
       else object[key] = compiledScripts;
     };
 
-    const transformStylesheets = (object: any, key: string) => {
+    const transformAssets = (object: any, key: string) => {
       const value = object?.[key];
       if (value == null) return;
-      const styles: string[] = typeof value === "string" ? [value] : value;
+      const filenames: string[] = typeof value === "string" ? [value] : value;
       const onManifest: string[] = [];
-      styles.forEach((style) => {
-        if (style.startsWith(GENERATED_PREFIX)) {
-          log("Skip generated asset:", style);
+      filenames.forEach((filename) => {
+        if (filename.startsWith(GENERATED_PREFIX)) {
+          log("Skip generated asset:", filename);
           onManifest.push(
-            filenameToCompiledFilename(style).replace(GENERATED_PREFIX, "")
+            filenameToCompiledFilename(filename).replace(GENERATED_PREFIX, "")
           );
         } else {
-          styleAssets.add(style);
-          onManifest.push(filenameToCompiledFilename(style));
+          assetInputs[filenameToInput(filename)] = filenameToPath(filename);
+          onManifest.push(filenameToCompiledFilename(filename));
         }
       });
       object[key] = onManifest;
@@ -260,7 +262,7 @@ export default function browserExtension<T>(
     transformHtml("background", "page");
     transformHtml("sidebar_action", "default_panel");
     additionalInputTypes?.html.forEach((filename) => {
-      generatedInputs[filenameToInput(filename)] = filenameToPath(filename);
+      htmlInputs[filenameToInput(filename)] = filenameToPath(filename);
     });
     transformedManifest.sandbox?.pages?.forEach(transformSandboxedHtml);
 
@@ -275,15 +277,15 @@ export default function browserExtension<T>(
 
     // CSS inputs
     transformedManifest.content_scripts?.forEach((contentScript: string) => {
-      transformStylesheets(contentScript, "css");
+      transformAssets(contentScript, "css");
     });
-    transformStylesheets(additionalInputTypes, "assets");
+    transformAssets(additionalInputTypes, "assets");
 
     return {
-      generatedInputs,
+      htmlInputs,
       transformedManifest,
       generatedScriptInputs,
-      styleAssets: Array.from(styleAssets.values()),
+      assetInputs,
     };
   }
 
@@ -418,16 +420,16 @@ export default function browserExtension<T>(
         // Generate inputs
         const {
           transformedManifest,
-          generatedInputs,
+          htmlInputs: generatedInputs,
           generatedScriptInputs,
-          styleAssets,
+          assetInputs,
         } = transformManifestInputs(manifestWithTs);
 
-        rollupOptions.input = generatedInputs;
+        rollupOptions.input = { ...generatedInputs, ...assetInputs };
         scriptInputs = generatedScriptInputs;
 
         // Assets
-        const assets = [...styleAssets, ...getAllAssets()];
+        const assets = getAllAssets();
         assets.forEach((asset) => {
           this.emitFile({
             type: "asset",
