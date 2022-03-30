@@ -188,20 +188,9 @@ See `demos/vue` for a full example.
 
 This plugin uses `web-ext` under the hood to startup a browser and install the extension in dev mode. You can configure `web-ext` via the `webExtConfig` option.
 
-> See [`web-ext` CLI docs](https://extensionworkshop.com/documentation/develop/web-ext-command-reference/)
+For a list of options, you'll have to look at [`web-ext`'s source code](https://github.com/mozilla/web-ext/blob/666886f40a967b515d43cf38fc9aec67ad744d89/src/program.js#L559), and search for `.command('run'`, then camelCase each flag. If it's type is `array`, set it equal to an array of the values.
 
-This plugin executes `web-ext` from JS directly, rather than the CLI. Unfortunately, there is [minimal docs around configuring it when ran from JS](https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code), so we have to translate the CLI flags into their JS config counterparts.
-
-In general you:
-
-1. Convert the --flag-name to camelCase
-2. Set the value equal to...
-   - If it's a single value, just the string value
-   - If it's an array (or accepts the flag multiple times), an array of string values
-
-> If someone can find a list of `web-ext`'s JS config options, I'll add a link to it here so it's not so guess-and-check.
-
-Here are some examples:
+Here are some examples (with their CLI equivalents above):
 
 ```ts
 webExtension({
