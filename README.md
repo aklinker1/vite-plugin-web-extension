@@ -203,7 +203,7 @@ In general you:
 
 Here are some examples:
 
-```text
+```ts
 webExtension({
   webExtConfig: {
     // --chromium-binary /path/to/google-chrome
