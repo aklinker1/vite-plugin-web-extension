@@ -19,7 +19,7 @@ export default defineConfig({
 ## Features
 
 - :wrench: Automatically build inputs from in your `manifest.json`
-- :zap: Super fast watch mode that automatically reloads your extension
+- :zap: Super fast dev mode that automatically reloads your extension
 - :globe_with_meridians: Supports all browsers
 - :fire: Frontend frameworks for the popup, options page, _**and content scripts**_!
 - :robot: Typescript support out of the box!
@@ -196,20 +196,44 @@ Here are some examples (with their CLI equivalents above):
 webExtension({
   webExtConfig: {
     // --chromium-binary /path/to/google-chrome
-    "chromiumBinary": "/path/to/google-chrome",
+    chromiumBinary: "/path/to/google-chrome",
     // --start-url google.com --start-url duckduckgo.com
-    "startUrl": ["google.com", "duckduckgo.com"],
+    startUrl: ["google.com", "duckduckgo.com"],
     // --watch-ignored *.md *.log
-    "watchIgnored": ["*.md", "*.log"],
-  }
+    watchIgnored: ["*.md", "*.log"],
+  },
 });
 ```
 
 Also see #22 for a real use case of changing the startup chrome window size
 
+### Dev Mode
+
+```bash
+vite dev
+```
+
+will open a browser and install your extension.
+
+When you change a file, it will either hot-reload (if the file was associated with an HTML entry point) or rebuilt and reload the entire extension (if the file is used by background/content scripts) so you get the latest code immediately.
+
+> Only supported for Manifest V2 builds due to a bug: https://bugs.chromium.org/p/chromium/issues/detail?id=1290188
+>
+> Use [Watch Mode](#watch-mode) for MV3 instead
+
+Dev mode works best when you're using a front-end framework, and making changes to a UI like the popup or options page.
+
+HMR will not be used when making changes to UI injected by content scripts.
+
+Set `disableAutoLaunch` to `true` to skip the automatic installation of the extension.
+
 ### Watch Mode
 
-To reload the extension when a file changes, run vite with the `--watch` flag
+Watch mode differs from dev mode because it will rebuild and reload the entire extension on every file change (no HMR)
+
+It will also result in the exact same code as `vite build`, whereas dev mode modifies your HTML files to enable HMR.
+
+To run in watch mode, use the `--watch` flag.
 
 ```bash
 vite build --watch
