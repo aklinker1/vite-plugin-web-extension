@@ -303,13 +303,13 @@ export default function browserExtension(
       if (transformedManifest.content_security_policy != null) {
         // TODO: "merge" CSPs automatically
         warn(
-          "Could not automatically add CSP to manifest to allow extension to run against dev server. Update the CSP yourself in dev mode following this guide: TODO link"
+          'Could not automatically add CSP to manifest to allow extension to run against dev server.\n\nUpdate the CSP yourself in dev mode include "http://localhost:3000" in script-src'
         );
       } else if (transformedManifest.manifest_version === 2) {
         transformedManifest.content_security_policy = CSP;
       } else if (transformedManifest.manifest_version === 3) {
         throw Error(
-          "Dev server does not work for Manifest V3 because of a Chrome Bug: https://bugs.chromium.org/p/chromium/issues/detail?id=1290188"
+          "Dev server does not work for Manifest V3 because of a Chrome Bug: https://bugs.chromium.org/p/chromium/issues/detail?id=1290188\n\nUse vite build --watch instead"
         );
       }
     }
@@ -567,7 +567,6 @@ export default function browserExtension(
             host: "localhost",
           },
         },
-        clearScreen: false,
         build: {
           emptyOutDir: false,
           terserOptions: {
@@ -583,7 +582,6 @@ export default function browserExtension(
             },
           },
         },
-        plugins: isDevServer ? [] : [],
       });
       finalConfig = mergeConfig(viteConfig, extensionConfig, true);
       return finalConfig;
@@ -638,7 +636,6 @@ export default function browserExtension(
 
         // Emit modified html files in dev mode that point to localhost
         if (isDevServer) {
-          // TODO: Add a file watcher here to reload the extension when an html file is changed
           Object.entries(rollupOptions.input).forEach(([name, inputPath]) => {
             customEmitFile({
               type: "asset",
