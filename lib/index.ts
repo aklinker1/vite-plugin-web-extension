@@ -442,6 +442,7 @@ export default function browserExtension(
     let newHtmlContent = htmlContent;
     const htmlFolder = path.dirname(htmlPath);
     console.log("replacing", htmlContent);
+    let hasAddedViteReloader = false;
     const scriptSrcRegex =
       /(<script\s+?type="module"\s+?src="(.*?)".*?>|<script\s+?src="(.*?)"\s+?type="module".*?>)/g;
     let match: RegExpExecArray | null;
@@ -483,7 +484,13 @@ export default function browserExtension(
           newSrc = `http://localhost:3000/${normalizePath(relativePath)}`;
         }
       }
-      const newScriptTag = existingScriptTag.replace(src, newSrc);
+      let newScriptTag = existingScriptTag.replace(src, newSrc);
+      if (!hasAddedViteReloader) {
+        // Add a script that watches vite and reloads when there's a change
+        newScriptTag +=
+          '</script>\n<script type="module" src="http://localhost:3000/@vite/client"></script>';
+        hasAddedViteReloader = true;
+      }
       log("Old script: " + existingScriptTag);
       log("Dev server script: " + newScriptTag);
       newHtmlContent = newHtmlContent.replace(existingScriptTag, newScriptTag);
