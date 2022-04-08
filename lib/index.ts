@@ -4,6 +4,7 @@ import {
   Plugin,
   mergeConfig,
   UserConfig,
+  UserConfigExport,
   normalizePath,
 } from "vite";
 import type { EmittedFile, PluginContext } from "rollup";
@@ -119,9 +120,18 @@ interface BrowserExtensionPluginOptions {
    * @default true
    */
   printSummary?: boolean;
+
+  /**
+   * Custom vite config to be merged with the required lib mode configuration when building content
+   * scripts or the background script
+   */
+  libModeViteConfig?: UserConfigExport;
 }
 
-type BuildScriptCache = Omit<BuildScriptConfig, "vite" | "watch">;
+type BuildScriptCache = Omit<
+  BuildScriptConfig,
+  "baseViteConfig" | "libModeViteConfig" | "watch"
+>;
 
 export default function browserExtension(
   options: BrowserExtensionPluginOptions
@@ -389,7 +399,8 @@ export default function browserExtension(
         await buildScript(
           {
             ...input,
-            vite: finalConfig,
+            libModeViteConfig: options.libModeViteConfig,
+            baseViteConfig: finalConfig,
             watch: isWatching || isDevServer,
           },
           hookWaiter,
