@@ -273,6 +273,31 @@ rendering chunks...
 ../dist/script1.js   0.09 KiB / gzip: 0.09 KiB"
 `;
 
+exports[`Vite Plugin Web Extension should support supplementing the library mode build config via libModeViteConfig 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • extension/dynamic-import.ts
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"extension/page1\\"
+rendering chunks...
+dist/extension/assets/128.png   3.52 KiB
+dist/extension/assets/16.png    0.52 KiB
+dist/extension/assets/48.png    1.45 KiB
+dist/manifest.json              0.37 KiB
+dist/extension/page1.html       0.26 KiB
+[vite-plugin-web-extension] Building extension/dynamic-import.ts in Lib Mode
+vite v2.7.9 building for production...
+transforming...
+✓ 2 modules transformed.
+rendering chunks...
+dist/extension/dynamic-import.js   0.28 KiB / gzip: 0.21 KiB"
+`;
+
 exports[`Vite Plugin Web Extension should work when the vite root is not specified 1`] = `
 "vite v2.7.9 building for production...
 [vite-plugin-web-extension] 

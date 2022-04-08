@@ -412,3 +412,36 @@ export default defineConfig({
   ],
 });
 ```
+
+### Customize Lib Mode Builds
+
+By default, `vite-plugin-web-extension` will automatically configure vite's build config when building the background and content scripts in lib mode.
+
+If that config is does not work for your case, you can modify it via `libModeViteConfig`.
+
+For example, if a script requires dynamic imports, they need to be added inline because UMD doesn't support code-splitting:
+
+```ts
+import { defineConfig } from "vite";
+import webExtension from "vite-plugin-web-extension";
+
+const libModeViteConfig = defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        // Disable code splitting and put dynamic imports inline
+        inlineDynamicImports: true,
+      },
+    },
+  },
+});
+
+export default defineConfig({
+  plugins: [
+    webExtension({
+      // ...
+      libModeViteConfig,
+    }),
+  ],
+});
+```

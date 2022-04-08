@@ -6,7 +6,8 @@ export interface BuildScriptConfig {
   inputAbsPath: string;
   outputRelPath: string;
   basePath?: string;
-  vite: Vite.UserConfig;
+  libModeViteConfig?: Vite.UserConfigExport;
+  baseViteConfig: Vite.UserConfig;
   watch: boolean;
 }
 
@@ -16,48 +17,60 @@ export async function buildScript(
   log: Function
 ) {
   log("Building in lib mode:", JSON.stringify(config, null, 2));
-  const filename = path.basename(config.outputRelPath);
+  const {
+    baseViteConfig,
+    basePath,
+    libModeViteConfig,
+    inputAbsPath,
+    outputRelPath,
+    watch,
+  } = config;
+
+  const filename = path.basename(outputRelPath);
   const outDir = path.resolve(
-    config.vite.build?.outDir ?? process.cwd(),
-    path.join(config.outputRelPath, "..")
+    baseViteConfig.build?.outDir ?? process.cwd(),
+    path.join(outputRelPath, "..")
   );
   const plugins =
-    config.vite.plugins?.filter(
+    baseViteConfig.plugins?.filter(
       (plugin) =>
         plugin &&
         (!("name" in plugin) || plugin.name !== "vite-plugin-web-extension")
     ) ?? [];
   plugins.push(hookWaiter.plugin());
 
-  const buildConfig: Vite.InlineConfig = {
-    root: config.vite.root,
-    clearScreen: false,
-    mode: config.vite.mode,
-    resolve: config.vite.resolve,
-    plugins,
-    define: config.vite.define,
-    base: config.basePath,
-    // Don't copy static assets for the lib builds - already done during multi-page builds
-    publicDir: false,
-    build: {
-      ...config.vite.build,
-      // Exclude <root>/index.html from inputs
-      rollupOptions: {},
-      emptyOutDir: false,
-      outDir,
-      watch: config.watch
-        ? {
-            clearScreen: false,
-          }
-        : undefined,
-      lib: {
-        name: filename.replace(/-/g, "_").toLowerCase(),
-        entry: config.inputAbsPath,
-        formats: ["umd"],
-        fileName: () => filename + ".js",
+  const buildConfig: Vite.InlineConfig = Vite.mergeConfig(
+    {
+      root: baseViteConfig.root,
+      clearScreen: false,
+      mode: baseViteConfig.mode,
+      resolve: baseViteConfig.resolve,
+      plugins,
+      define: baseViteConfig.define,
+      base: basePath,
+      // Don't copy static assets for the lib builds - already done during multi-page builds
+      publicDir: false,
+      build: {
+        ...baseViteConfig.build,
+        // Exclude <root>/index.html from inputs
+        rollupOptions: {},
+        emptyOutDir: false,
+        outDir,
+        watch: watch
+          ? {
+              clearScreen: false,
+            }
+          : undefined,
+        lib: {
+          name: filename.replace(/-/g, "_").toLowerCase(),
+          entry: inputAbsPath,
+          formats: ["umd"],
+          fileName: () => filename + ".js",
+        },
       },
     },
-  };
+    libModeViteConfig ?? {}
+  );
   log("Final config:", JSON.stringify(buildConfig, null, 2));
   await Vite.build(buildConfig);
 }
