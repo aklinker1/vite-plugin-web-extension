@@ -47,6 +47,13 @@ Special thanks to the contributors!
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/knokmki612">
+            <img src="https://avatars.githubusercontent.com/u/9744580?v=4" width="100;" alt="knokmki612"/>
+            <br />
+            <sub><b>Kimiaki Kuno</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/r2dev2">
             <img src="https://avatars.githubusercontent.com/u/50760816?v=4" width="100;" alt="r2dev2"/>
             <br />
