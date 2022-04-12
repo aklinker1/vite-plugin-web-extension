@@ -308,6 +308,7 @@ export default function browserExtension(
     transformAssets(additionalInputTypes, "assets");
 
     if (isDevServer) {
+      transformedManifest.permissions ??= [];
       transformedManifest.permissions.push("http://localhost/*");
       const CSP = "script-src 'self' http://localhost:3000; object-src 'self'";
       if (transformedManifest.content_security_policy != null) {
