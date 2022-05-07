@@ -453,7 +453,6 @@ export default function browserExtension(
   ): string {
     let newHtmlContent = htmlContent;
     const htmlFolder = path.dirname(htmlPath);
-    console.log("replacing", htmlContent);
     let hasAddedViteReloader = false;
     const scriptSrcRegex =
       /(<script\s+?type="module"\s+?src="(.*?)".*?>|<script\s+?src="(.*?)"\s+?type="module".*?>)/g;
@@ -464,7 +463,6 @@ export default function browserExtension(
       }
       const [existingScriptTag, _, src1, src2] = match;
       const src = src1 || src2;
-      console.log({ existingScriptTag, src });
       let newSrc: string;
       if (src.startsWith("/")) {
         newSrc = `http://localhost:3000${src}`;
