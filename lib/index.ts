@@ -579,10 +579,6 @@ export default function browserExtension(
         },
         build: {
           emptyOutDir: false,
-          terserOptions: {
-            // As per chrome policy
-            mangle: false,
-          },
           rollupOptions: {
             output: {
               // Remove hashes from output filenames for consistent builds
