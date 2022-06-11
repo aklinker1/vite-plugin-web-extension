@@ -260,7 +260,7 @@ export default function browserExtension(
     };
 
     const htmlExtensions = [".html"];
-    const scriptExtensions = [".ts", ".js"];
+    const scriptExtensions = [".ts", ".js", ".tsx"];
     const additionalInputTypes = options.additionalInputs?.reduce(
       (mapping, input) => {
         if (htmlExtensions.find((ext) => input.endsWith(ext))) {
