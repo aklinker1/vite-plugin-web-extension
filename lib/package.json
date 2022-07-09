@@ -6,6 +6,7 @@
   "repository": {
     "url": "https://github.com/aklinker1/vite-plugin-web-extension"
   },
+  "type": "module",
   "keywords": [
     "vite-plugin",
     "web",
@@ -19,16 +20,22 @@
     "addon",
     "browser"
   ],
-  "main": "dist/index.js",
+  "exports": {
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
+    "dist/index.cjs",
     "dist/index.js",
     "dist/index.d.ts",
     "index.ts"
   ],
   "scripts": {
     "compile": "tsc",
-    "build": "tsup index.ts && tsc",
+    "build": "tsup --format esm,cjs index.ts && tsc",
     "prepare": "pnpm build"
   },
   "dependencies": {
