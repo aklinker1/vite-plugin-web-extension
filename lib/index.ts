@@ -17,7 +17,7 @@ import {
   mkdirSync,
   existsSync,
 } from "fs";
-const webExt = require("web-ext");
+import webExt from "web-ext";
 import { buildScript, BuildScriptConfig } from "./src/build-script";
 import { resolveBrowserTagsInObject } from "./src/resolve-browser-flags";
 import { validateManifest } from "./src/validation";
