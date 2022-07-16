@@ -66,6 +66,13 @@ Special thanks to the contributors!
             <br />
             <sub><b>Ronak Badhe</b></sub>
         </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/x11x">
+            <img src="https://avatars.githubusercontent.com/u/28614156?v=4" width="100;" alt="x11x"/>
+            <br />
+            <sub><b>x11x</b></sub>
+        </a>
     </td></tr>
 </table>
 <!-- readme: contributors -end -->
