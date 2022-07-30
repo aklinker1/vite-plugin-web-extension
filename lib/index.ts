@@ -185,7 +185,7 @@ export default function browserExtension(
 
     const filenameToCompiledFilename = (filename: string) =>
       filename
-        .replace(/.(ts)$/, ".js")
+        .replace(/.(ts|tsx)$/, ".js")
         .replace(/.(scss|sass|less|stylus)$/, ".css");
 
     const transformHtml = (...manifestPath: string[]) => {
