@@ -1,7 +1,5 @@
 import Ajv from "ajv";
-import https from "https";
-
-const SCHEMA_URL = "https://json.schemastore.org/chrome-manifest";
+import manifestSchema from "./manifest-schema.json"
 
 // Validate
 
@@ -19,8 +17,7 @@ export async function validateManifest(
   if (typeof manifest !== "object")
     throw Error(`Manifest must be an object, got ${typeof manifest}`);
 
-  const schema = await get(SCHEMA_URL);
-  const data = ajv.validate(schema, manifest);
+  const data = ajv.validate(manifestSchema, manifest);
   if (!data) {
     log(JSON.stringify(manifest, null, 2));
     const errors = (ajv.errors ?? [])
@@ -34,35 +31,3 @@ export async function validateManifest(
   }
 }
 
-// Load
-
-const schemaCache: Record<string, any> = {};
-
-function get(url: string): Promise<any> {
-  if (schemaCache[url]) return Promise.resolve(schemaCache[url]);
-
-  let resolve: (data: any) => void;
-  let reject: (err: unknown) => void;
-  const promise = new Promise<any>((res, rej) => {
-    resolve = res;
-    reject = rej;
-  });
-
-  https
-    .get(url, (response) => {
-      let responseBody = "";
-      response.on("data", (chunk) => {
-        responseBody += chunk;
-      });
-      response.on("end", () => {
-        resolve(JSON.parse(responseBody));
-      });
-    })
-    .on("error", (err) => reject(err));
-
-  promise.then((schema) => {
-    schemaCache[url] = schema;
-  });
-
-  return promise;
-}
