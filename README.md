@@ -40,6 +40,13 @@ Special thanks to the contributors!
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/Treora">
+            <img src="https://avatars.githubusercontent.com/u/4191409?v=4" width="100;" alt="Treora"/>
+            <br />
+            <sub><b>Gerben</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/xiz0r">
             <img src="https://avatars.githubusercontent.com/u/1795296?v=4" width="100;" alt="xiz0r"/>
             <br />
@@ -66,12 +73,13 @@ Special thanks to the contributors!
             <br />
             <sub><b>Ronak Badhe</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/x11x">
             <img src="https://avatars.githubusercontent.com/u/28614156?v=4" width="100;" alt="x11x"/>
             <br />
-            <sub><b>x11x</b></sub>
+            <sub><b>X11x</b></sub>
         </a>
     </td></tr>
 </table>
