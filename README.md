@@ -29,61 +29,9 @@ export default defineConfig({
 
 Special thanks to the contributors!
 
-<!-- readme: contributors -start -->
-<table>
-<tr>
-    <td align="center">
-        <a href="https://github.com/aklinker1">
-            <img src="https://avatars.githubusercontent.com/u/10101283?v=4" width="100;" alt="aklinker1"/>
-            <br />
-            <sub><b>Aaron Klinker</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/Treora">
-            <img src="https://avatars.githubusercontent.com/u/4191409?v=4" width="100;" alt="Treora"/>
-            <br />
-            <sub><b>Gerben</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/xiz0r">
-            <img src="https://avatars.githubusercontent.com/u/1795296?v=4" width="100;" alt="xiz0r"/>
-            <br />
-            <sub><b>Juan Colo</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/KentoNishi">
-            <img src="https://avatars.githubusercontent.com/u/38841491?v=4" width="100;" alt="KentoNishi"/>
-            <br />
-            <sub><b>Kento Nishi</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/knokmki612">
-            <img src="https://avatars.githubusercontent.com/u/9744580?v=4" width="100;" alt="knokmki612"/>
-            <br />
-            <sub><b>Kimiaki Kuno</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/r2dev2">
-            <img src="https://avatars.githubusercontent.com/u/50760816?v=4" width="100;" alt="r2dev2"/>
-            <br />
-            <sub><b>Ronak Badhe</b></sub>
-        </a>
-    </td></tr>
-<tr>
-    <td align="center">
-        <a href="https://github.com/x11x">
-            <img src="https://avatars.githubusercontent.com/u/28614156?v=4" width="100;" alt="x11x"/>
-            <br />
-            <sub><b>X11x</b></sub>
-        </a>
-    </td></tr>
-</table>
-<!-- readme: contributors -end -->
+<a href="https://github.com/aklinker1/vite-plugin-web-extension/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=aklinker1/vite-plugin-web-extension" />
+</a>
 
 See the [contributing docs](CONTRIBUTING.md) to setup the project for development.
 
