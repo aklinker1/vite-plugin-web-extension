@@ -5,5 +5,16 @@
     "clean": "rm -rf node_modules **/node_modules"
   },
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {},
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@types/download",
+        "body-parser",
+        "download",
+        "express",
+        "safe-compare"
+      ]
+    }
+  }
 }
