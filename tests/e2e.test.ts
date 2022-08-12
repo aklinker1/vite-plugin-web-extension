@@ -1,5 +1,5 @@
 import { testBuild } from "./utils/test-build";
-import fs from "fs";
+import fs from "fs/promises";
 import WebExtension from "vite-plugin-web-extension";
 import { defineConfig, InlineConfig } from "vite";
 import path from "path";
@@ -13,7 +13,7 @@ async function expectBuildToMatchSnapshot(
 ) {
   expect(await testBuild(config)).toMatchSnapshot();
   for (const file of expectedDirStructure) {
-    expect(fs.lstatSync(file)).toBeDefined();
+    expect(await fs.lstat(file)).toBeDefined();
   }
 }
 
@@ -31,7 +31,7 @@ function manifest(overrides: any) {
     ...overrides,
   });
 }
-function baseConfig(manifestOverrides: any) {
+function baseConfig(manifestOverrides: any): InlineConfig {
   return {
     root: "extension",
     build: {
@@ -57,10 +57,12 @@ function baseOutputs(additionalOutputs?: string[]): string[] {
 }
 
 describe("Vite Plugin Web Extension", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     try {
-      fs.rmdirSync(DIST_DIRECTORY, { recursive: true });
-    } catch (err) {}
+      await fs.rm(DIST_DIRECTORY, { recursive: true });
+    } catch (err) {
+      // We just want to delete the directory if it exists, so we don't care about this failing (ie: the dir doesn't exist)
+    }
   });
 
   it("should build a simple popup extension", () =>
@@ -111,10 +113,10 @@ describe("Vite Plugin Web Extension", () => {
     "should not fail when emptyOutDir=%s and the outDirExists=%s",
     async (emptyOutDir: boolean, distExists: boolean) => {
       if (distExists) {
-        fs.mkdirSync(DIST_DIRECTORY);
-        expect(fs.lstatSync(DIST_DIRECTORY).isDirectory()).toBe(true);
+        await fs.mkdir(DIST_DIRECTORY);
+        expect((await fs.lstat(DIST_DIRECTORY)).isDirectory()).toBe(true);
       } else {
-        expect(() => fs.lstatSync(DIST_DIRECTORY)).toThrowError(
+        await expect(() => fs.lstat(DIST_DIRECTORY)).rejects.toThrowError(
           "ENOENT: no such file or directory"
         );
       }

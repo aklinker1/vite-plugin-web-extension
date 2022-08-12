@@ -6,12 +6,15 @@ export async function testBuild(config: InlineConfig) {
     const logCollector = (...args: any[]) => {
       logs.push(args.join(" "));
     };
+    const writeNoop = () => true;
     const spies: jest.SpyInstance[] = [
       jest.spyOn(console, "log").mockImplementation(logCollector),
       jest.spyOn(console, "info").mockImplementation(logCollector),
       jest.spyOn(console, "debug").mockImplementation(logCollector),
       jest.spyOn(console, "warn").mockImplementation(logCollector),
       jest.spyOn(console, "error").mockImplementation(logCollector),
+      jest.spyOn(process.stdout, "write").mockImplementation(writeNoop),
+      jest.spyOn(process.stderr, "write").mockImplementation(writeNoop),
     ];
 
     await viteBuild(config);
