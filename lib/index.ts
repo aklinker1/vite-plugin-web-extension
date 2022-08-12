@@ -24,6 +24,7 @@ import { validateManifest } from "./src/validation";
 import { HookWaiter } from "./src/hook-waiter";
 import { copyDirSync } from "./src/copy-dir";
 import md5 from "md5";
+import { inspect } from "util";
 
 const GENERATED_PREFIX = "generated:";
 
@@ -602,7 +603,7 @@ export default function browserExtension(
 
     async buildStart(rollupOptions) {
       log("Building for browser:", browser);
-      log("Building with vite config:", JSON.stringify(finalConfig, null, 2));
+      log("Building with vite config:", inspect(finalConfig));
       isError = false;
       try {
         if (!hasBuiltOnce && shouldEmptyOutDir) {

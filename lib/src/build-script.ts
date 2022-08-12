@@ -1,4 +1,5 @@
 import path from "path";
+import { inspect } from "util";
 import * as Vite from "vite";
 import { HookWaiter } from "./hook-waiter";
 
@@ -16,7 +17,7 @@ export async function buildScript(
   hookWaiter: HookWaiter,
   log: Function
 ) {
-  log("Building in lib mode:", JSON.stringify(config, null, 2));
+  log("Building in lib mode:", inspect(config));
   const {
     baseViteConfig,
     basePath,
@@ -71,6 +72,6 @@ export async function buildScript(
     },
     libModeViteConfig ?? {}
   );
-  log("Final config:", JSON.stringify(buildConfig, null, 2));
+  log("Final config:", inspect(buildConfig));
   await Vite.build(buildConfig);
 }
