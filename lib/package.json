@@ -52,6 +52,6 @@
     "vite": "^2.7.9"
   },
   "peerDependencies": {
-    "vite": "^2.6"
+    "vite": ">=2.6"
   }
 }
