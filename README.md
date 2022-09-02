@@ -19,6 +19,7 @@ export default defineConfig({
 ## Features
 
 - :wrench: Automatically build inputs from in your `manifest.json`
+- :tada: Automatically open a browser and install the extension during development
 - :zap: Super fast dev mode that automatically reloads your extension
 - :globe_with_meridians: Supports all browsers
 - :fire: Frontend frameworks for the popup, options page, _**and content scripts**_!
@@ -41,15 +42,17 @@ See the [contributing docs](CONTRIBUTING.md) to setup the project for developmen
 npm i -D vite-plugin-web-extension
 ```
 
-## Roadmap
+<!--
+## Quick Start
 
-- [x] `v0.1.0` ~~_Build for production_~~
-- [x] `v0.2.0` ~~_CSS inputs & generated files_~~
-- [x] `v0.3.0` ~~_Dev mode with automatic reload_~~
-- [x] `v0.5.0` ~~_Manifest V3 support_~~
-- [x] `v0.6.0` ~~_Frontend framework support in content scripts_~~
-- [x] `v0.7.0` ~~_Browser specific flags in the manifest_~~
-- [x] `v1.2.0` ~~_HMR for html pages_~~
+```bash
+npx create-vite-plugin-web-extension
+yarn create vite-plugin-web-extension
+pnpm create vite-plugin-web-extension
+```
+
+## Manual Setup
+-->
 
 ## Setup and Usage
 

@@ -9,16 +9,14 @@
 
 This repo is a monorepo. PNPM makes has all the tools built-in to make working with the repo easy.
 
-- `demos/*` - This directory contains examples of projects using the plugin
-- `lib` - This is the actual library that is uploaded to NPM
-- `tests` - This is where the E2E tests are
-
-All of the changes to the plugin itself will be in the `lib` directory.
+- `packages/vite-plugin-web-extension` - This is the Vite plugin uploaded to NPM
+- `packages/demo-*` - Contains examples of projects using the plugin
+- `packages/e2e` - This is where the E2E tests are
 
 To get started, install dependencies:
 
 ```bash
-pnpm install
+pnpm i
 ```
 
 ## Testing Changes
