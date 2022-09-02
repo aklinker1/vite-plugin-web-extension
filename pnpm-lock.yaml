@@ -56,6 +56,7 @@ importers:
   packages/e2e:
     specifiers:
       '@types/lodash.debounce': ^4.0.6
+      '@types/node': ^16.11.6
       cross-env: ^7.0.3
       typescript: ^4.4.4
       vite: ^2.7.9
@@ -63,6 +64,7 @@ importers:
       vitest: ^0.22.1
     devDependencies:
       '@types/lodash.debounce': 4.0.6
+      '@types/node': 16.11.6
       cross-env: 7.0.3
       typescript: 4.4.4
       vite: 2.7.9
@@ -79,6 +81,7 @@ importers:
       tsup: ^5.5.0
       typescript: ^4.4.4
       vite: ^2.7.9
+      vitest: ^0.22.1
       web-ext: ^6.5.0
     dependencies:
       ajv: 8.8.1
@@ -91,6 +94,7 @@ importers:
       tsup: 5.5.0_typescript@4.4.4
       typescript: 4.4.4
       vite: 2.7.9
+      vitest: 0.22.1
 
 packages:
 
