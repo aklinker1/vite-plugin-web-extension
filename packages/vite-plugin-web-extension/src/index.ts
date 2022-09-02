@@ -18,11 +18,11 @@ import {
   existsSync,
 } from "fs";
 import webExt from "web-ext";
-import { buildScript, BuildScriptConfig } from "./src/build-script";
-import { resolveBrowserTagsInObject } from "./src/resolve-browser-flags";
-import { validateManifest } from "./src/validation";
-import { HookWaiter } from "./src/hook-waiter";
-import { copyDirSync } from "./src/copy-dir";
+import { buildScript, BuildScriptConfig } from "./old-utils/build-script";
+import { resolveBrowserTagsInObject } from "./utils/resolve-browser-flags";
+import { validateManifest } from "./old-utils/validation";
+import { HookWaiter } from "./old-utils/hook-waiter";
+import { copyDirSync } from "./old-utils/copy-dir";
 import md5 from "md5";
 import { inspect } from "util";
 

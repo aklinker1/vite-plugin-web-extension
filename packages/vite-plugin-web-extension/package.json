@@ -35,7 +35,7 @@
   ],
   "scripts": {
     "compile": "tsc",
-    "build": "tsup --format esm,cjs index.ts && tsc",
+    "build": "tsup --format esm,cjs src/index.ts && tsc",
     "test": "vitest",
     "prepare": "pnpm build"
   },
