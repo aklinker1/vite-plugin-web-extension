@@ -4,6 +4,6 @@
     "noEmit": false,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "types": ["node", "jest"]
+    "types": ["node"]
   }
 }
