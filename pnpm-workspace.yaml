@@ -1,4 +1,2 @@
 packages:
-  - lib
-  - tests
-  - demos/*
+  - packages/*

@@ -30,5 +30,5 @@ jobs:
       # Compile and build are ran on install
 
       - name: E2E Tests
-        working-directory: tests
+        working-directory: packages/e2e
         run: pnpm test

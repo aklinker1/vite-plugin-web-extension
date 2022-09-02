@@ -28,7 +28,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: E2E Tests
-        working-directory: tests
+        working-directory: packages/e2e
         run: pnpm test
 
       - name: Create Changelog
@@ -37,11 +37,11 @@ jobs:
         with:
           github-token: ${{ secrets.github_token }}
           output-file: "false"
-          version-file: ./lib/package.json
+          version-file: ./packages/vite-plugin-web-extension/package.json
 
       - name: Publish to NPM
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        working-directory: lib
+        working-directory: packages/vite-plugin-web-extension
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
           yarn publish --non-interactive
