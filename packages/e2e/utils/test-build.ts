@@ -1,4 +1,5 @@
 import { InlineConfig, build as viteBuild } from "vite";
+import { vi, SpyInstance } from "vitest";
 
 export async function testBuild(config: InlineConfig) {
   const logs: string[] = [];
@@ -7,14 +8,14 @@ export async function testBuild(config: InlineConfig) {
       logs.push(args.join(" "));
     };
     const writeNoop = () => true;
-    const spies: jest.SpyInstance[] = [
-      jest.spyOn(console, "log").mockImplementation(logCollector),
-      jest.spyOn(console, "info").mockImplementation(logCollector),
-      jest.spyOn(console, "debug").mockImplementation(logCollector),
-      jest.spyOn(console, "warn").mockImplementation(logCollector),
-      jest.spyOn(console, "error").mockImplementation(logCollector),
-      jest.spyOn(process.stdout, "write").mockImplementation(writeNoop),
-      jest.spyOn(process.stderr, "write").mockImplementation(writeNoop),
+    const spies: SpyInstance[] = [
+      vi.spyOn(console, "log").mockImplementation(logCollector),
+      vi.spyOn(console, "info").mockImplementation(logCollector),
+      vi.spyOn(console, "debug").mockImplementation(logCollector),
+      vi.spyOn(console, "warn").mockImplementation(logCollector),
+      vi.spyOn(console, "error").mockImplementation(logCollector),
+      vi.spyOn(process.stdout, "write").mockImplementation(writeNoop),
+      vi.spyOn(process.stderr, "write").mockImplementation(writeNoop),
     ];
 
     await viteBuild(config);

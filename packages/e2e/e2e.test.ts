@@ -4,6 +4,7 @@ import WebExtension from "vite-plugin-web-extension";
 import { defineConfig, InlineConfig } from "vite";
 import path from "path";
 import { expectManifest } from "./utils/expect-manifest";
+import { describe, it, expect, beforeEach } from "vitest";
 
 const DIST_DIRECTORY = path.resolve(process.cwd(), "dist");
 

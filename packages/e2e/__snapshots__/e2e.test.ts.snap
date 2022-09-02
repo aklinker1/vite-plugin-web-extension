@@ -1,4 +1,308 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1
+
+exports[`Vite Plugin Web Extension > should build a extension with both html pages and scripts 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • extension/script1.js
+    • extension/script2.ts
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/assets/128.png   3.52 KiB
+../dist/assets/16.png    0.52 KiB
+../dist/assets/48.png    1.45 KiB
+../dist/manifest.json    0.37 KiB
+../dist/page1.html       0.26 KiB
+[vite-plugin-web-extension] Building extension/script1.js in Lib Mode
+vite v2.7.9 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"script1\\"
+rendering chunks...
+../dist/script1.js   0.09 KiB / gzip: 0.09 KiB
+[vite-plugin-web-extension] Building extension/script2.ts in Lib Mode
+vite v2.7.9 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"script2\\"
+rendering chunks...
+../dist/script2.js   0.09 KiB / gzip: 0.09 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should build a simple popup extension 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • (none)
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/assets/128.png   3.52 KiB
+../dist/assets/16.png    0.52 KiB
+../dist/assets/48.png    1.45 KiB
+../dist/manifest.json    0.29 KiB
+../dist/page1.html       0.26 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should build additional inputs along side the rest of the manifest 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • extension/script1.js
+    • extension/script2.ts
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/assets/128.png   3.52 KiB
+../dist/assets/16.png    0.52 KiB
+../dist/assets/48.png    1.45 KiB
+../dist/manifest.json    0.35 KiB
+../dist/page1.html       0.26 KiB
+[vite-plugin-web-extension] Building extension/script1.js in Lib Mode
+vite v2.7.9 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"script1\\"
+rendering chunks...
+../dist/script1.js   0.09 KiB / gzip: 0.09 KiB
+[vite-plugin-web-extension] Building extension/script2.ts in Lib Mode
+vite v2.7.9 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"script2\\"
+rendering chunks...
+../dist/script2.js   0.09 KiB / gzip: 0.09 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should include assets from the publicDir 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • (none)
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"extension/page1\\"
+rendering chunks...
+dist/extension/assets/128.png   3.52 KiB
+dist/extension/assets/16.png    0.52 KiB
+dist/extension/assets/48.png    1.45 KiB
+dist/manifest.json              0.29 KiB
+dist/extension/page1.html       0.26 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should not fail when emptyOutDir=false and the outDirExists=false 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • (none)
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/assets/128.png   3.52 KiB
+../dist/assets/16.png    0.52 KiB
+../dist/assets/48.png    1.45 KiB
+../dist/manifest.json    0.29 KiB
+../dist/page1.html       0.26 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should not fail when emptyOutDir=false and the outDirExists=true 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • (none)
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/assets/128.png   3.52 KiB
+../dist/assets/16.png    0.52 KiB
+../dist/assets/48.png    1.45 KiB
+../dist/manifest.json    0.29 KiB
+../dist/page1.html       0.26 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should not fail when emptyOutDir=true and the outDirExists=false 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • (none)
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/assets/128.png   3.52 KiB
+../dist/assets/16.png    0.52 KiB
+../dist/assets/48.png    1.45 KiB
+../dist/manifest.json    0.29 KiB
+../dist/page1.html       0.26 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should not fail when emptyOutDir=true and the outDirExists=true 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • (none)
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/assets/128.png   3.52 KiB
+../dist/assets/16.png    0.52 KiB
+../dist/assets/48.png    1.45 KiB
+../dist/manifest.json    0.29 KiB
+../dist/page1.html       0.26 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should respect the browser flags, removing fields other than chrome (defaults to chrome) 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • extension/script1.js
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/assets/128.png   3.52 KiB
+../dist/assets/16.png    0.52 KiB
+../dist/assets/48.png    1.45 KiB
+../dist/manifest.json    0.42 KiB
+../dist/page1.html       0.26 KiB
+[vite-plugin-web-extension] Building extension/script1.js in Lib Mode
+vite v2.7.9 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"script1\\"
+rendering chunks...
+../dist/script1.js   0.09 KiB / gzip: 0.09 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should respect the browser flags, removing fields other than firefox (defaults to chrome) 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • extension/script1.js
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/assets/128.png   3.52 KiB
+../dist/assets/16.png    0.52 KiB
+../dist/assets/48.png    1.45 KiB
+../dist/manifest.json    0.43 KiB
+../dist/page1.html       0.26 KiB
+[vite-plugin-web-extension] Building extension/script1.js in Lib Mode
+vite v2.7.9 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"script1\\"
+rendering chunks...
+../dist/script1.js   0.09 KiB / gzip: 0.09 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should respect the browser flags, removing fields other than undefined (defaults to chrome) 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • extension/script1.js
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/assets/128.png   3.52 KiB
+../dist/assets/16.png    0.52 KiB
+../dist/assets/48.png    1.45 KiB
+../dist/manifest.json    0.42 KiB
+../dist/page1.html       0.26 KiB
+[vite-plugin-web-extension] Building extension/script1.js in Lib Mode
+vite v2.7.9 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"script1\\"
+rendering chunks...
+../dist/script1.js   0.09 KiB / gzip: 0.09 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should support supplementing the library mode build config via libModeViteConfig 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • extension/dynamic-import.ts
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"extension/page1\\"
+rendering chunks...
+dist/extension/assets/128.png   3.52 KiB
+dist/extension/assets/16.png    0.52 KiB
+dist/extension/assets/48.png    1.45 KiB
+dist/manifest.json              0.37 KiB
+dist/extension/page1.html       0.26 KiB
+[vite-plugin-web-extension] Building extension/dynamic-import.ts in Lib Mode
+vite v2.7.9 building for production...
+transforming...
+✓ 2 modules transformed.
+rendering chunks...
+dist/extension/dynamic-import.js   0.28 KiB / gzip: 0.21 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should work when the vite root is not specified 1`] = `
+"vite v2.7.9 building for production...
+[vite-plugin-web-extension] 
+  Building HTML Pages in Multi-Page Mode:
+    • extension/page1.html
+  Building in Lib Mode:
+    • (none)
+[vite-plugin-web-extension] Building HTML Pages in Multi-Page Mode
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"extension/page1\\"
+rendering chunks...
+dist/extension/assets/128.png   3.52 KiB
+dist/extension/assets/16.png    0.52 KiB
+dist/extension/assets/48.png    1.45 KiB
+dist/manifest.json              0.29 KiB
+dist/extension/page1.html       0.26 KiB"
+`;
 
 exports[`Vite Plugin Web Extension should build a extension with both html pages and scripts 1`] = `
 "vite v2.7.9 building for production...
