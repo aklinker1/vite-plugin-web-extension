@@ -29,6 +29,10 @@ jobs:
 
       # Compile and build are ran on install
 
+      - name: Unit Tests
+        working-directory: packages/vite-plugin-web-extension
+        run: pnpm test
+
       - name: E2E Tests
         working-directory: packages/e2e
         run: pnpm test

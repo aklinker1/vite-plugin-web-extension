@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.6",
+    "@types/node": "^16.11.6",
     "cross-env": "^7.0.3",
     "typescript": "^4.4.4",
     "vite": "^2.7.9",
