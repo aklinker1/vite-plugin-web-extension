@@ -87,6 +87,7 @@ importers:
     specifiers:
       '@types/md5': ^2.3.1
       '@types/node': ^16.11.6
+      '@types/webextension-polyfill': ^0.9.0
       ajv: ^8.8.1
       md5: ^2.3.0
       rollup: ^2.62.0
@@ -95,13 +96,16 @@ importers:
       vite: ^2.7.9
       vitest: ^0.22.1
       web-ext: ^6.5.0
+      webextension-polyfill: ^0.10.0
     dependencies:
       ajv: 8.8.1
       md5: 2.3.0
       web-ext: 6.5.0
+      webextension-polyfill: 0.10.0
     devDependencies:
       '@types/md5': 2.3.1
       '@types/node': 16.11.6
+      '@types/webextension-polyfill': 0.9.0
       rollup: 2.62.0
       tsup: 5.5.0_typescript@4.4.4
       typescript: 4.4.4
@@ -424,6 +428,10 @@ packages:
 
   /@types/web-bluetooth/0.0.15:
     resolution: {integrity: sha512-w7hEHXnPMEZ+4nGKl/KDRVpxkwYxYExuHOYXyzIzCDzEZ9ZCGMAewulr9IqJu2LR4N37fcnb1XVeuZ09qgOxhA==}
+    dev: true
+
+  /@types/webextension-polyfill/0.9.0:
+    resolution: {integrity: sha512-HG1y1o2hK8ag6Y7dfkrAbfKmMIP+B0E6SwAzUfmQ1dDxEIdLTtMyrStY26suHBPrAL7Xw/chlDW02ugc3uXWtQ==}
     dev: true
 
   /@types/yauzl/2.9.2:
@@ -5335,6 +5343,10 @@ packages:
       - safe-compare
       - supports-color
       - utf-8-validate
+    dev: false
+
+  /webextension-polyfill/0.10.0:
+    resolution: {integrity: sha512-c5s35LgVa5tFaHhrZDnr3FpQpjj1BB+RXhLTYUxGqBVN460HkbM8TBtEqdXWbpTKfzwCcjAZVF7zXCYSKtcp9g==}
     dev: false
 
   /when/3.7.7:
