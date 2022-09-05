@@ -16,7 +16,7 @@ export default defineUserConfig({
     navbar: [
       {
         text: "Guide",
-        link: "/guide",
+        link: "/",
       },
       "/reference/plugin-options.md",
     ],
@@ -24,11 +24,7 @@ export default defineUserConfig({
       "/": [
         {
           text: "Guide",
-          children: [
-            "/guide",
-            "/guide/installation.md",
-            "/guide/configuration.md",
-          ],
+          children: ["/", "/guide/installation.md", "/guide/configuration.md"],
         },
       ],
       "/reference/": [
