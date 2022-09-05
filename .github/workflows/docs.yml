@@ -33,5 +33,6 @@ jobs:
         with:
           target_branch: gh-pages
           build_dir: packages/docs/.vuepress/dist
+          fqdn: vite-plugin-web-extension.aklinker1.io
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
