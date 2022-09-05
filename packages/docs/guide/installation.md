@@ -70,10 +70,8 @@ Lets say your project looks like this:
       <i>icon-16.png</i>
       <i>icon-48.png</i>
       <i>icon-128.png</i>
-   <strong>background/</strong>
-      <i>index.ts</i>
-   <strong>popup/</strong>
-      <i>index.html</i>
+   <i>background.ts</i>
+   <i>popup.html</i>
    <i>manifest.json</i>
 <i>package.json</i>
 <i>vite.config.ts</i>
@@ -96,7 +94,7 @@ export default defineConfig({
   // Add the webExtension plugin
   plugins: [
     webExtension({
-      manifest: path.resolve(__dirname, "src/manifest.json"),
+      manifest: "manifest.json",
       assets: "assets",
     }),
   ],
@@ -124,11 +122,11 @@ For the input `manifest` option, all paths should use their real file extension 
   "browser_action": {
     "default_icon": "assets/icon-128.png",
     // Relative to "src"
-    "default_popup": "popup/index.html"
+    "default_popup": "popup.html"
   },
   "background": {
     // Relative to "src", using real .ts file extension
-    "scripts": "background/index.ts"
+    "scripts": "background.ts"
   }
 }
 ```

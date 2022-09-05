@@ -7,26 +7,30 @@ on:
 
 jobs:
   docs:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
+
       - name: Use Node.js 16
         uses: actions/setup-node@v2
         with:
           node-version: 16
           cache: 'pnpm'
+
       - name: Install dependencies
         run: pnpm install
+
 
       - name: Build VuePress site
         run: pnpm build
         working-directory: packages/docs
+
 
       - name: Deploy to GitHub Pages
         uses: crazy-max/ghaction-github-pages@v2

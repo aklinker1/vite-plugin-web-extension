@@ -12,24 +12,13 @@ export default defineUserConfig({
     editLink: true,
     lastUpdated: true,
     repo: "https://github.com/aklinker1/vite-plugin-web-extension",
+    home: "/guide",
     navbar: [
       {
         text: "Guide",
         link: "/guide",
       },
-      {
-        text: "Reference",
-        children: [
-          {
-            text: "Miasma",
-            children: [
-              "/reference/server-config.md",
-              "/reference/cli.md",
-              "/reference/graphql.md",
-            ],
-          },
-        ],
-      },
+      "/reference/plugin-options.md",
     ],
     sidebar: {
       "/": [
