@@ -12,7 +12,6 @@ export default defineUserConfig({
     editLink: true,
     lastUpdated: true,
     repo: "https://github.com/aklinker1/vite-plugin-web-extension",
-    home: "/guide",
     navbar: [
       {
         text: "Guide",
