@@ -27,11 +27,7 @@ export default defineUserConfig({
           children: ["/", "/guide/installation.md", "/guide/configuration.md"],
         },
       ],
-      "/reference/": [
-        "/reference/server-config.md",
-        "/reference/cli.md",
-        "/reference/graphql.md",
-      ],
+      "/reference/": ["/reference/plugin-options.md"],
     },
   }),
 });
