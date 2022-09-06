@@ -1,36 +1,67 @@
-import { Plugin, UserConfig } from "vite";
+import { InlineConfig, mergeConfig, Plugin, UserConfig } from "vite";
 import { RollupCache } from "rollup";
 import { PluginOptions } from "./options";
 import { getBuildConfigs } from "./utils/get-build-configs";
 import { createLogger } from "./utils/logger";
 import { inspect } from "node:util";
+import { multibuildSeries } from "./utils/multibuild-series";
+import { PLUGIN_NAME } from "./utils/constants";
 
 export default function browserExtension(options: PluginOptions): Plugin {
-  const name = "vite-plugin-web-extension";
   const logger = createLogger(options.verbose);
   let cache: RollupCache | undefined;
   let buildConfigs: UserConfig[] = [];
+  let isDevMode = false;
+  let isWatchMode = false;
+  let isBuildMode = true;
 
   return {
-    name,
+    name: PLUGIN_NAME,
 
     /**
      * Get a list of all the builds (and their configs) that need to occur, then override the first
      */
     async config(config, env) {
-      buildConfigs = await getBuildConfigs({
+      isDevMode = env.command === "serve";
+      let firstConfig: UserConfig;
+      const allBuildConfigs = await getBuildConfigs({
         baseConfig: config,
         env,
         pluginOptions: options,
         logger,
       });
-      logger.verbose(`Building ${buildConfigs.length} configs`);
-      logger.verbose(inspect(buildConfigs, { depth: 5 }));
-      if (buildConfigs.length === 0)
-        throw Error(
-          "No inputs found in manifest.json. Set `options.verbose = true` for more details."
-        );
-      return buildConfigs[0];
+      [firstConfig, ...buildConfigs] = allBuildConfigs;
+      logger.verbose(`Building ${allBuildConfigs.length} configs`);
+      logger.verbose(inspect(allBuildConfigs, { depth: 5 }));
+
+      return firstConfig;
+    },
+    buildEnd() {
+      // Build, watch
+    },
+    buildStart() {
+      // Build, dev, watch
+      if (options.browser != null)
+        logger.log(`Building for browser: ${options.browser}`);
+    },
+    async closeBundle() {
+      // Build, watch
+      await new Promise((res) => setTimeout(res));
+      if (isBuildMode) await multibuildSeries(buildConfigs);
+    },
+    configResolved(config) {
+      isWatchMode = config.inlineConfig.build?.watch === true;
+      isBuildMode = !isDevMode && !isWatchMode;
+
+      if (isDevMode) logger.verbose("Dev mode");
+      if (isWatchMode) logger.verbose("Watch mode");
+      if (isBuildMode) logger.verbose("Build mode");
+    },
+    generateBundle(options, bundle, isWrite) {
+      // Build, watch
+    },
+    handleHotUpdate(ctx) {
+      // dev
     },
   };
 }

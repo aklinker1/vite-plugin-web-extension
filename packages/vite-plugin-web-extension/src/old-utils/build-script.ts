@@ -1,6 +1,7 @@
 import path from "path";
 import { inspect } from "util";
 import * as Vite from "vite";
+import { PLUGIN_NAME } from "../utils/constants";
 import { HookWaiter } from "./hook-waiter";
 
 export interface BuildScriptConfig {
@@ -34,9 +35,7 @@ export async function buildScript(
   );
   const plugins =
     baseViteConfig.plugins?.filter(
-      (plugin) =>
-        plugin &&
-        (!("name" in plugin) || plugin.name !== "vite-plugin-web-extension")
+      (plugin) => plugin && (!("name" in plugin) || plugin.name !== PLUGIN_NAME)
     ) ?? [];
   plugins.push(hookWaiter.plugin());
 

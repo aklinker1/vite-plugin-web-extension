@@ -1,11 +1,13 @@
-import { ConfigEnv, mergeConfig, UserConfig } from "vite";
+import { ConfigEnv, mergeConfig, Plugin, UserConfig } from "vite";
 import { PluginOptions } from "../options";
 import { Logger } from "./logger";
-import { manifestWriter } from "../plugins/manifest-writer";
+import { manifestWriterPlugin } from "../plugins/manifest-writer-plugin";
 import { compact } from "./arrays";
 import { entryFilenameToOutput } from "./filenames";
 import { Manifest } from "webextension-polyfill";
 import { InputOption } from "rollup";
+import { PLUGIN_NAME } from "./constants";
+import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 
 const GENERATED_PREFIX = "generated:";
 
@@ -23,11 +25,20 @@ export async function getBuildConfigs(options: {
   logger: Logger;
 }): Promise<UserConfig[]> {
   const { pluginOptions, baseConfig } = options;
-  const { plugin: manifestWriterPlugin, loadManifest } =
-    manifestWriter(options);
+  const { plugin: manifestWriter, loadManifest } =
+    manifestWriterPlugin(options);
   const manifest = await loadManifest();
 
-  const configs: UserConfig[] = [];
+  const configs: UserConfig[] = [
+    {
+      build: {
+        rollupOptions: {
+          input: "manifest.json",
+        },
+      },
+      plugins: [manifestWriter],
+    },
+  ];
   const addConfig = (newConfig: UserConfig) =>
     configs.push(mergeConfig(baseConfig, newConfig, true));
 
@@ -106,7 +117,43 @@ export async function getBuildConfigs(options: {
   // Each additional script gets it's own config
   additionalScriptInputs?.forEach(addLibModeConfig);
 
-  return configs;
+  if (configs.length === 0)
+    throw Error(
+      "No inputs found in manifest.json. Set `options.verbose = true` for more details."
+    );
+
+  return cleanupBasedOnOrder(configs, {
+    manifestWriter,
+    logger: options.logger,
+  });
+}
+
+function cleanupBasedOnOrder(
+  buildConfigs: UserConfig[],
+  options: { manifestWriter: Plugin; logger: Logger }
+): UserConfig[] {
+  for (let i = 0; i < buildConfigs.length; i++) {
+    buildConfigs[i] = mergeConfig(buildConfigs[i], {
+      plugins: [labeledStepPlugin(options.logger, buildConfigs.length, i)],
+    });
+  }
+
+  buildConfigs[0].plugins ??= [];
+  buildConfigs[0].plugins.push(options.manifestWriter);
+
+  const subsequentConfig: UserConfig = {
+    clearScreen: false,
+    build: {
+      emptyOutDir: false,
+    },
+  };
+  for (let i = 1; i < buildConfigs.length; i++) {
+    buildConfigs[i] = removePlugin(
+      mergeConfig(buildConfigs[i], subsequentConfig),
+      PLUGIN_NAME
+    );
+  }
+  return buildConfigs;
 }
 
 function createEntryList(
@@ -134,4 +181,15 @@ function separateAdditionalInputs(additionalInputs?: string[]) {
     else additionalScriptInputs.push(additionalInput);
   });
   return { additionalScriptInputs, additionalHtmlInputs };
+}
+
+function removePlugin(config: UserConfig, pluginName: string): UserConfig {
+  return {
+    ...config,
+    plugins:
+      config.plugins?.filter(
+        (plugin) =>
+          plugin && (!("name" in plugin) || plugin.name !== pluginName)
+      ) ?? [],
+  };
 }

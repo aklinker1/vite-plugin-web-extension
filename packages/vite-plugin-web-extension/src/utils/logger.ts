@@ -1,3 +1,5 @@
+import { PLUGIN_NAME, VERBOSE_LOGGER } from "./constants";
+
 export interface Logger {
   verbose(message: string): void;
   log(message: string): void;
@@ -19,7 +21,9 @@ export function createLogger(verbose?: boolean): Logger {
       console.debug(
         message
           .split("\n")
-          .map((line) => `  ${BOLD}${DIM}vite:web-extension${RESET} ${line}`)
+          .map(
+            (line) => `  ${BOLD}${DIM}vite:${VERBOSE_LOGGER}${RESET} ${line}`
+          )
           .join("\n")
       );
     },
@@ -27,10 +31,7 @@ export function createLogger(verbose?: boolean): Logger {
       console.log(
         message
           .split("\n")
-          .map(
-            (line) =>
-              `${BOLD}${GREEN}[vite-plugin-web-extension]${RESET} ${line}`
-          )
+          .map((line) => `${BOLD}${GREEN}[${PLUGIN_NAME}]${RESET} ${line}`)
           .join("\n")
       );
     },
@@ -39,8 +40,7 @@ export function createLogger(verbose?: boolean): Logger {
         message
           .split("\n")
           .map(
-            (line) =>
-              `${BOLD}${YELLOW}[vite-plugin-web-extension] WARN: ${line}${RESET}`
+            (line) => `${BOLD}${YELLOW}[${PLUGIN_NAME}] WARN: ${line}${RESET}`
           )
           .join("\n")
       );
@@ -49,10 +49,7 @@ export function createLogger(verbose?: boolean): Logger {
       console.error(
         message
           .split("\n")
-          .map(
-            (line) =>
-              `${BOLD}${RED}[vite-plugin-web-extension] ERROR: ${line}${RESET}`
-          )
+          .map((line) => `${BOLD}${RED}[${PLUGIN_NAME}] ERROR: ${line}${RESET}`)
           .join("\n")
       );
       console.error(err);
