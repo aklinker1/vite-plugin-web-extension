@@ -137,7 +137,7 @@ Either the file or object returned by the `manifest` option can include flags th
 
 Here's an example: Firefox doesn't support manifest V3 yet, but chrome does!
 
-```jsonc
+```json
 {
   "{{chrome}}.manifest_version": 3,
   "{{firefox}}.manifest_version": 2,
