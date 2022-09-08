@@ -111,16 +111,16 @@ The `manifest` option also accepts a function. This function should return a jav
 Often times this is used to pull in details from your `package.json` like the version so they only have to be maintained in a single place
 
 ```ts
-import webExtension from "vite-plugin-web-extension";
+import webExtension, { readJsonFile } from "vite-plugin-web-extension";
 
 export default defineConfig({
   plugins: [
     webExtension({
       manifest: () => {
         // Generate your manifest
-        const packageJson = require("./package.json");
+        const packageJson = readJsonFile("package.json");
         return {
-          ...require("./manifest.json"),
+          ...readJsonFile("manifest.json"),
           name: packageJson.name,
           version: packageJson.version,
         };
