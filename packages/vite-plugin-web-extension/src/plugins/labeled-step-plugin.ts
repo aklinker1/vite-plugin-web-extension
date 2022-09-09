@@ -16,10 +16,14 @@ export function labeledStepPlugin(
     buildStart() {
       process.stdout.write("\n");
       const progressLabel = `(${index + 1}/${total})`;
-      if (finalConfig.build?.lib == null) {
-        logger.log("Building HTML pages in multi-page mode " + progressLabel);
+      if (finalConfig.build?.lib) {
+        logger.log(
+          `${progressLabel} Building ${finalConfig.build.lib.entry} in lib mode`
+        );
+      } else if (finalConfig.build?.rollupOptions?.input) {
+        logger.log(progressLabel + " Building HTML pages in multi-page mode");
       } else {
-        logger.log("Building in lib mode " + progressLabel);
+        logger.warn(progressLabel + " Building unknown config");
       }
     },
   };

@@ -21,7 +21,7 @@ importers:
       lodash.debounce: ^4.0.8
       sass: ^1.49.9
       typescript: ^4.4.4
-      vite: ^2.7.9
+      vite: ^3.1.0
       vite-plugin-web-extension: workspace:*
     dependencies:
       lodash.debounce: 4.0.8
@@ -29,7 +29,7 @@ importers:
       '@types/lodash.debounce': 4.0.6
       sass: 1.49.9
       typescript: 4.4.4
-      vite: 2.7.9_sass@1.49.9
+      vite: 3.1.0_sass@1.49.9
       vite-plugin-web-extension: link:../vite-plugin-web-extension
 
   packages/demo-vue:
@@ -93,7 +93,7 @@ importers:
       rollup: ^2.62.0
       tsup: ^5.5.0
       typescript: ^4.4.4
-      vite: ^2.7.9
+      vite: ^3.1.0
       vitest: ^0.22.1
       web-ext: ^6.5.0
       webextension-polyfill: ^0.10.0
@@ -109,7 +109,7 @@ importers:
       rollup: 2.62.0
       tsup: 5.5.0_typescript@4.4.4
       typescript: 4.4.4
-      vite: 2.7.9
+      vite: 3.1.0
       vitest: 0.22.1
 
 packages:
@@ -4469,6 +4469,14 @@ packages:
       fsevents: 2.3.2
     dev: true
 
+  /rollup/2.78.1:
+    resolution: {integrity: sha512-VeeCgtGi4P+o9hIg+xz4qQpRl6R401LWEXBmxYKOV4zlF82lyhgh2hTZnheFUbANE8l2A41F458iwj2vEYaXJg==}
+    engines: {node: '>=10.0.0'}
+    hasBin: true
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
   /rollup/2.79.0:
     resolution: {integrity: sha512-x4KsrCgwQ7ZJPcFA/SUu6QVcYlO7uRLfLAy0DSA4NS2eG8japdbpM50ToH7z4iObodRYOJ0soneF0iaQRJ6zhA==}
     engines: {node: '>=10.0.0'}
@@ -5111,31 +5119,6 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
 
-  /vite/2.7.9_sass@1.49.9:
-    resolution: {integrity: sha512-CyopIJIRrc26Wnbkch5BCHFhQodzeV4jjSegLAEw1RImvXSuoOo2SfpEW9zRVi188WmjJwCqCaoG25C0r4nekw==}
-    engines: {node: '>=12.2.0'}
-    hasBin: true
-    peerDependencies:
-      less: '*'
-      sass: '*'
-      stylus: '*'
-    peerDependenciesMeta:
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-    dependencies:
-      esbuild: 0.13.12
-      postcss: 8.4.5
-      resolve: 1.20.0
-      rollup: 2.62.0
-      sass: 1.49.9
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: true
-
   /vite/3.0.9:
     resolution: {integrity: sha512-waYABTM+G6DBTCpYAxvevpG50UOlZuynR0ckTK5PawNVt7ebX6X7wNXHaGIO6wYYFXSM7/WcuFuO2QzhBB6aMw==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -5159,6 +5142,61 @@ packages:
       postcss: 8.4.16
       resolve: 1.22.1
       rollup: 2.77.3
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /vite/3.1.0:
+    resolution: {integrity: sha512-YBg3dUicDpDWFCGttmvMbVyS9ydjntwEjwXRj2KBFwSB8SxmGcudo1yb8FW5+M/G86aS8x828ujnzUVdsLjs9g==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.15.6
+      postcss: 8.4.16
+      resolve: 1.22.1
+      rollup: 2.78.1
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /vite/3.1.0_sass@1.49.9:
+    resolution: {integrity: sha512-YBg3dUicDpDWFCGttmvMbVyS9ydjntwEjwXRj2KBFwSB8SxmGcudo1yb8FW5+M/G86aS8x828ujnzUVdsLjs9g==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.15.6
+      postcss: 8.4.16
+      resolve: 1.22.1
+      rollup: 2.78.1
+      sass: 1.49.9
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -5193,7 +5231,7 @@ packages:
       local-pkg: 0.4.2
       tinypool: 0.2.4
       tinyspy: 1.0.2
-      vite: 3.0.9
+      vite: 3.1.0
     transitivePeerDependencies:
       - less
       - sass

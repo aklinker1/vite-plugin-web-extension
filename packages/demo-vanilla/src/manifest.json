@@ -34,14 +34,11 @@
         "content-scripts/script3/some-script.ts",
         "content-scripts/script2/index.ts"
       ],
-      "css": ["generated:content-scripts/script3/style.css", "test.scss"]
+      "css": ["test.scss"]
     },
     {
       "matches": ["*://*/*"],
-      "js": [
-        "generated:assets/generated.js",
-        "content-scripts/script2/index.ts"
-      ],
+      "js": ["content-scripts/script2/index.ts"],
       "css": ["content-scripts/script2/style.css"]
     },
     {

@@ -10,7 +10,7 @@ export default defineConfig({
   root: "src",
   build: {
     outDir: root("dist"),
-    emptyOutDir: true,
+    emptyOutDir: false,
   },
   plugins: [
     browserExtension({
