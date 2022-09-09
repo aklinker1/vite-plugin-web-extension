@@ -11,6 +11,8 @@ import { resolveBrowserTagsInObject } from "./utils/resolve-browser-flags";
 import { inspect } from "node:util";
 import { mergeConfigs } from "./utils/merge-configs";
 import { getOutDir, getRootDir } from "./utils/paths";
+import { OutputAsset, OutputChunk } from "rollup";
+import type { Manifest, Runtime } from "webextension-polyfill";
 
 /**
  * This plugin composes multiple Vite builds together into a single Vite build by calling the
@@ -48,7 +50,7 @@ export default function browserExtension(options: PluginOptions): Plugin {
     }
   }
 
-  //#region Parsing Manifest
+  //#region Manifest
   /**
    * Loads the manifest.json with it's browser template tags resolved, and the real source file
    * extensions
@@ -76,6 +78,79 @@ export default function browserExtension(options: PluginOptions): Plugin {
       "Manifest with entrypoints: " + inspect(entrypointsManifest)
     );
     return entrypointsManifest;
+  }
+
+  function renderManifest(
+    manifest: any,
+    bundles: Array<OutputChunk | OutputAsset>
+  ): any {
+    const findReplacement = (entry: string) =>
+      bundles.find((output) => {
+        if (output.type === "chunk")
+          return output.facadeModuleId?.endsWith(entry);
+        return output.name === entry || output.fileName === entry;
+      });
+    const replaceFieldWithOutput = (
+      parentObject: any | undefined,
+      key: any,
+      onGeneratedFile: (outputPath: string) => void = () => {}
+    ) => {
+      const sourcePath = parentObject?.[key];
+      if (!sourcePath) return;
+      const replacement = findReplacement(sourcePath);
+      if (!replacement?.fileName) return;
+      parentObject[key] = replacement.fileName;
+      if (replacement.type === "chunk") {
+        // @ts-ignore
+        const metadata = replacement.viteMetadata as {
+          importedAssets: Set<string>;
+          importedCss: Set<string>;
+        };
+        if (
+          metadata == null ||
+          metadata.importedAssets == null ||
+          metadata.importedCss == null
+        ) {
+          throw Error(
+            "Vite internal API has changed and broke this plugin. Please submit an issue to github with your Vite version."
+          );
+        }
+        metadata.importedAssets.forEach(onGeneratedFile);
+        metadata.importedCss.forEach(onGeneratedFile);
+      }
+    };
+    const replaceArrayWithOutput = (
+      parentArray: string[] | undefined,
+      onGeneratedFile: (outputPath: string) => void = () => {}
+    ): void => {
+      if (!parentArray) return;
+      for (let i = 0; i < parentArray.length; i++) {
+        replaceFieldWithOutput(parentArray, i, onGeneratedFile);
+      }
+    };
+
+    replaceFieldWithOutput(manifest.action, "default_popup");
+    replaceFieldWithOutput(manifest, "devtools_page");
+    replaceFieldWithOutput(manifest, "options_page");
+    replaceFieldWithOutput(manifest.options_ui, "page");
+    replaceFieldWithOutput(manifest.browser_action, "default_popup");
+    replaceFieldWithOutput(manifest.page_action, "default_popup");
+    replaceFieldWithOutput(manifest.sidebar_action, "default_panel");
+    replaceArrayWithOutput(manifest.sandbox?.pages);
+    replaceFieldWithOutput(manifest.background, "service_worker");
+    replaceFieldWithOutput(manifest.background, "page");
+    replaceArrayWithOutput(manifest.background?.scripts);
+
+    manifest?.content_scripts?.forEach((cs: Manifest.ContentScript) => {
+      replaceArrayWithOutput(cs?.js, (generatedFile) => {
+        if (!generatedFile.endsWith(".css")) return;
+        cs.css ??= [];
+        cs.css.push(generatedFile);
+      });
+      replaceArrayWithOutput(cs?.css);
+    });
+
+    return manifest;
   }
   //#endregion
 
@@ -107,11 +182,9 @@ export default function browserExtension(options: PluginOptions): Plugin {
       const entrypointsManifest = await loadManifest();
       await ctx.rebuild(baseConfig, entrypointsManifest, mode);
       process.stdout.write("\n");
-      const bundle = ctx.getBundle();
 
       // Generate the manifest based on the output files
-      console.log(bundle);
-      const manifest = entrypointsManifest;
+      const manifest = renderManifest(entrypointsManifest, ctx.getBundles());
       this.emitFile({
         type: "asset",
         source: JSON.stringify(manifest),

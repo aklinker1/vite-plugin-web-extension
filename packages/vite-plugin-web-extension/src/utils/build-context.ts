@@ -1,4 +1,4 @@
-import { RollupOutput } from "rollup";
+import { OutputAsset, OutputChunk, RollupOutput } from "rollup";
 import { inspect } from "util";
 import * as Vite from "vite";
 import { Manifest } from "webextension-polyfill";
@@ -13,10 +13,6 @@ import { mergeConfigs } from "./merge-configs";
 import path from "node:path";
 import { getRootDir } from "./paths";
 
-export type BundleMap = {
-  [moduleId: string]: { filename: string; assets: string[] };
-};
-
 export interface BuildContext {
   /**
    * Based on the baseConfig and new manifest, rebuild all the entrypoints and update the bundle
@@ -27,7 +23,7 @@ export interface BuildContext {
     manifest: any,
     mode: BuildMode
   ): Promise<void>;
-  getBundle(): BundleMap;
+  getBundles(): Array<OutputChunk | OutputAsset>;
 }
 
 /**
@@ -41,7 +37,11 @@ export function createBuildContext({
   pluginOptions: PluginOptions;
   logger: Logger;
 }): BuildContext {
-  let bundleMap: BundleMap = {};
+  /**
+   * Tracks an each input path relative to the Vite root, to their output filename and a list of
+   * generated assets.
+   */
+  let bundles: Array<OutputChunk | OutputAsset> = [];
 
   //#region Build Config Generation
   async function generateBuildConfigs(
@@ -82,7 +82,7 @@ export function createBuildContext({
     const alreadyIncluded: Record<string, boolean> = {};
 
     const addConfig = (config: Vite.InlineConfig) => configs.push(config);
-    const addMultiPageConfig = (entries: string[]) => {
+    const addHtmlConfig = (entries: string[]) => {
       const newConfig: Vite.InlineConfig = {
         build: {
           rollupOptions: {
@@ -98,7 +98,7 @@ export function createBuildContext({
       };
       addConfig(newConfig); // TODO: add pluginOptions.htmlViteConfig
     };
-    const addLibModeConfig = (entry: string) => {
+    const addScriptConfig = (entry: string) => {
       if (alreadyIncluded[entry]) return;
       alreadyIncluded[entry] = true;
 
@@ -117,18 +117,13 @@ export function createBuildContext({
               [moduleId]: path.resolve(getRootDir(baseConfig), entry),
             },
             output: {
-              entryFileNames: `${outputDir}[name].[hash].js`,
-              chunkFileNames: `${outputDir}[name].[hash].js`,
+              // Configure the output filenames so they appear in the same folder
+              // - content-scripts/some-script/index.<hash>.js
+              // - content-scripts/some-script/index.<hash>.css
+              entryFileNames: `[name].[hash].js`,
               assetFileNames: `${outputDir}[name].[hash].[ext]`,
             },
           },
-          // Configure lib mode entrypoint
-          // lib: {
-          //   name: entry.replace(/-/g, "_").toLowerCase(),
-          //   entry: entry,
-          //   formats: ["umd"],
-          //   fileName: () => entryFilenameToOutput(entry),
-          // },
         },
       };
       addConfig(
@@ -150,11 +145,11 @@ export function createBuildContext({
       manifest.sidebar_action?.default_panel,
       additionalHtmlInputs,
     ]);
-    if (htmlEntries.length > 0) addMultiPageConfig(htmlEntries);
+    if (htmlEntries.length > 0) addHtmlConfig(htmlEntries);
 
     // Sandbox - multi-page-mode
     const sandboxEntries = createEntryList([manifest.sandbox?.pages]);
-    if (sandboxEntries.length > 0) addMultiPageConfig(sandboxEntries);
+    if (sandboxEntries.length > 0) addHtmlConfig(sandboxEntries);
 
     // Every Background Script gets it's own config
     const backgroundScripts = createEntryList([
@@ -162,16 +157,16 @@ export function createBuildContext({
       manifest.background?.page,
       manifest.background?.scripts,
     ]);
-    backgroundScripts?.forEach(addLibModeConfig);
+    backgroundScripts?.forEach(addScriptConfig);
 
     // Every Content Script gets it's own config
     manifest.content_scripts?.forEach((cs: Manifest.ContentScript) => {
       const csEntries = createEntryList([cs.js, cs.css]);
-      csEntries.forEach(addLibModeConfig);
+      csEntries.forEach(addScriptConfig);
     });
 
     // Each additional script gets it's own config
-    additionalScriptInputs?.forEach(addLibModeConfig);
+    additionalScriptInputs?.forEach(addScriptConfig);
 
     if (configs.length === 0)
       throw Error(
@@ -214,34 +209,21 @@ export function createBuildContext({
   //#endregion
 
   return {
-    async rebuild(baseConfig, manifest, mode) {
+    async rebuild(baseConfig, manifest) {
       const buildConfigs = await generateBuildConfigs(baseConfig, manifest);
       if (pluginOptions.verbose) {
         // Print configs deep enough to include lib and rollup inputs
         logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));
       }
 
-      bundleMap = {};
+      bundles = [];
       for (const config of buildConfigs) {
-        const output = (await Vite.build(config)) as
-          | RollupOutput
-          | RollupOutput[];
-        if (Array.isArray(output)) {
-          // lib mode
-          const [entry, ...assets] = output[0].output;
-          bundleMap[
-            entry.facadeModuleId?.replace(getRootDir(baseConfig) + "/", "")!
-          ] = {
-            filename: entry.fileName,
-            assets: assets.map((a) => a.fileName) ?? [],
-          };
-        } else {
-          // multi-page mode
-        }
+        const output = (await Vite.build(config)) as RollupOutput;
+        bundles.push(...output.output);
       }
     },
-    getBundle() {
-      return bundleMap;
+    getBundles() {
+      return bundles;
     },
   };
 }

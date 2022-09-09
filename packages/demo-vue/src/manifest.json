@@ -15,7 +15,7 @@
     {
       "matches": ["*://*/*"],
       "js": ["content-script/index.ts"],
-      "css": ["generated:content-script/style.css"]
+      "css": []
     }
   ],
   "permissions": ["tabs", "{{firefox}}.<all_urls>", "{{chrome}}.activeTab"]
