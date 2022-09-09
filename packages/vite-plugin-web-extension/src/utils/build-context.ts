@@ -1,4 +1,4 @@
-import { InputOption, RollupOutput } from "rollup";
+import { RollupOutput } from "rollup";
 import { inspect } from "util";
 import * as Vite from "vite";
 import { Manifest } from "webextension-polyfill";
@@ -7,11 +7,15 @@ import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { compact } from "./arrays";
 import { BuildMode } from "./build-mode";
 import { PLUGIN_NAME } from "./constants";
-import { entryFilenameToOutput } from "./filenames";
+import { entryFilenameToInput, entryFilenameToOutput } from "./filenames";
 import { Logger } from "./logger";
 import { mergeConfigs } from "./merge-configs";
+import path from "node:path";
+import { getRootDir } from "./paths";
 
-export type BundleMap = Record<string, string[]>;
+export type BundleMap = {
+  [moduleId: string]: { filename: string; assets: string[] };
+};
 
 export interface BuildContext {
   /**
@@ -40,7 +44,38 @@ export function createBuildContext({
   let bundleMap: BundleMap = {};
 
   //#region Build Config Generation
+  async function generateBuildConfigs(
+    baseConfig: Vite.InlineConfig,
+    manifest: any
+  ) {
+    const entryConfigs = await generateBuildConfigsFromManifest(
+      baseConfig,
+      manifest
+    );
+    const totalEntries = entryConfigs.length;
+    const finalConfigs = entryConfigs
+      .map((entryConfig, i) =>
+        mergeConfigs(baseConfig, entryConfig, {
+          // We shouldn't clear the screen for these internal builds
+          clearScreen: false,
+          // Don't copy static assets for the lib builds - already done during manifest build
+          publicDir: false,
+          // Don't empty the outDir, this is handled in the parent, manifest build process
+          build: { emptyOutDir: false },
+          plugins: [
+            // Print a message before starting each step
+            labeledStepPlugin(logger, totalEntries, i),
+          ],
+          // logLevel: "warn",
+        })
+      )
+      // Exclude this plugin from child builds to break recursion
+      .map((config) => removePlugin(config, PLUGIN_NAME));
+    return finalConfigs;
+  }
+
   async function generateBuildConfigsFromManifest(
+    baseConfig: Vite.InlineConfig,
     manifest: any
   ): Promise<Vite.InlineConfig[]> {
     const configs: Vite.InlineConfig[] = [];
@@ -51,31 +86,53 @@ export function createBuildContext({
       const newConfig: Vite.InlineConfig = {
         build: {
           rollupOptions: {
-            input: entriesToInputs(entries),
+            input: entries.reduce<Record<string, string>>((input, entry) => {
+              input[entryFilenameToInput(entry)] = path.resolve(
+                getRootDir(baseConfig),
+                entry
+              );
+              return input;
+            }, {}),
           },
         },
       };
-      return newConfig; // TODO: add pluginOptions.multiPageViteConfig
+      addConfig(newConfig); // TODO: add pluginOptions.htmlViteConfig
     };
     const addLibModeConfig = (entry: string) => {
       if (alreadyIncluded[entry]) return;
       alreadyIncluded[entry] = true;
 
+      const moduleId = entryFilenameToInput(entry);
+      /**
+       * "content-scripts/some-script/index" -> "content-scripts/some-script/"
+       * "some-script" -> ""
+       */
+      const outputDir = moduleId.includes("/")
+        ? path.dirname(moduleId) + "/"
+        : "";
       const newConfig: Vite.InlineConfig = {
         build: {
-          // Excludes <root>/index.html from inputs
-          rollupOptions: {},
-          // Configure lib mode entrypoint
-          lib: {
-            name: entry.replace(/-/g, "_").toLowerCase(),
-            entry: entry,
-            formats: ["umd"],
-            fileName: () => entryFilenameToOutput(entry),
+          rollupOptions: {
+            input: {
+              [moduleId]: path.resolve(getRootDir(baseConfig), entry),
+            },
+            output: {
+              entryFileNames: `${outputDir}[name].[hash].js`,
+              chunkFileNames: `${outputDir}[name].[hash].js`,
+              assetFileNames: `${outputDir}[name].[hash].[ext]`,
+            },
           },
+          // Configure lib mode entrypoint
+          // lib: {
+          //   name: entry.replace(/-/g, "_").toLowerCase(),
+          //   entry: entry,
+          //   formats: ["umd"],
+          //   fileName: () => entryFilenameToOutput(entry),
+          // },
         },
       };
       addConfig(
-        Vite.mergeConfig(newConfig, pluginOptions.libModeViteConfig ?? {})
+        Vite.mergeConfig(newConfig, pluginOptions.scriptViteConfig ?? {})
       );
     };
 
@@ -130,13 +187,6 @@ export function createBuildContext({
     return compact<string>(a?.flat() ?? []);
   }
 
-  function entriesToInputs(entries: string[]): InputOption {
-    return entries.reduce<Record<string, string>>((input, entry) => {
-      input[entry] = entryFilenameToOutput(entry);
-      return input;
-    }, {});
-  }
-
   function separateAdditionalInputs(additionalInputs?: string[]) {
     const additionalScriptInputs: string[] = [];
     const additionalHtmlInputs: string[] = [];
@@ -165,35 +215,29 @@ export function createBuildContext({
 
   return {
     async rebuild(baseConfig, manifest, mode) {
-      const entryConfigs = await generateBuildConfigsFromManifest(manifest);
-      const totalEntries = entryConfigs.length;
-      const finalConfigs = entryConfigs
-        .map((entryConfig, i) => {
-          return mergeConfigs([
-            baseConfig,
-            entryConfig,
-            {
-              // We shouldn't clear the screen for these internal builds
-              clearScreen: false,
-              // Don't copy static assets for the lib builds - already done during manifest build
-              publicDir: false,
-              plugins: [
-                // Print a message before starting each step
-                labeledStepPlugin(logger, totalEntries, i),
-              ],
-            },
-          ]);
-        })
-        // Exclude this plugin from child builds to break recursion
-        .map((config) => removePlugin(config, PLUGIN_NAME));
-
+      const buildConfigs = await generateBuildConfigs(baseConfig, manifest);
       if (pluginOptions.verbose) {
         // Print configs deep enough to include lib and rollup inputs
-        logger.verbose("Final configs: " + inspect(finalConfigs, undefined, 7));
+        logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));
       }
 
-      for (const config of finalConfigs) {
-        const [{ output }] = (await Vite.build(config)) as RollupOutput[];
+      bundleMap = {};
+      for (const config of buildConfigs) {
+        const output = (await Vite.build(config)) as
+          | RollupOutput
+          | RollupOutput[];
+        if (Array.isArray(output)) {
+          // lib mode
+          const [entry, ...assets] = output[0].output;
+          bundleMap[
+            entry.facadeModuleId?.replace(getRootDir(baseConfig) + "/", "")!
+          ] = {
+            filename: entry.fileName,
+            assets: assets.map((a) => a.fileName) ?? [],
+          };
+        } else {
+          // multi-page mode
+        }
       }
     },
     getBundle() {

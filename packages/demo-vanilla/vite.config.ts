@@ -10,7 +10,7 @@ export default defineConfig({
   root: "src",
   build: {
     outDir: root("dist"),
-    emptyOutDir: false,
+    emptyOutDir: true,
   },
   plugins: [
     browserExtension({
@@ -21,7 +21,7 @@ export default defineConfig({
         "another-page/index.html",
       ],
       watchFilePaths: [root("src/manifest.json")],
-      verbose: true,
+      verbose: false,
       browser: process.env.TARGET || "chrome",
     }),
   ],

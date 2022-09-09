@@ -9,6 +9,8 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import { resolveBrowserTagsInObject } from "./utils/resolve-browser-flags";
 import { inspect } from "node:util";
+import { mergeConfigs } from "./utils/merge-configs";
+import { getOutDir, getRootDir } from "./utils/paths";
 
 /**
  * This plugin composes multiple Vite builds together into a single Vite build by calling the
@@ -47,6 +49,10 @@ export default function browserExtension(options: PluginOptions): Plugin {
   }
 
   //#region Parsing Manifest
+  /**
+   * Loads the manifest.json with it's browser template tags resolved, and the real source file
+   * extensions
+   */
   async function loadManifest(): Promise<any> {
     let manifestTemplate: any;
     if (typeof options.manifest === "function") {
@@ -54,7 +60,7 @@ export default function browserExtension(options: PluginOptions): Plugin {
       manifestTemplate = options.manifest();
     } else {
       // Manifest string should be a path relative to the config.root
-      const root = baseConfig.root ?? process.cwd();
+      const root = getRootDir(baseConfig);
       const manifestPath = path.resolve(root, options.manifest);
       logger.verbose(
         `Loading manifest from file @ ${manifestPath} (root: ${root})`
@@ -82,15 +88,30 @@ export default function browserExtension(options: PluginOptions): Plugin {
       configureBuildMode(config, env);
       baseConfig = config;
 
-      // We only want to output the manifest.json, so we don't need an input.
-      return noInput.config;
+      return mergeConfigs(
+        // We only want to output the manifest.json, so we don't need an input.
+        noInput.config,
+        // Don't empty the out directory automatically, if allowed, it clears all the outputs from
+        // the build context. Instead, we do it manually in `onBuildStart`
+        { build: { emptyOutDir: false } }
+      );
     },
     // Runs during: Build, dev, watch
-    async buildStart() {
-      const manifest = await loadManifest();
-      await ctx.rebuild(baseConfig, manifest, mode);
+    async buildStart(buildOptions) {
+      if (baseConfig.build?.emptyOutDir) {
+        logger.verbose("Removing build.outDir...");
+        await fs.rm(getOutDir(baseConfig), { recursive: true, force: true });
+      }
+
+      // Build
+      const entrypointsManifest = await loadManifest();
+      await ctx.rebuild(baseConfig, entrypointsManifest, mode);
+      process.stdout.write("\n");
       const bundle = ctx.getBundle();
+
+      // Generate the manifest based on the output files
       console.log(bundle);
+      const manifest = entrypointsManifest;
       this.emitFile({
         type: "asset",
         source: JSON.stringify(manifest),

@@ -98,5 +98,5 @@ export interface PluginOptions {
    * Custom vite config to be merged with the required lib mode configuration when building content
    * scripts or the background script
    */
-  libModeViteConfig?: UserConfigExport;
+  scriptViteConfig?: UserConfigExport;
 }

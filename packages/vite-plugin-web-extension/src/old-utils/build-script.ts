@@ -2,13 +2,14 @@ import path from "path";
 import { inspect } from "util";
 import * as Vite from "vite";
 import { PLUGIN_NAME } from "../utils/constants";
+import { mergeConfigs } from "../utils/merge-configs";
 import { HookWaiter } from "./hook-waiter";
 
 export interface BuildScriptConfig {
   inputAbsPath: string;
   outputRelPath: string;
   basePath?: string;
-  libModeViteConfig?: Vite.UserConfigExport;
+  libModeViteConfig?: Vite.InlineConfig;
   baseViteConfig: Vite.UserConfig;
   watch: boolean;
 }
@@ -39,7 +40,7 @@ export async function buildScript(
     ) ?? [];
   plugins.push(hookWaiter.plugin());
 
-  const buildConfig: Vite.InlineConfig = Vite.mergeConfig(
+  const buildConfig: Vite.InlineConfig = mergeConfigs(
     {
       root: baseViteConfig.root,
       clearScreen: false,
