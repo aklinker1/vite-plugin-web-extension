@@ -23,7 +23,7 @@ import { chownSync } from "node:fs";
  * The plugin itself configures just the manifest to be transformed and it starts the "build
  * context", where the rest of the build is performed.
  */
-export default function browserExtension(options: PluginOptions): Plugin {
+export default function browserExtension(options: PluginOptions = {}): Plugin {
   const noInput = defineNoRollupInput();
   const logger = createLogger(options.verbose);
   /**

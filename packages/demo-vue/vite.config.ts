@@ -16,7 +16,7 @@ export default defineConfig({
   plugins: [
     vue(),
     browserExtension({
-      browser: process.env.TARGET,
+      browser: process.env.TARGET ?? "chrome",
       webExtConfig: {
         firefox: "firefox",
       },

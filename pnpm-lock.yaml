@@ -35,7 +35,7 @@ importers:
   packages/demo-vue:
     specifiers:
       '@types/lodash.debounce': ^4.0.6
-      '@vitejs/plugin-vue': ^2.1.0
+      '@vitejs/plugin-vue': ^3.0.0
       '@vue/compiler-sfc': ^3.2.25
       lodash.debounce: ^4.0.8
       typescript: ^4.4.4
@@ -46,7 +46,7 @@ importers:
       lodash.debounce: 4.0.8
     devDependencies:
       '@types/lodash.debounce': 4.0.6
-      '@vitejs/plugin-vue': 2.1.0_vite@3.1.0+vue@3.2.29
+      '@vitejs/plugin-vue': 3.0.3_vite@3.1.0+vue@3.2.29
       '@vue/compiler-sfc': 3.2.29
       typescript: 4.4.4
       vite: 3.1.0
@@ -460,17 +460,6 @@ packages:
       '@types/node': 16.11.6
     dev: false
 
-  /@vitejs/plugin-vue/2.1.0_vite@3.1.0+vue@3.2.29:
-    resolution: {integrity: sha512-AZ78WxvFMYd8JmM/GBV6a6SGGTU0GgN/0/4T+FnMMsLzFEzTeAUwuraapy50ifHZsC+G5SvWs86bvaCPTneFlA==}
-    engines: {node: '>=12.0.0'}
-    peerDependencies:
-      vite: ^2.5.10
-      vue: ^3.2.25
-    dependencies:
-      vite: 3.1.0
-      vue: 3.2.29
-    dev: true
-
   /@vitejs/plugin-vue/3.0.3_vite@3.0.9+vue@3.2.38:
     resolution: {integrity: sha512-U4zNBlz9mg+TA+i+5QPc3N5lQvdUXENZLO2h0Wdzp56gI1MWhqJOv+6R+d4kOzoaSSq6TnGPBdZAXKOe4lXy6g==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -480,6 +469,17 @@ packages:
     dependencies:
       vite: 3.0.9
       vue: 3.2.38
+    dev: true
+
+  /@vitejs/plugin-vue/3.0.3_vite@3.1.0+vue@3.2.29:
+    resolution: {integrity: sha512-U4zNBlz9mg+TA+i+5QPc3N5lQvdUXENZLO2h0Wdzp56gI1MWhqJOv+6R+d4kOzoaSSq6TnGPBdZAXKOe4lXy6g==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      vite: ^3.0.0
+      vue: ^3.2.25
+    dependencies:
+      vite: 3.1.0
+      vue: 3.2.29
     dev: true
 
   /@vue/compiler-core/3.2.29:

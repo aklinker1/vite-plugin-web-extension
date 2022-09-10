@@ -16,7 +16,7 @@ export interface PluginOptions {
    *   ...
    * })
    */
-  manifest: string | (() => Manifest) | (() => Promise<Manifest>) | undefined;
+  manifest?: string | (() => Manifest) | (() => Promise<Manifest>) | undefined;
 
   /**
    * This path is where the manifest will be written to, and it is relative to Vite's output path
