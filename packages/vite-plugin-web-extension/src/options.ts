@@ -7,10 +7,16 @@ export interface PluginOptions {
    * The path to your manifest.json or a  function that returns your manifest as a JS object. It's a
    * function that returns a generated or dynamic javascript object representing the manifest
    *
+   * Defaults to `"manifest.json"`
+   *
    * @example
-   * () => readJsonFile("./path/to/manifest.json")
+   * () => ({
+   *   name: "Extension Name",
+   *   manifest_version: 3,
+   *   ...
+   * })
    */
-  manifest: string | (() => Manifest) | (() => Promise<Manifest>);
+  manifest: string | (() => Manifest) | (() => Promise<Manifest>) | undefined;
 
   /**
    * This path is where the manifest will be written to, and it is relative to Vite's output path

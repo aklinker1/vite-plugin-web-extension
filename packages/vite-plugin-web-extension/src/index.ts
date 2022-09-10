@@ -57,13 +57,14 @@ export default function browserExtension(options: PluginOptions): Plugin {
    */
   async function loadManifest(): Promise<any> {
     let manifestTemplate: any;
-    if (typeof options.manifest === "function") {
+    const manifestOption = options.manifest ?? "manifest.json";
+    if (typeof manifestOption === "function") {
       logger.verbose("Loading manifest from function");
-      manifestTemplate = options.manifest();
+      manifestTemplate = manifestOption();
     } else {
       // Manifest string should be a path relative to the config.root
       const root = getRootDir(baseConfig);
-      const manifestPath = path.resolve(root, options.manifest);
+      const manifestPath = path.resolve(root, manifestOption);
       logger.verbose(
         `Loading manifest from file @ ${manifestPath} (root: ${root})`
       );
