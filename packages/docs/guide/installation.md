@@ -66,7 +66,7 @@ Lets say your project looks like this:
 <strong>dist/</strong>
    <i>build output...</i>
 <strong>src/</strong>
-   <strong>assets/</strong>
+   <strong>public/</strong>
       <i>icon-16.png</i>
       <i>icon-48.png</i>
       <i>icon-128.png</i>
@@ -75,37 +75,32 @@ Lets say your project looks like this:
    <i>manifest.json</i>
 <i>package.json</i>
 <i>vite.config.ts</i>
-<i>...</i>
 </pre>
 
-Here's the minimal setup required:
+Configuring Vite is simple:
 
 ```ts
 // vite.config.ts
 import webExtension from "vite-plugin-web-extension";
+import path from "node:path";
 
 export default defineConfig({
   root: "src",
-  // Configure our outputs - nothing special, this is normal vite config
+  // Because we set the root, we need to configure the output directory
   build: {
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
-  },
+  }
   // Add the webExtension plugin
-  plugins: [
-    webExtension({
-      manifest: "manifest.json",
-      assets: "assets",
-    }),
-  ],
+  plugins: [webExtension()],
 });
 ```
 
-> Note that the `assets` option is relative to your Vite `root`. In this case, it's pointing to `src/assets`, not just `assets`.
+> You don't need to specify a `root` if you don't want to.
 
-> You don't need to specify a `root` if you don't want to. When excluded, it defaults to the directory your `vite.config.ts` is in.
+By default, `vite-plugin-web-extension` will look for `<root>/manifest.json`. 
 
-For the input `manifest` option, all paths should use their real file extension and the paths should be relative to your vite `root`.
+In your `src/manifest.json`, all paths should also be relative to your Vite `root`, and point to the source code files.
 
 ```json
 // src/manifest.json
@@ -114,23 +109,20 @@ For the input `manifest` option, all paths should use their real file extension 
   "version": "1.0.0",
   "manifest_version": "2",
   "icons": {
-    // Relative to "src"
-    "16": "assets/icon-16.png",
-    "48": "assets/icon-48.png",
-    "128": "assets/icon-128.png"
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
   },
   "browser_action": {
-    "default_icon": "assets/icon-128.png",
-    // Relative to "src"
+    "default_icon": "icon-128.png",
     "default_popup": "popup.html"
   },
   "background": {
-    // Relative to "src", using real .ts file extension
     "scripts": "background.ts"
   }
 }
 ```
 
-And there you go!
+> Files in `public/` directory don't need to be relative to Vite's root. See [Vite's docs](https://vitejs.dev/guide/assets.html#the-public-directory) for more details.
 
-Run `vite build` and you should see a fully compiled and working browser extension in your `dist/` directory!
+And we're done! Run `vite build` and you should see a fully compiled and working browser extension in your `dist/` directory!

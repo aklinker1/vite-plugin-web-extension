@@ -13,7 +13,7 @@ vite dev
 
 will open a browser and install your extension.
 
-When you change a file, it will either hot-reload (if the file was associated with an HTML entry point) or rebuilt and reload the entire extension (if the file is used by background/content scripts) so you get the latest code immediately.
+When you change a file, it will either hot-reload (if the file was associated with an HTML entry point) or rebuilt and reload the entire extension (if the file is used by scripts) so you get the latest code immediately.
 
 > Only supported for Manifest V2 builds due to a bug: https://bugs.chromium.org/p/chromium/issues/detail?id=1290188
 >
@@ -23,11 +23,11 @@ Dev mode works best when you're using a front-end framework, and making changes 
 
 HMR will not be used when making changes to UI injected by content scripts.
 
-Set `disableAutoLaunch` to `true` to skip the automatic installation of the extension.
+> Set `disableAutoLaunch` to `true` to skip the automatic installation of the extension.
 
 ## Watch Mode
 
-Watch mode differs from dev mode because it will rebuild and reload the entire extension on every file change (no HMR)
+Watch mode differs from dev mode because it will rebuild and reload the entire extension on every file change (no HMR).
 
 It will also result in the exact same code as `vite build`, whereas dev mode modifies your HTML files to enable HMR.
 
@@ -37,7 +37,7 @@ To run in watch mode, use the `--watch` flag.
 vite build --watch
 ```
 
-To reload when you update files other than source files (config files like `tailwind.config.js`) pass the `watchFilePaths` option. Use **absolute paths** for this option:
+To reload when you update files other than source files (config files like `tailwind.config.js`) pass **absolute paths** of the files into `watchFilePaths` option.
 
 ```ts
 import path from "path";
@@ -55,15 +55,11 @@ export default defineConfig({
 });
 ```
 
-> Watch mode will not reload properly when the manifest changes. You'll need to restart the `vite build --watch` command use the updated manifest.
->
-> This is a limitation of [`web-ext`](https://www.npmjs.com/package/web-ext)
-
-Set `disableAutoLaunch` to `true` to skip the automatic installation of the extension.
+> Set `disableAutoLaunch` to `true` to skip the automatic installation of the extension.
 
 ## Front-end Frameworks
 
-If you want to add a framework like Vue or React, just add their Vite plugin!
+If you want to add a framework like Vue or React, just add it's Vite plugin!
 
 ```ts
 import vue from '@vitejs/plugin-vue'
@@ -72,14 +68,14 @@ export default defineConfig({
   ...
   plugins: [
     vue(),
-    webExtension({ ... }),
+    webExtension(),
   ],
 });
 ```
 
 You can now use the framework anywhere! In your popup, options page, content scripts, etc.
 
-See `demos/vue` for a full example.
+See [`packages/demo-vue`](https://github.com/aklinker1/vite-plugin-web-extension/tree/main/packages/demo-vue) for an example.
 
 ## Browser Startup
 
@@ -102,26 +98,27 @@ webExtension({
 });
 ```
 
-See [#22](https://github.com/aklinker1/vite-plugin-web-extension/issues/22) for a real use case of changing the startup chrome window size.
+See [#22](https://github.com/aklinker1/vite-plugin-web-extension/issues/22) for a real use case of changing the size of Chrome's window on startup.
 
 ## Dynamic Manifests
 
-The `manifest` option also accepts a function. This function should return a javascript object containing the same thing as `manifest.json`. It should include real file paths, as well as any browser specific flags (see next section).
+The `manifest` option accepts a file path or a function. 
 
-Often times this is used to pull in details from your `package.json` like the version so they only have to be maintained in a single place
+- The file path should be relative to the Vite `root`
+- The function should return a javascript object containing the same thing as `manifest.json`
+
+Often times the function is used to pull in details from your `package.json`, like the version, so they only have to be maintained in a single place:
 
 ```ts
-import webExtension from "vite-plugin-web-extension";
+import webExtension, { readJsonFile } from "vite-plugin-web-extension";
 
 export default defineConfig({
   plugins: [
     webExtension({
       manifest: () => {
-        // Generate your manifest
-        const packageJson = require("./package.json");
+        const packageJson = readJsonFile("./package.json");
         return {
-          ...require("./manifest.json"),
-          name: packageJson.name,
+          ...readJsonFile("./manifest.json"),
           version: packageJson.version,
         };
       },
@@ -131,13 +128,18 @@ export default defineConfig({
 });
 ```
 
+> `readJsonFile` is provided as an alias for `JSON.parse(fs.readFileSync(..., "utf-8"))`
+
 ### Browser Specific Manifest Fields
 
-Either the file or object returned by the `manifest` option can include flags that specify certain fields for certain browsers, and the plugin will strip out any values that aren't for a specific browser
+Either the file contents or object returned by the `manifest` option can include flags that specify fields for specific browsers, and the plugin will strip out any values that don't match the browser you're targeting.
 
-Here's an example: Firefox doesn't support manifest V3 yet, but chrome does!
+Here's a common use case: Firefox doesn't support MV3 yet, but Chrome does!
 
-```jsonc
+<CodeGroup>
+  <CodeGroupItem title="manifest.json" active>
+
+```json:no-line-numbers
 {
   "{{chrome}}.manifest_version": 3,
   "{{firefox}}.manifest_version": 2,
@@ -153,21 +155,52 @@ Here's an example: Firefox doesn't support manifest V3 yet, but chrome does!
 }
 ```
 
-To build for a specific browser, simply pass the `browser` option and prefix any **field name** or **string value** with `{{browser-name}}.`. This is not limited to just `chrome` and `firefox`, you can use any string inside the double curly braces as long as your pass it into the plugin's `browser` option.
+  </CodeGroupItem>
+  <CodeGroupItem title="browser: chrome">
+
+```json:no-line-numbers
+{
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "index.html"
+  },
+  "options_page": "options.html",
+  "permissions": ["activeTab"]
+}
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title="browser: firefox">
+
+```json:no-line-numbers
+{
+  "manifest_version": 2,
+  "browser_action": {
+    "default_popup": "index.html",
+    "browser_style": false
+  },
+  "options_page": "options.html",
+  "permissions": ["activeTab", "<all_urls>"]
+}
+```
+
+  </CodeGroupItem>
+</CodeGroup>
+
+
+To build for a specific browser, pass the `browser` option and prefix any **field name** or **string value** with `{{browser-name}}.`. This is not limited to just `chrome` and `firefox`, you can use any string inside the double curly braces as long as your pass it into the plugin's `browser` option.
 
 You can pass this option in a multitude of ways. Here's one way via environment variables!
 
-```bash
+```bash:no-line-numbers
 # In package.json or via CLI
 cross-env TARGET_BROWSER=chrome vite build
 ```
 
-```ts
+```ts:no-line-numbers
 export default defineConfig({
   plugins: [
     webExtension({
-      manifest: "manifest.json",
-      assets: "assets",
       browser: process.env.TARGET_BROWSER,
     }),
   ],
@@ -180,11 +213,10 @@ If you have have HTML or JS files that need to be built, but aren't listed in yo
 
 The paths should be relative to the Vite's `root`, just like the `assets` option.
 
-```ts
+```ts:no-line-numbers
 export default defineConfig({
   plugins: [
     webExtension({
-      ...
       additionalInputs: [
         "onboarding/index.html",
         "content-scripts/injected-from-background.ts",
@@ -194,51 +226,15 @@ export default defineConfig({
 });
 ```
 
-> HTML pages are built alongside the popup and options page in multi-page mode, whereas all other files are built as standalone bundles.
+## Generated Files
 
-## CSS
-
-For HTML entry points like the popup or options page, css is automatically output and referenced in the built HTML. There's nothing you need to do!
-
-### Content Scripts
-
-For content scripts listed in your `manifest.json`, it's a little more difficult. There are two ways to include CSS files:
-
-1. You have a CSS file in your project
-1. The stylesheet is generated by a framework like Vue or React or is imported by the code
-
-For the first case, it's simple! Make sure you have the relevant plugin installed to parse your stylesheet (like scss), then list the file in your `manifest.json`. The plugin will look at the `css` array and output all inputs as plain CSS.
-
-```json
-{
-  "content_scripts": [
-    {
-      "matches": [...],
-      "css": ["content-scripts/some-style.scss"]
-    }
-  ]
-}
-```
-
-For the second case, it's a little more involved. Say your content script is at `content-scripts/overlay.ts` and is responsible for binding a Vue/React app to a webpage. When Vite compiles it, it will output two files: `dist/content-scripts/overlay.js` and `dist/content-scripts/overlay.css`. Check what is output, then update your manifest to point towards the output files, prefixed with `generated:`.
-
-```json
-{
-  "content_scripts": [
-    {
-      "matches": [...],
-      "scripts": "content-scripts/overlay.ts",
-      "css": ["generated:content-scripts/overlay.css"]
-    }
-  ]
-}
-```
-
-This will tell the plugin that the file is already being generated for us, but that we still need it in the final manifest.
+`vite-plugin-web-extension` will automatically add any generated CSS, images, or assets to the `manifest.json` as required. If a content script's JS file imports a CSS file (or SCSS/SASS/Stylus/etc), then the resulting CSS file will be added to the content script's `css` list.
 
 ### Browser API `tabs.executeScripts`
 
 For content scripts injected programmatically, include the script's path in the plugin's [`additionalInputs` option](#additional-inputs).
+
+They will be built in their own build steps, and be included in the output directory, but not listed in the final `manifest.json`.
 
 ## Manifest Validation
 
@@ -256,21 +252,23 @@ export default defineConfig({
 });
 ```
 
+If you're working offline, validation will be skipped.
+
 ## Per-build Customization
 
-<!--### Multi-page Builds
+### HTML Builds
 
 By default, `vite-plugin-web-extension` will automatically configure sets of HTML input files to be built in [multi-page mode](https://vitejs.dev/guide/build.html#multi-page-app).
 
-To customize these builds, you can provide `options.multiPageModeViteConfig`-->
+To customize these builds, you can provide `options.htmlViteConfig`
 
-### Lib-mode Builds
+### Script Builds
 
-By default, `vite-plugin-web-extension` will automatically configure vite's build config when building scripts in lib mode (background, content scripts, additional inputs, etc).
+By default, `vite-plugin-web-extension` will automatically configure vite to build script inputs (background, content scripts, additional inputs, etc) in separate steps.
 
-If that config is does not work for your case, you can modify it via `libModeViteConfig`.
+If that config is does not work for your case, you can modify it via `scriptsViteConfig`.
 
-For example, if a script requires dynamic imports, they need to be added inline because UMD doesn't support code-splitting:
+For example, if a script requires dynamic imports, they need to be inlined because UMD doesn't support code-splitting:
 
 ```ts
 import { defineConfig } from "vite";
@@ -289,10 +287,7 @@ const libModeViteConfig = defineConfig({
 
 export default defineConfig({
   plugins: [
-    webExtension({
-      // ...
-      libModeViteConfig,
-    }),
+    webExtension({ scriptViteConfig }),
   ],
 });
 ```

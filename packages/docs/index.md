@@ -12,12 +12,7 @@ title: Introduction
 import webExtension from "vite-plugin-web-extension";
 
 export default defineConfig({
-  plugins: [
-    webExtension({
-      manifest: "manifest.json",
-      assets: "assets",
-    }),
-  ],
+  plugins: [webExtension()],
 });
 ```
 
@@ -33,9 +28,11 @@ export default defineConfig({
 
 ## How does this work?
 
-The build process happens in 2 steps:
+1. Read in the manifest
+2. Build all entrypoints listed in the `manifest.json` using Vite's JS API
+3. Write the final manifest based on the files output from the previous step
+4. Open the browser using Mozilla's `web-ext` tool
 
-1. Bundle all the HTML entry-points as a [multi-page app](https://vitejs.dev/guide/build.html#multi-page-app)
-2. Bundle everything else (background scripts/service worker, content scripts, etc) individually in [library mode](https://vitejs.dev/guide/build.html#library-mode)
+When the entry points are built, they are grouped together logically to minimize the number of `vite build`s happening in the background.
 
-Scripts have to be bundled individually, separate from each other and the HTML entry-points, because they cannot import additional JS files. Each entry-point needs to have everything it needs inside that one file listed in the final manifest.
+> The plugin will print each group before they're built so you have a better idea of what it's doing behind the scenes.
