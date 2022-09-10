@@ -83,20 +83,23 @@ export function createBuildContext({
 
     const addConfig = (config: Vite.InlineConfig) => configs.push(config);
     const addHtmlConfig = (entries: string[]) => {
-      const newConfig: Vite.InlineConfig = {
-        build: {
-          rollupOptions: {
-            input: entries.reduce<Record<string, string>>((input, entry) => {
-              input[entryFilenameToInput(entry)] = path.resolve(
-                getRootDir(baseConfig),
-                entry
-              );
-              return input;
-            }, {}),
+      const htmlConfig = mergeConfigs(
+        {
+          build: {
+            rollupOptions: {
+              input: entries.reduce<Record<string, string>>((input, entry) => {
+                input[entryFilenameToInput(entry)] = path.resolve(
+                  getRootDir(baseConfig),
+                  entry
+                );
+                return input;
+              }, {}),
+            },
           },
         },
-      };
-      addConfig(newConfig); // TODO: add pluginOptions.htmlViteConfig
+        pluginOptions.htmlViteConfig ?? {}
+      );
+      addConfig(htmlConfig);
     };
     const addScriptConfig = (entry: string) => {
       if (alreadyIncluded[entry]) return;
@@ -110,25 +113,26 @@ export function createBuildContext({
       const outputDir = moduleId.includes("/")
         ? path.dirname(moduleId) + "/"
         : "";
-      const newConfig: Vite.InlineConfig = {
-        build: {
-          rollupOptions: {
-            input: {
-              [moduleId]: path.resolve(getRootDir(baseConfig), entry),
-            },
-            output: {
-              // Configure the output filenames so they appear in the same folder
-              // - content-scripts/some-script/index.<hash>.js
-              // - content-scripts/some-script/index.<hash>.css
-              entryFileNames: `[name].[hash].js`,
-              assetFileNames: `${outputDir}[name].[hash].[ext]`,
+      const scriptConfig = mergeConfigs(
+        {
+          build: {
+            rollupOptions: {
+              input: {
+                [moduleId]: path.resolve(getRootDir(baseConfig), entry),
+              },
+              output: {
+                // Configure the output filenames so they appear in the same folder
+                // - content-scripts/some-script/index.<hash>.js
+                // - content-scripts/some-script/index.<hash>.css
+                entryFileNames: `[name].[hash].js`,
+                assetFileNames: `${outputDir}[name].[hash].[ext]`,
+              },
             },
           },
         },
-      };
-      addConfig(
-        Vite.mergeConfig(newConfig, pluginOptions.scriptViteConfig ?? {})
+        pluginOptions.scriptViteConfig ?? {}
       );
+      addConfig(scriptConfig);
     };
 
     const { additionalHtmlInputs, additionalScriptInputs } =
