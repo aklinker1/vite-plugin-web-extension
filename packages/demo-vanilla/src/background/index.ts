@@ -1,4 +1,4 @@
 console.log("background/index.ts");
-import { test } from "./test";
+import { test } from "../content-scripts/script2/test";
 
 test();

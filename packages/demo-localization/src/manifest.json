@@ -5,9 +5,9 @@
   "default_locale": "en",
   "version": "1.0.0",
   "icons": {
-    "16": "assets/16.png",
-    "48": "assets/48.png",
-    "128": "assets/128.png"
+    "16": "icon/16.png",
+    "48": "icon/48.png",
+    "128": "icon/128.png"
   },
   "browser_action": {
     "default_popup": "popup.html"
