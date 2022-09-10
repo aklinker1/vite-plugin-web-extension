@@ -1,4 +1,4 @@
-import { UserConfigExport } from "vite";
+import { InlineConfig, UserConfigExport } from "vite";
 
 export type Manifest = any;
 
@@ -17,19 +17,6 @@ export interface PluginOptions {
    * (default: `"manifest.json"`)
    */
   writeManifestTo?: string;
-
-  /**
-   * A path relative to Vite's root where all the extensions static assets can be found
-   *
-   * @example
-   * "src/assets"
-   */
-  assets: string;
-
-  /**
-   * A path relative to the output directory (default: `"assets"`). All the files from the `assets`
-   */
-  writeAssetsTo?: string;
 
   /**
    * Whether or not to show logs. This is useful when modules aren't resolving and you need to debug
@@ -69,25 +56,6 @@ export interface PluginOptions {
   skipManifestValidation?: boolean;
 
   /**
-   * @deprecated This field no longer has any effect. Background scripts are always built in lib
-   *             mode
-   *
-   * How the `background.service_worker` is built. This setting does nothing if you don't have a
-   * service worker.
-   *
-   * - If it's `"module"`, the service worker is treated as apart of the initial multi-page build, and
-   * you should set `background.module` to `true`.
-   * - If it's `"standalone"`, the service worker will be treated as an `additionalInput` and be
-   * bundled in an individual build process.
-   *
-   * @default "module"
-   *
-   * It can be useful to switch to `"standalone"` when there are issues with your chunks, like
-   * `window` being used when it's not available in a service worker
-   */
-  serviceWorkerType?: "module" | "standalone";
-
-  /**
    * Whether or not to print the summary block showing what files are being used as entry-points
    *
    * @default true
@@ -95,8 +63,13 @@ export interface PluginOptions {
   printSummary?: boolean;
 
   /**
-   * Custom vite config to be merged with the required lib mode configuration when building content
-   * scripts or the background script
+   * Custom vite config to be merged with when building html inputs (popup, options, sandbox, etc)
    */
-  scriptViteConfig?: UserConfigExport;
+  htmlViteConfig?: InlineConfig;
+
+  /**
+   * Custom vite config to be merged with when building script inputs (background scripts/service
+   * worker, content scripts, etc)
+   */
+  scriptViteConfig?: InlineConfig;
 }
