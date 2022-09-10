@@ -16,8 +16,6 @@ export default defineConfig({
   plugins: [
     vue(),
     browserExtension({
-      manifest: root("src/manifest.json"),
-      assets: "assets",
       browser: process.env.TARGET,
       webExtConfig: {
         firefox: "firefox",

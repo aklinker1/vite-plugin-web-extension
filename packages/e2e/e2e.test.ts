@@ -41,7 +41,6 @@ function baseConfig(manifestOverrides: any): InlineConfig {
     },
     plugins: [
       WebExtension({
-        assets: "assets",
         manifest: manifest(manifestOverrides),
       }),
     ],
@@ -130,7 +129,6 @@ describe("Vite Plugin Web Extension", () => {
           },
           plugins: [
             WebExtension({
-              assets: "assets",
               manifest: manifest({
                 browser_action: {
                   default_popup: "page1.html",
@@ -153,7 +151,6 @@ describe("Vite Plugin Web Extension", () => {
         },
         plugins: [
           WebExtension({
-            assets: "extension/assets",
             manifest: manifest({
               browser_action: {
                 default_popup: "extension/page1.html",
@@ -181,7 +178,6 @@ describe("Vite Plugin Web Extension", () => {
         },
         plugins: [
           WebExtension({
-            assets: "assets",
             manifest: manifest({
               browser_action: {
                 default_popup: "page1.html",
@@ -254,7 +250,6 @@ describe("Vite Plugin Web Extension", () => {
           },
           plugins: [
             WebExtension({
-              assets: "assets",
               manifest: manifest({
                 "{{chrome}}.manifest_version": 3,
                 "{{firefox}}.manifest_version": 2,
@@ -294,7 +289,6 @@ describe("Vite Plugin Web Extension", () => {
         publicDir: "extension/assets",
         plugins: [
           WebExtension({
-            assets: "extension/assets",
             manifest: manifest({
               browser_action: {
                 default_popup: "extension/page1.html",
@@ -316,7 +310,6 @@ describe("Vite Plugin Web Extension", () => {
         publicDir: "extension/assets",
         plugins: [
           WebExtension({
-            assets: "extension/assets",
             manifest: manifest({
               browser_action: {
                 default_popup: "extension/page1.html",

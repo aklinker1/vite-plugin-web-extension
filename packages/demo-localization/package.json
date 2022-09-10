@@ -7,7 +7,7 @@
   },
   "devDependencies": {
     "typescript": "^4.4.4",
-    "vite": "^2.7.9",
+    "vite": "^3.1.0",
     "vite-plugin-web-extension": "workspace:*"
   }
 }
