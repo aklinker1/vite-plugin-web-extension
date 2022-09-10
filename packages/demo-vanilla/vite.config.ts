@@ -15,7 +15,6 @@ export default defineConfig({
   plugins: [
     browserExtension({
       manifest: "manifest.json",
-      assets: "assets",
       additionalInputs: [
         "content-scripts/script1/index.ts",
         "another-page/index.html",

@@ -12,6 +12,7 @@ import { Logger } from "./logger";
 import { mergeConfigs } from "./merge-configs";
 import path from "node:path";
 import { getRootDir } from "./paths";
+import uniqBy from "lodash.uniqby";
 
 export interface BuildContext {
   /**
@@ -220,11 +221,12 @@ export function createBuildContext({
         logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));
       }
 
-      bundles = [];
+      const newBundles: Array<OutputChunk | OutputAsset> = [];
       for (const config of buildConfigs) {
         const output = (await Vite.build(config)) as RollupOutput;
-        bundles.push(...output.output);
+        newBundles.push(...output.output);
       }
+      bundles = uniqBy(newBundles, "fileName");
     },
     getBundles() {
       return bundles;

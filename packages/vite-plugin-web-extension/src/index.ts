@@ -13,6 +13,8 @@ import { mergeConfigs } from "./utils/merge-configs";
 import { getOutDir, getRootDir } from "./utils/paths";
 import { OutputAsset, OutputChunk } from "rollup";
 import type { Manifest, Runtime } from "webextension-polyfill";
+import uniqBy from "lodash.uniqby";
+import { chownSync } from "node:fs";
 
 /**
  * This plugin composes multiple Vite builds together into a single Vite build by calling the
@@ -85,10 +87,18 @@ export default function browserExtension(options: PluginOptions): Plugin {
     manifest: any,
     bundles: Array<OutputChunk | OutputAsset>
   ): any {
+    // console.log(bundles);
     const findReplacement = (entry: string) =>
       bundles.find((output) => {
-        if (output.type === "chunk")
+        if (
+          output.type === "chunk" &&
+          output.isEntry &&
+          // JS files show up instead of the HTML file, so this prevents an HTML replacement from
+          // being a JS file
+          !output.facadeModuleId?.endsWith(".html")
+        ) {
           return output.facadeModuleId?.endsWith(entry);
+        }
         return output.name === entry || output.fileName === entry;
       });
     const replaceFieldWithOutput = (

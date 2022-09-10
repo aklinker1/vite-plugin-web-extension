@@ -86,11 +86,13 @@ importers:
   packages/vite-plugin-web-extension:
     specifiers:
       '@types/lodash.uniq': ^4.5.7
+      '@types/lodash.uniqby': ^4.7.7
       '@types/md5': ^2.3.1
       '@types/node': ^16.11.6
       '@types/webextension-polyfill': ^0.9.0
       ajv: ^8.8.1
       lodash.uniq: ^4.5.0
+      lodash.uniqby: ^4.7.0
       md5: ^2.3.0
       rollup: ^2.62.0
       tsup: ^5.5.0
@@ -102,11 +104,13 @@ importers:
     dependencies:
       ajv: 8.8.1
       lodash.uniq: 4.5.0
+      lodash.uniqby: 4.7.0
       md5: 2.3.0
       web-ext: 6.5.0
       webextension-polyfill: 0.10.0
     devDependencies:
       '@types/lodash.uniq': 4.5.7
+      '@types/lodash.uniqby': 4.7.7
       '@types/md5': 2.3.1
       '@types/node': 16.11.6
       '@types/webextension-polyfill': 0.9.0
@@ -388,6 +392,12 @@ packages:
 
   /@types/lodash.uniq/4.5.7:
     resolution: {integrity: sha512-qg7DeAbdZMi6DGvCxThlJycykLLhETrJrQZ6F2KaZ+o0sNK1qRHz46lgNA+nHHjwrmA2a91DyiZTp3ey3m1rEw==}
+    dependencies:
+      '@types/lodash': 4.14.176
+    dev: true
+
+  /@types/lodash.uniqby/4.7.7:
+    resolution: {integrity: sha512-sv2g6vkCIvEUsK5/Vq17haoZaisfj2EWW8mP7QWlnKi6dByoNmeuHDDXHR7sabuDqwO4gvU7ModIL22MmnOocg==}
     dependencies:
       '@types/lodash': 4.14.176
     dev: true
@@ -3675,6 +3685,10 @@ packages:
 
   /lodash.uniq/4.5.0:
     resolution: {integrity: sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==}
+    dev: false
+
+  /lodash.uniqby/4.7.0:
+    resolution: {integrity: sha512-e/zcLx6CSbmaEgFHCA7BnoQKyCtKMxnuWrJygbwPs/AIn+IMKl66L8/s+wBUn5LRw2pZx3bUHibiV1b6aTWIww==}
     dev: false
 
   /log-symbols/5.1.0:
