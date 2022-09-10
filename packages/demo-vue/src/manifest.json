@@ -14,8 +14,7 @@
   "content_scripts": [
     {
       "matches": ["*://*/*"],
-      "js": ["content-script/index.ts"],
-      "css": []
+      "js": ["content-script/index.ts"]
     }
   ],
   "permissions": ["tabs", "{{firefox}}.<all_urls>", "{{chrome}}.activeTab"]

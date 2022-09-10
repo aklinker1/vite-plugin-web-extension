@@ -1,9 +1,12 @@
 import { Plugin, UserConfig } from "vite";
 import { PLUGIN_NAME } from "../utils/constants";
-import { Logger } from "../utils/logger";
+import { Logger, RESET, TEAL } from "../utils/logger";
 import { getRootDir } from "../utils/paths";
 import path from "node:path";
 
+/**
+ * A plugin that prints the inputs that will be built.
+ */
 export function labeledStepPlugin(
   logger: Logger,
   total: number,
@@ -30,9 +33,9 @@ export function labeledStepPlugin(
 
       const rootDir = getRootDir(finalConfig);
       logger.log(
-        `${progressLabel} Building [${absPaths
+        `${progressLabel} Building ${TEAL}[${absPaths
           .map((p) => path.relative(rootDir, p))
-          .join(", ")}]...`
+          .join(", ")}]${RESET}...`
       );
     },
   };

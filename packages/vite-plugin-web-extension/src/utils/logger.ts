@@ -7,12 +7,15 @@ export interface Logger {
   error(message: string, error: unknown): void;
 }
 
-const RESET = "\x1b[0m";
-const BOLD = "\x1b[1m";
-const DIM = "\x1b[2m";
-const RED = "\x1b[91m";
-const GREEN = "\x1b[92m";
-const YELLOW = "\x1b[93m";
+export const RESET = "\x1b[0m";
+export const BOLD = "\x1b[1m";
+export const DIM = "\x1b[2m";
+export const RED = "\x1b[91m";
+export const GREEN = "\x1b[92m";
+export const YELLOW = "\x1b[93m";
+export const BLUE = "\x1b[94m";
+export const VIOLET = "\x1b[95m";
+export const TEAL = "\x1b[96m";
 
 export function createLogger(verbose?: boolean): Logger {
   return {

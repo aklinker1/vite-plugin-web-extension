@@ -7,7 +7,7 @@ import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { compact } from "./arrays";
 import { BuildMode } from "./build-mode";
 import { PLUGIN_NAME } from "./constants";
-import { entryFilenameToInput, entryFilenameToOutput } from "./filenames";
+import { entryFilenameToInput } from "./filenames";
 import { Logger } from "./logger";
 import { mergeConfigs } from "./merge-configs";
 import path from "node:path";
@@ -186,7 +186,7 @@ export function createBuildContext({
     const additionalScriptInputs: string[] = [];
     const additionalHtmlInputs: string[] = [];
     additionalInputs?.forEach((additionalInput) => {
-      if (entryFilenameToOutput(additionalInput).endsWith("html"))
+      if (additionalInput.endsWith("html"))
         additionalHtmlInputs.push(additionalInput);
       else additionalScriptInputs.push(additionalInput);
     });
