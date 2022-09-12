@@ -213,18 +213,36 @@ export function createBuildContext({
   }
   //#endregion
 
+  //#region Build Modes
+
   return {
-    async rebuild(baseConfig, manifest) {
+    async rebuild(baseConfig, manifest, mode) {
       const buildConfigs = await generateBuildConfigs(baseConfig, manifest);
-      if (pluginOptions.verbose) {
-        // Print configs deep enough to include lib and rollup inputs
-        logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));
-      }
+      // Print configs deep enough to include rollup inputs
+      logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));
 
       const newBundles: Array<OutputChunk | OutputAsset> = [];
       for (const config of buildConfigs) {
-        const output = (await Vite.build(config)) as RollupOutput;
-        newBundles.push(...output.output);
+        const output = await Vite.build(config);
+        if (Array.isArray(output)) {
+          newBundles.push(...output.map((o) => o.output).flat());
+        } else if ("output" in output) {
+          newBundles.push(...output.output);
+        } else {
+          // In watch mode, wait until it's built once
+          await new Promise<void>((res, rej) => {
+            output.addListener("event", (e) => {
+              switch (e.code) {
+                case "BUNDLE_END":
+                  res();
+                  break;
+                case "ERROR":
+                  rej(e.error);
+                  break;
+              }
+            });
+          });
+        }
       }
       bundles = uniqBy(newBundles, "fileName");
     },

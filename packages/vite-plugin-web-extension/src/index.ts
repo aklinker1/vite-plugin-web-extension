@@ -87,7 +87,6 @@ export default function browserExtension(options: PluginOptions = {}): Plugin {
     manifest: any,
     bundles: Array<OutputChunk | OutputAsset>
   ): any {
-    // console.log(bundles);
     const findReplacement = (entry: string) =>
       bundles.find((output) => {
         if (
@@ -192,7 +191,6 @@ export default function browserExtension(options: PluginOptions = {}): Plugin {
       // Build
       const entrypointsManifest = await loadManifest();
       await ctx.rebuild(baseConfig, entrypointsManifest, mode);
-      process.stdout.write("\n");
 
       // Generate the manifest based on the output files
       const manifest = renderManifest(entrypointsManifest, ctx.getBundles());
