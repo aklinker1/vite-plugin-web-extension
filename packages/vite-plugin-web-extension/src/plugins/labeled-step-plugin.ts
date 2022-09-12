@@ -1,6 +1,6 @@
 import { Plugin, UserConfig } from "vite";
 import { PLUGIN_NAME } from "../utils/constants";
-import { DIM, Logger, RESET, TEAL } from "../utils/logger";
+import { Logger, RESET, TEAL } from "../utils/logger";
 import { getRootDir } from "../utils/paths";
 import path from "node:path";
 import { InputOption } from "rollup";
@@ -59,11 +59,6 @@ export function labeledStepPlugin(
     configResolved(config) {
       finalConfig = config as unknown as UserConfig;
       rootDir = getRootDir(finalConfig);
-    },
-    watchChange(filename) {
-      logger.log(
-        `${DIM}${path.relative(rootDir, filename)}${RESET} changed...`
-      );
     },
     buildStart() {
       if (buildCount == 0) printFirstBuild();
