@@ -94,7 +94,7 @@ importers:
       '@types/md5': ^2.3.1
       '@types/node': ^16.11.6
       '@types/webextension-polyfill': ^0.9.0
-      ajv: ^8.8.1
+      ajv: ^8.11.0
       cosmiconfig: ^7.0.1
       find-config: ^1.0.0
       fs-extra: ^10.1.0
@@ -109,7 +109,7 @@ importers:
       web-ext: ^7.2.0
       webextension-polyfill: ^0.10.0
     dependencies:
-      ajv: 8.8.1
+      ajv: 8.11.0
       cosmiconfig: 7.0.1
       find-config: 1.0.0
       fs-extra: 10.1.0
@@ -1113,15 +1113,6 @@ packages:
 
   /ajv/8.11.0:
     resolution: {integrity: sha512-wGgprdCvMalC0BztXvitD2hC04YffAvtsUn93JbGXYLAtCUO4xd17mCCZQxUOItiBwZvJScWo8NIvQMQ71rdpg==}
-    dependencies:
-      fast-deep-equal: 3.1.3
-      json-schema-traverse: 1.0.0
-      require-from-string: 2.0.2
-      uri-js: 4.4.1
-    dev: false
-
-  /ajv/8.8.1:
-    resolution: {integrity: sha512-6CiMNDrzv0ZR916u2T+iRunnD60uWmNn8SkdB44/6stVORUg0aAkWO7PkOhpCmjmW8f2I/G/xnowD66fxGyQJg==}
     dependencies:
       fast-deep-equal: 3.1.3
       json-schema-traverse: 1.0.0

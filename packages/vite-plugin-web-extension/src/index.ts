@@ -14,6 +14,7 @@ import { getOutDir, getPublicDir, getRootDir } from "./utils/paths";
 import { OutputAsset, OutputChunk } from "rollup";
 import type { Manifest } from "webextension-polyfill";
 import { startWebExt, ExtensionRunner } from "./utils/extension-runner";
+import { createManifestValidator } from "./utils/manifest-validation";
 
 /**
  * This plugin composes multiple Vite builds together into a single Vite build by calling the
@@ -35,6 +36,7 @@ export default function browserExtension(options: PluginOptions = {}): Plugin {
    */
   let baseConfig: UserConfig;
   let extensionRunner: ExtensionRunner;
+  const validateManifest = createManifestValidator({ logger });
 
   /**
    * Set the build mode based on how vite was ran/configured.
@@ -194,6 +196,7 @@ export default function browserExtension(options: PluginOptions = {}): Plugin {
 
       // Generate the manifest based on the output files
       const manifest = renderManifest(entrypointsManifest, ctx.getBundles());
+      if (!options.skipManifestValidation) await validateManifest(manifest);
       this.emitFile({
         type: "asset",
         source: JSON.stringify(manifest),

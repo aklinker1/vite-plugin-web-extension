@@ -36,7 +36,7 @@
     "prepare": "pnpm build"
   },
   "dependencies": {
-    "ajv": "^8.8.1",
+    "ajv": "^8.11.0",
     "cosmiconfig": "^7.0.1",
     "find-config": "^1.0.0",
     "fs-extra": "^10.1.0",
