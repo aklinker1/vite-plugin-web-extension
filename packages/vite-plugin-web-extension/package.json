@@ -21,33 +21,34 @@
     "browser"
   ],
   "exports": {
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
+    ".": "./dist/index.js"
   },
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/index.cjs",
     "dist/index.js",
-    "dist/index.d.ts",
-    "index.ts"
+    "dist/index.d.ts"
   ],
   "scripts": {
     "compile": "tsc",
-    "build": "tsup --format esm,cjs src/index.ts && tsc",
+    "build": "tsup --format esm src/index.ts && tsc",
     "test": "vitest",
     "prepare": "pnpm build"
   },
   "dependencies": {
     "ajv": "^8.8.1",
+    "cosmiconfig": "^7.0.1",
+    "find-config": "^1.0.0",
+    "fs-extra": "^10.1.0",
     "lodash.uniq": "^4.5.0",
     "lodash.uniqby": "^4.7.0",
     "md5": "^2.3.0",
-    "web-ext": "^6.5.0",
+    "web-ext": "^7.2.0",
     "webextension-polyfill": "^0.10.0"
   },
   "devDependencies": {
+    "@types/find-config": "^1.0.1",
+    "@types/fs-extra": "^9.0.13",
     "@types/lodash.uniq": "^4.5.7",
     "@types/lodash.uniqby": "^4.7.7",
     "@types/md5": "^2.3.1",

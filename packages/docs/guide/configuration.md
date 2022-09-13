@@ -81,22 +81,7 @@ See [`packages/demo-vue`](https://github.com/aklinker1/vite-plugin-web-extension
 
 This plugin uses `web-ext` under the hood to startup a browser and install the extension in dev mode. You can configure `web-ext` via the `webExtConfig` option.
 
-For a list of options, you'll have to look at [`web-ext`'s source code](https://github.com/mozilla/web-ext/blob/666886f40a967b515d43cf38fc9aec67ad744d89/src/program.js#L559), and search for `.command('run'`, then camelCase each flag. If it's type is `array`, set it equal to an array of the values.
-
-Here are some examples (with their CLI equivalents above):
-
-```ts
-webExtension({
-  webExtConfig: {
-    // --chromium-binary /path/to/google-chrome
-    chromiumBinary: "/path/to/google-chrome",
-    // --start-url google.com --start-url duckduckgo.com
-    startUrl: ["google.com", "duckduckgo.com"],
-    // --watch-ignored *.md *.log
-    watchIgnored: ["*.md", "*.log"],
-  },
-});
-```
+For a list of options, you'll have to look at [`web-ext`'s source code](https://github.com/mozilla/web-ext/blob/e37e60a2738478f512f1255c537133321f301771/src/cmd/run.js#L28-L62).
 
 See [#22](https://github.com/aklinker1/vite-plugin-web-extension/issues/22) for a real use case of changing the size of Chrome's window on startup.
 

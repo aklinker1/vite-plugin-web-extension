@@ -6,15 +6,14 @@ import { BuildMode } from "./utils/build-mode";
 import { createBuildContext } from "./utils/build-context";
 import { defineNoRollupInput } from "./utils/no-rollup-input";
 import path from "node:path";
-import fs from "node:fs/promises";
+import fs from "fs-extra";
 import { resolveBrowserTagsInObject } from "./utils/resolve-browser-flags";
 import { inspect } from "node:util";
 import { mergeConfigs } from "./utils/merge-configs";
-import { getOutDir, getRootDir } from "./utils/paths";
+import { getOutDir, getPublicDir, getRootDir } from "./utils/paths";
 import { OutputAsset, OutputChunk } from "rollup";
-import type { Manifest, Runtime } from "webextension-polyfill";
-import uniqBy from "lodash.uniqby";
-import { chownSync } from "node:fs";
+import type { Manifest } from "webextension-polyfill";
+import { startWebExt, ExtensionRunner } from "./utils/extension-runner";
 
 /**
  * This plugin composes multiple Vite builds together into a single Vite build by calling the
@@ -35,6 +34,7 @@ export default function browserExtension(options: PluginOptions = {}): Plugin {
    * This stores the config passed in by the user from their `vite.config.ts`
    */
   let baseConfig: UserConfig;
+  let extensionRunner: ExtensionRunner;
 
   /**
    * Set the build mode based on how vite was ran/configured.
@@ -200,6 +200,15 @@ export default function browserExtension(options: PluginOptions = {}): Plugin {
         fileName: "manifest.json",
         name: "manifest.json",
       });
+
+      // Manually copy the public directory when necessary
+      if (mode === BuildMode.WATCH || mode === BuildMode.DEV) {
+        const publicDir = getPublicDir(baseConfig);
+        if (publicDir != null) {
+          const outputDir = getOutDir(baseConfig);
+          fs.copy(publicDir, outputDir);
+        }
+      }
     },
     // Runs during: build, dev, watch
     resolveId(id) {
@@ -212,7 +221,16 @@ export default function browserExtension(options: PluginOptions = {}): Plugin {
     // Runs during: build, watch
     buildEnd() {},
     // Runs during: build, watch
-    closeBundle() {},
+    async closeBundle() {
+      if (mode === BuildMode.WATCH && !options.disableAutoLaunch) {
+        await extensionRunner?.exit();
+        extensionRunner = await startWebExt({
+          pluginOptions: options,
+          config: baseConfig,
+          logger,
+        });
+      }
+    },
     // Runs during: build, watch
     generateBundle(options, bundle, isWrite) {
       noInput.cleanupBundle(bundle);

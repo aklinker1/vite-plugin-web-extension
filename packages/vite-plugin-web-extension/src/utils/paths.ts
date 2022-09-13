@@ -11,3 +11,9 @@ export function getOutDir(config: InlineConfig): string {
   const outDir = config.build?.outDir ?? "dist";
   return path.resolve(getRootDir(config), outDir);
 }
+
+// TODO: Test
+export function getPublicDir(config: InlineConfig): string | undefined {
+  if (config.publicDir === false) return;
+  return path.resolve(getRootDir(config), config.publicDir ?? "public");
+}

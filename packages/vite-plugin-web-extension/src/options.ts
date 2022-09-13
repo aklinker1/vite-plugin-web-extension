@@ -37,11 +37,6 @@ export interface PluginOptions {
   additionalInputs?: string[];
 
   /**
-   * See [`web-ext` docs](https://github.com/mozilla/web-ext#using-web-ext-in-nodejs-code) for options to configure how `web-ext` runs
-   */
-  webExtConfig?: any;
-
-  /**
    * Used to disable auto-installing the extension when in watch mode. Default value is `false`.
    */
   disableAutoLaunch?: boolean;

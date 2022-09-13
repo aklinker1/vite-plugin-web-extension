@@ -1,4 +1,4 @@
-import { OutputAsset, OutputChunk, RollupOutput } from "rollup";
+import { OutputAsset, OutputChunk, RollupWatcher } from "rollup";
 import { inspect } from "util";
 import * as Vite from "vite";
 import { Manifest } from "webextension-polyfill";
@@ -43,6 +43,7 @@ export function createBuildContext({
    * generated assets.
    */
   let bundles: Array<OutputChunk | OutputAsset> = [];
+  let activeWatchers: RollupWatcher[] = [];
 
   //#region Build Config Generation
   async function generateBuildConfigs(
@@ -217,6 +218,9 @@ export function createBuildContext({
 
   return {
     async rebuild(baseConfig, manifest, mode) {
+      await Promise.all(activeWatchers.map((watcher) => watcher.close()));
+      activeWatchers = [];
+
       const buildConfigs = await generateBuildConfigs(baseConfig, manifest);
       // Print configs deep enough to include rollup inputs
       logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));
@@ -230,6 +234,8 @@ export function createBuildContext({
           newBundles.push(...output.output);
         } else {
           // In watch mode, wait until it's built once
+          // @ts-expect-error: Rollup/Vite type conflict
+          activeWatchers.push(output);
           await new Promise<void>((res, rej) => {
             output.addListener("event", (e) => {
               switch (e.code) {

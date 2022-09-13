@@ -1,4 +1,4 @@
-import { PLUGIN_NAME, VERBOSE_LOGGER } from "./constants";
+import { PLUGIN_NAME, LOGGER_PREFIX } from "./constants";
 
 export interface Logger {
   verbose(message: string): void;
@@ -24,9 +24,7 @@ export function createLogger(verbose?: boolean): Logger {
       console.debug(
         message
           .split("\n")
-          .map(
-            (line) => `  ${BOLD}${DIM}vite:${VERBOSE_LOGGER}${RESET} ${line}`
-          )
+          .map((line) => `  ${BOLD}${DIM}${LOGGER_PREFIX}${RESET} ${line}`)
           .join("\n")
       );
     },
@@ -34,7 +32,7 @@ export function createLogger(verbose?: boolean): Logger {
       console.log(
         message
           .split("\n")
-          .map((line) => `${BOLD}${GREEN}[${PLUGIN_NAME}]${RESET} ${line}`)
+          .map((line) => `${BOLD}${GREEN}[${LOGGER_PREFIX}]${RESET} ${line}`)
           .join("\n")
       );
     },
@@ -43,7 +41,7 @@ export function createLogger(verbose?: boolean): Logger {
         message
           .split("\n")
           .map(
-            (line) => `${BOLD}${YELLOW}[${PLUGIN_NAME}] WARN: ${line}${RESET}`
+            (line) => `${BOLD}${YELLOW}[${LOGGER_PREFIX}] WARN: ${line}${RESET}`
           )
           .join("\n")
       );
@@ -52,7 +50,9 @@ export function createLogger(verbose?: boolean): Logger {
       console.error(
         message
           .split("\n")
-          .map((line) => `${BOLD}${RED}[${PLUGIN_NAME}] ERROR: ${line}${RESET}`)
+          .map(
+            (line) => `${BOLD}${RED}[${LOGGER_PREFIX}] ERROR: ${line}${RESET}`
+          )
           .join("\n")
       );
       console.error(err);

@@ -1,6 +1,7 @@
 {
   "name": "vue-demo",
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "pnpm install && tsc && vite dev",
     "dev:firefox": "pnpm install && tsc && TARGET=firefox vite dev",
@@ -9,6 +10,7 @@
     "validate": "web-ext lint -s dist"
   },
   "dependencies": {
+    "import-fresh": "^3.3.0",
     "lodash.debounce": "^4.0.8"
   },
   "devDependencies": {
