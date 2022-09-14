@@ -1,21 +1,25 @@
-import { InlineConfig } from "vite";
+import { ResolvedConfig } from "vite";
 import path from "node:path";
 import { InputOption } from "rollup";
 
 // TODO: Test
-export function getRootDir(config: InlineConfig): string {
-  return path.resolve(process.cwd(), config.root ?? process.cwd());
+export function getRootDir(config: ResolvedConfig): string {
+  const cwd = process.cwd();
+  const configFileDir = config.configFile
+    ? path.resolve(cwd, config.configFile)
+    : cwd;
+  return path.resolve(configFileDir, config.root);
 }
 
 // TODO: Test
-export function getOutDir(config: InlineConfig): string {
-  const outDir = config.build?.outDir ?? "dist";
+export function getOutDir(config: ResolvedConfig): string {
+  const { outDir } = config.build;
   return path.resolve(getRootDir(config), outDir);
 }
 
 // TODO: Test
-export function getPublicDir(config: InlineConfig): string | undefined {
-  if (config.publicDir === false) return;
+export function getPublicDir(config: ResolvedConfig): string | undefined {
+  if (config.publicDir === "") return;
   return path.resolve(getRootDir(config), config.publicDir ?? "public");
 }
 

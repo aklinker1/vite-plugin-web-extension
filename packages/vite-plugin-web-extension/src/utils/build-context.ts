@@ -11,19 +11,20 @@ import { colorizeFilename, entryFilenameToInput } from "./filenames";
 import { BOLD, DIM, Logger, RESET, CYAN, VIOLET } from "./logger";
 import { mergeConfigs } from "./merge-configs";
 import path from "node:path";
-import { getInputAbsPaths, getRootDir } from "./paths";
+import { getInputAbsPaths } from "./paths";
 import uniqBy from "lodash.uniqby";
 
 export interface BuildContext {
   /**
-   * Based on the baseConfig and new manifest, rebuild all the entrypoints and update the bundle
+   * Based on the user config and new manifest, rebuild all the entrypoints and update the bundle
    * map.
    */
-  rebuild(
-    baseConfig: Vite.InlineConfig,
-    manifest: any,
-    mode: BuildMode
-  ): Promise<void>;
+  rebuild(options: {
+    rootDir: string;
+    userConfig: Vite.UserConfig;
+    manifest: any;
+    mode: BuildMode;
+  }): Promise<void>;
   getBundles(): Array<OutputChunk | OutputAsset>;
 }
 
@@ -47,17 +48,18 @@ export function createBuildContext({
 
   //#region Build Config Generation
   async function generateBuildConfigs(
-    baseConfig: Vite.InlineConfig,
+    rootDir: string,
+    userConfig: Vite.UserConfig,
     manifest: any
   ) {
     const entryConfigs = await generateBuildConfigsFromManifest(
-      baseConfig,
+      rootDir,
       manifest
     );
     const totalEntries = entryConfigs.length;
     const finalConfigs = entryConfigs
       .map((entryConfig, i) =>
-        mergeConfigs(baseConfig, entryConfig, {
+        mergeConfigs(userConfig, entryConfig, {
           // We shouldn't clear the screen for these internal builds
           clearScreen: false,
           // Don't copy static assets for the lib builds - already done during manifest build
@@ -77,7 +79,7 @@ export function createBuildContext({
   }
 
   async function generateBuildConfigsFromManifest(
-    baseConfig: Vite.InlineConfig,
+    rootDir: string,
     manifest: any
   ): Promise<Vite.InlineConfig[]> {
     const configs: Vite.InlineConfig[] = [];
@@ -91,7 +93,7 @@ export function createBuildContext({
             rollupOptions: {
               input: entries.reduce<Record<string, string>>((input, entry) => {
                 input[entryFilenameToInput(entry)] = path.resolve(
-                  getRootDir(baseConfig),
+                  rootDir,
                   entry
                 );
                 return input;
@@ -120,7 +122,7 @@ export function createBuildContext({
           build: {
             rollupOptions: {
               input: {
-                [moduleId]: path.resolve(getRootDir(baseConfig), entry),
+                [moduleId]: path.resolve(rootDir, entry),
               },
               output: {
                 // Configure the output filenames so they appear in the same folder
@@ -214,11 +216,13 @@ export function createBuildContext({
   }
   //#endregion
 
-  function printSummary(buildConfigs: Vite.InlineConfig[]): void {
+  function printSummary(
+    rootDir: string,
+    buildConfigs: Vite.InlineConfig[]
+  ): void {
     if (buildConfigs.length === 0) return;
 
     logger.log(`${BOLD}Build Steps${RESET}`);
-    const rootDir = getRootDir(buildConfigs[0]);
     buildConfigs.forEach((config, i) => {
       if (config.build?.rollupOptions?.input == null) return;
 
@@ -244,12 +248,16 @@ export function createBuildContext({
   }
 
   return {
-    async rebuild(baseConfig, manifest, mode) {
+    async rebuild({ rootDir, userConfig, manifest }) {
       await Promise.all(activeWatchers.map((watcher) => watcher.close()));
       activeWatchers = [];
 
-      const buildConfigs = await generateBuildConfigs(baseConfig, manifest);
-      if (pluginOptions.printSummary) printSummary(buildConfigs);
+      const buildConfigs = await generateBuildConfigs(
+        rootDir,
+        userConfig,
+        manifest
+      );
+      if (pluginOptions.printSummary) printSummary(rootDir, buildConfigs);
 
       // Print configs deep enough to include rollup inputs
       logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));

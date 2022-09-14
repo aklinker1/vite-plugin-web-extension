@@ -1,5 +1,5 @@
-import { ConfigEnv, Plugin, UserConfig } from "vite";
-import { InternalPluginOptions, PluginOptions } from "../options";
+import { ConfigEnv, Plugin, ResolvedConfig, UserConfig } from "vite";
+import { InternalPluginOptions } from "../options";
 import { createLogger } from "../utils/logger";
 import { PLUGIN_NAME } from "../utils/constants";
 import { BuildMode } from "../utils/build-mode";
@@ -32,11 +32,20 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
   let mode = BuildMode.BUILD;
   const ctx = createBuildContext({ logger, pluginOptions: options });
   /**
-   * This stores the config passed in by the user from their `vite.config.ts`
+   * This stores the config passed in by the user from their `vite.config.ts`. This is the config
+   * used as a base for all the builds performed by the build context.
    */
-  let baseConfig: UserConfig;
+  let userConfig: UserConfig;
+  /**
+   * This stores the final, resolved config with lots of defaults and additional information filled
+   * out by Vite. Used to find paths related to the build process.
+   */
+  let resolvedConfig: ResolvedConfig;
   let extensionRunner: ExtensionRunner;
   const validateManifest = createManifestValidator({ logger });
+  let rootDir: string;
+  let outDir: string;
+  let publicDir: string | undefined;
 
   /**
    * Set the build mode based on how vite was ran/configured.
@@ -67,10 +76,9 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       manifestTemplate = manifestOption();
     } else {
       // Manifest string should be a path relative to the config.root
-      const root = getRootDir(baseConfig);
-      const manifestPath = path.resolve(root, manifestOption);
+      const manifestPath = path.resolve(rootDir, manifestOption);
       logger.verbose(
-        `Loading manifest from file @ ${manifestPath} (root: ${root})`
+        `Loading manifest from file @ ${manifestPath} (root: ${rootDir})`
       );
       const text = await fs.readFile(manifestPath, "utf-8");
       manifestTemplate = JSON.parse(text);
@@ -173,7 +181,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
         logger.log(`Building for browser: ${options.browser}`);
       }
       configureBuildMode(config, env);
-      baseConfig = config;
+      userConfig = config;
 
       return mergeConfigs(
         // We only want to output the manifest.json, so we don't need an input.
@@ -183,16 +191,30 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
         { build: { emptyOutDir: false } }
       );
     },
+    configResolved(config) {
+      resolvedConfig = config;
+      rootDir = getRootDir(config);
+      outDir = getOutDir(config);
+      publicDir = getPublicDir(config);
+    },
     // Runs during: Build, dev, watch
     async buildStart(buildOptions) {
-      if (baseConfig.build?.emptyOutDir) {
+      if (resolvedConfig.build.emptyOutDir) {
         logger.verbose("Removing build.outDir...");
-        await fs.rm(getOutDir(baseConfig), { recursive: true, force: true });
+        await fs.rm(getOutDir(resolvedConfig), {
+          recursive: true,
+          force: true,
+        });
       }
 
       // Build
       const entrypointsManifest = await loadManifest();
-      await ctx.rebuild(baseConfig, entrypointsManifest, mode);
+      await ctx.rebuild({
+        rootDir,
+        userConfig,
+        manifest: entrypointsManifest,
+        mode,
+      });
 
       // Generate the manifest based on the output files
       const manifest = renderManifest(entrypointsManifest, ctx.getBundles());
@@ -205,12 +227,9 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       });
 
       // Manually copy the public directory when necessary
-      if (mode === BuildMode.WATCH || mode === BuildMode.DEV) {
-        const publicDir = getPublicDir(baseConfig);
-        if (publicDir != null) {
-          const outputDir = getOutDir(baseConfig);
-          fs.copy(publicDir, outputDir);
-        }
+      if (publicDir && (mode === BuildMode.WATCH || mode === BuildMode.DEV)) {
+        const outputDir = getOutDir(resolvedConfig);
+        fs.copy(publicDir, outputDir);
       }
     },
     // Runs during: build, dev, watch
@@ -229,7 +248,8 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
         await extensionRunner?.exit();
         extensionRunner = await startWebExt({
           pluginOptions: options,
-          config: baseConfig,
+          rootDir,
+          outDir,
           logger,
         });
       }

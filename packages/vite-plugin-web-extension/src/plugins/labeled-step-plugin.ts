@@ -1,6 +1,6 @@
-import { Plugin, UserConfig } from "vite";
+import { Plugin, ResolvedConfig, UserConfig } from "vite";
 import { PLUGIN_NAME } from "../utils/constants";
-import { GREEN, Logger, RESET, CYAN, VIOLET } from "../utils/logger";
+import { Logger } from "../utils/logger";
 import { getInputAbsPaths, getRootDir } from "../utils/paths";
 import path from "node:path";
 import { colorizeFilename } from "../utils/filenames";
@@ -13,7 +13,7 @@ export function labeledStepPlugin(
   total: number,
   index: number
 ): Plugin {
-  let finalConfig: UserConfig;
+  let finalConfig: ResolvedConfig;
   let rootDir: string;
   let buildCount = 0;
 
@@ -53,7 +53,7 @@ export function labeledStepPlugin(
   return {
     name: `${PLUGIN_NAME}:labeled-step`,
     configResolved(config) {
-      finalConfig = config as unknown as UserConfig;
+      finalConfig = config;
       rootDir = getRootDir(finalConfig);
       if (buildCount == 0) printFirstBuild();
       else printRebuilds();

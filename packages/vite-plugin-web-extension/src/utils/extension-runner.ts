@@ -1,7 +1,5 @@
-import { InlineConfig } from "vite";
 import webExt from "web-ext";
 import { InternalPluginOptions } from "../options";
-import { getOutDir, getRootDir } from "./paths";
 import * as webExtLogger from "web-ext/util/logger";
 import { cosmiconfig } from "cosmiconfig";
 import { Logger } from "./logger";
@@ -18,10 +16,11 @@ const ERROR_LOG_LEVEL = 50;
 
 export async function startWebExt(options: {
   pluginOptions: InternalPluginOptions;
-  config: InlineConfig;
+  rootDir: string;
+  outDir: string;
   logger: Logger;
 }): Promise<ExtensionRunner> {
-  const { pluginOptions, config, logger } = options;
+  const { pluginOptions, rootDir, outDir, logger } = options;
 
   //#region Config File
   const userConfig = await cosmiconfig("web-ext", {
@@ -44,7 +43,7 @@ export async function startWebExt(options: {
       ".web-ext-config.js",
       ".web-ext-config.cjs",
     ],
-  }).search(getRootDir(config));
+  }).search(rootDir);
   if (userConfig != null) {
     logger.verbose(`web-ext config discovered at ${userConfig.filepath}:`);
     logger.verbose(inspect(userConfig.config));
@@ -67,7 +66,7 @@ export async function startWebExt(options: {
           : "chromium",
       ...userConfig?.config,
       // These options are required or the CLI freezes on linux
-      sourceDir: getOutDir(config),
+      sourceDir: outDir,
       noReload: true,
       noInput: true,
     },
