@@ -12,6 +12,10 @@ export interface ExtensionRunner {
   exit(): Promise<void>;
 }
 
+// https://github.com/mozilla/web-ext/blob/e37e60a2738478f512f1255c537133321f301771/src/util/logger.js#L12
+const WARN_LOG_LEVEL = 40;
+const ERROR_LOG_LEVEL = 50;
+
 export async function startWebExt(options: {
   pluginOptions: PluginOptions;
   config: InlineConfig;
@@ -77,7 +81,3 @@ export async function startWebExt(options: {
     exit: () => runner.exit(),
   };
 }
-
-// https://github.com/mozilla/web-ext/blob/e37e60a2738478f512f1255c537133321f301771/src/util/logger.js#L12
-const WARN_LOG_LEVEL = 40;
-const ERROR_LOG_LEVEL = 50;
