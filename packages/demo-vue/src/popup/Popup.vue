@@ -1,3 +1,3 @@
 <template>
-  <p>Hello vue popup 2</p>
+  <p>Hello vue popup</p>
 </template>

@@ -10,7 +10,6 @@
     "validate": "web-ext lint -s dist"
   },
   "dependencies": {
-    "import-fresh": "^3.3.0",
     "lodash.debounce": "^4.0.8"
   },
   "devDependencies": {
