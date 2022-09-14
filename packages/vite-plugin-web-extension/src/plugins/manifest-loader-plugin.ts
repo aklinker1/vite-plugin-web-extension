@@ -15,6 +15,7 @@ import { OutputAsset, OutputChunk } from "rollup";
 import type { Manifest } from "webextension-polyfill";
 import { startWebExt, ExtensionRunner } from "../utils/extension-runner";
 import { createManifestValidator } from "../utils/manifest-validation";
+import { colorizeFilename } from "../utils/filenames";
 
 /**
  * This plugin composes multiple Vite builds together into a single Vite build by calling the
@@ -199,6 +200,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     },
     // Runs during: Build, dev, watch
     async buildStart(buildOptions) {
+      // Empty out directory
       if (resolvedConfig.build.emptyOutDir) {
         logger.verbose("Removing build.outDir...");
         await fs.rm(getOutDir(resolvedConfig), {
@@ -206,6 +208,9 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
           force: true,
         });
       }
+
+      // Add watch files
+      options.watchFilePaths.forEach(this.addWatchFile);
 
       // Build
       const entrypointsManifest = await loadManifest();
@@ -257,6 +262,9 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     // Runs during: build, watch
     generateBundle(options, bundle, isWrite) {
       noInput.cleanupBundle(bundle);
+    },
+    watchChange(id) {
+      logger.log(`${colorizeFilename(id)} changed, restarting browser`);
     },
     // Runs during: dev
     handleHotUpdate(ctx) {},
