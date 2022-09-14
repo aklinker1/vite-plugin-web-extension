@@ -6,7 +6,7 @@ import { InternalPluginOptions, PluginOptions } from "../options";
 import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { compact } from "./arrays";
 import { BuildMode } from "./build-mode";
-import { PLUGIN_NAME } from "./constants";
+import { MANIFEST_LOADER_PLUGIN_NAME } from "./constants";
 import { colorizeFilename, entryFilenameToInput } from "./filenames";
 import { BOLD, DIM, Logger, RESET, CYAN, VIOLET } from "./logger";
 import { mergeConfigs } from "./merge-configs";
@@ -74,7 +74,7 @@ export function createBuildContext({
         })
       )
       // Exclude this plugin from child builds to break recursion
-      .map((config) => removePlugin(config, PLUGIN_NAME));
+      .map((config) => removePlugin(config, MANIFEST_LOADER_PLUGIN_NAME));
     return finalConfigs;
   }
 

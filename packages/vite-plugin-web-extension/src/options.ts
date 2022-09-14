@@ -1,4 +1,4 @@
-import { InlineConfig, UserConfigExport } from "vite";
+import { InlineConfig } from "vite";
 
 export type Manifest = any;
 

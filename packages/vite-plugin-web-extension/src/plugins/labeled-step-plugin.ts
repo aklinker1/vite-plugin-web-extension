@@ -1,5 +1,8 @@
 import { Plugin, ResolvedConfig, UserConfig } from "vite";
-import { PLUGIN_NAME } from "../utils/constants";
+import {
+  LABELED_STEP_PLUGIN_NAME,
+  MANIFEST_LOADER_PLUGIN_NAME,
+} from "../utils/constants";
 import { Logger } from "../utils/logger";
 import { getInputAbsPaths, getRootDir } from "../utils/paths";
 import path from "node:path";
@@ -51,7 +54,7 @@ export function labeledStepPlugin(
   }
 
   return {
-    name: `${PLUGIN_NAME}:labeled-step`,
+    name: LABELED_STEP_PLUGIN_NAME,
     configResolved(config) {
       finalConfig = config;
       rootDir = getRootDir(finalConfig);

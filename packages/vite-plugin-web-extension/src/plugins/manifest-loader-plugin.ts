@@ -1,7 +1,7 @@
 import { ConfigEnv, Plugin, ResolvedConfig, UserConfig } from "vite";
 import { InternalPluginOptions } from "../options";
 import { createLogger } from "../utils/logger";
-import { PLUGIN_NAME } from "../utils/constants";
+import { MANIFEST_LOADER_PLUGIN_NAME } from "../utils/constants";
 import { BuildMode } from "../utils/build-mode";
 import { createBuildContext } from "../utils/build-context";
 import { defineNoRollupInput } from "../utils/no-rollup-input";
@@ -176,7 +176,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
   //#endregion
 
   return {
-    name: PLUGIN_NAME,
+    name: MANIFEST_LOADER_PLUGIN_NAME,
     async config(config, env) {
       if (options.browser != null) {
         logger.log(`Building for browser: ${options.browser}`);

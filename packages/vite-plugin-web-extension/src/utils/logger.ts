@@ -1,4 +1,4 @@
-import { PLUGIN_NAME, LOGGER_PREFIX } from "./constants";
+import { MANIFEST_LOADER_PLUGIN_NAME } from "./constants";
 
 export interface Logger {
   verbose(message: string): void;
@@ -38,7 +38,10 @@ export function createLogger(
       console.debug(
         message
           .split("\n")
-          .map((line) => `  ${BOLD}${DIM}${LOGGER_PREFIX}${RESET} ${line}`)
+          .map(
+            (line) =>
+              `  ${BOLD}${DIM}${MANIFEST_LOADER_PLUGIN_NAME}${RESET} ${line}`
+          )
           .join("\n")
       );
     },
@@ -50,7 +53,8 @@ export function createLogger(
         message
           .split("\n")
           .map(
-            (line) => `${BOLD}${YELLOW}[${LOGGER_PREFIX}] WARN: ${line}${RESET}`
+            (line) =>
+              `${BOLD}${YELLOW}[${MANIFEST_LOADER_PLUGIN_NAME}] WARN: ${line}${RESET}`
           )
           .join("\n")
       );
@@ -60,7 +64,8 @@ export function createLogger(
         message
           .split("\n")
           .map(
-            (line) => `${BOLD}${RED}[${LOGGER_PREFIX}] ERROR: ${line}${RESET}`
+            (line) =>
+              `${BOLD}${RED}[${MANIFEST_LOADER_PLUGIN_NAME}] ERROR: ${line}${RESET}`
           )
           .join("\n")
       );

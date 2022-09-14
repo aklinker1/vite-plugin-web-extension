@@ -1,3 +1,2 @@
-export const LOGGER_PREFIX = "vite:web-extension";
-
-export const PLUGIN_NAME = `vite-plugin-web-extension`;
+export const MANIFEST_LOADER_PLUGIN_NAME = `web-extension:manifest`;
+export const LABELED_STEP_PLUGIN_NAME = `web-extension:labeled-step`;
