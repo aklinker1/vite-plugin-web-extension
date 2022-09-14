@@ -21,9 +21,11 @@
     "browser"
   ],
   "exports": {
-    ".": "./dist/index.js"
+    "require": "./dist/index.cjs",
+    "import": "./dist/index.js"
   },
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/index.js",
@@ -31,7 +33,7 @@
   ],
   "scripts": {
     "compile": "tsc",
-    "build": "tsup --format esm src/index.ts && tsc",
+    "build": "tsup --format esm,cjs src/index.ts && tsc",
     "test": "vitest",
     "prepare": "pnpm build"
   },

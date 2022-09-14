@@ -17,7 +17,7 @@ export default defineConfig({
     vue(),
     browserExtension({
       browser: process.env.TARGET ?? "chrome",
-      verbose: true,
+      verbose: false,
     }),
   ],
 });

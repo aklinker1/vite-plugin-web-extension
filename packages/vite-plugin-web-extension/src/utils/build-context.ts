@@ -8,10 +8,10 @@ import { compact } from "./arrays";
 import { BuildMode } from "./build-mode";
 import { PLUGIN_NAME } from "./constants";
 import { entryFilenameToInput } from "./filenames";
-import { Logger } from "./logger";
+import { BOLD, DIM, Logger, RESET, TEAL, VIOLET } from "./logger";
 import { mergeConfigs } from "./merge-configs";
 import path from "node:path";
-import { getRootDir } from "./paths";
+import { getInputAbsPaths, getRootDir } from "./paths";
 import uniqBy from "lodash.uniqby";
 
 export interface BuildContext {
@@ -214,7 +214,32 @@ export function createBuildContext({
   }
   //#endregion
 
-  //#region Build Modes
+  function printSummary(buildConfigs: Vite.InlineConfig[]): void {
+    if (buildConfigs.length === 0) return;
+
+    logger.log(`${BOLD}Build Steps${RESET}`);
+    const rootDir = getRootDir(buildConfigs[0]);
+    buildConfigs.forEach((config, i) => {
+      if (config.build?.rollupOptions?.input == null) return;
+
+      const relativePaths = getInputAbsPaths(
+        config.build.rollupOptions.input
+      ).map((absPath) => path.relative(rootDir, absPath));
+
+      if (relativePaths.length === 1) {
+        logger.log(
+          `  ${i + 1}. Bundling ${TEAL}${relativePaths[0]}${RESET} indvidually`
+        );
+      } else {
+        logger.log(
+          `  ${i + 1}. Bunding ${relativePaths.length} entrpyoints together:`
+        );
+        relativePaths.forEach((relativePath) =>
+          logger.log(`    ${DIM}•${RESET} ${TEAL}${relativePath}${RESET}`)
+        );
+      }
+    });
+  }
 
   return {
     async rebuild(baseConfig, manifest, mode) {
@@ -222,6 +247,8 @@ export function createBuildContext({
       activeWatchers = [];
 
       const buildConfigs = await generateBuildConfigs(baseConfig, manifest);
+      if (pluginOptions.printSummary !== false) printSummary(buildConfigs);
+
       // Print configs deep enough to include rollup inputs
       logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));
 
