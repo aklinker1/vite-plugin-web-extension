@@ -37,14 +37,12 @@ importers:
       '@types/lodash.debounce': ^4.0.6
       '@vitejs/plugin-vue': ^3.0.0
       '@vue/compiler-sfc': ^3.2.25
-      import-fresh: ^3.3.0
       lodash.debounce: ^4.0.8
       typescript: ^4.4.4
       vite: ^3.1.0
       vite-plugin-web-extension: workspace:*
       vue: ^3.2.25
     dependencies:
-      import-fresh: 3.3.0
       lodash.debounce: 4.0.8
     devDependencies:
       '@types/lodash.debounce': 4.0.6
@@ -87,7 +85,6 @@ importers:
 
   packages/vite-plugin-web-extension:
     specifiers:
-      '@types/find-config': ^1.0.1
       '@types/fs-extra': ^9.0.13
       '@types/lodash.uniq': ^4.5.7
       '@types/lodash.uniqby': ^4.7.7
@@ -96,7 +93,6 @@ importers:
       '@types/webextension-polyfill': ^0.9.0
       ajv: ^8.11.0
       cosmiconfig: ^7.0.1
-      find-config: ^1.0.0
       fs-extra: ^10.1.0
       lodash.uniq: ^4.5.0
       lodash.uniqby: ^4.7.0
@@ -111,7 +107,6 @@ importers:
     dependencies:
       ajv: 8.11.0
       cosmiconfig: 7.0.1
-      find-config: 1.0.0
       fs-extra: 10.1.0
       lodash.uniq: 4.5.0
       lodash.uniqby: 4.7.0
@@ -119,7 +114,6 @@ importers:
       web-ext: 7.2.0
       webextension-polyfill: 0.10.0
     devDependencies:
-      '@types/find-config': 1.0.1
       '@types/fs-extra': 9.0.13
       '@types/lodash.uniq': 4.5.7
       '@types/lodash.uniqby': 4.7.7
@@ -392,10 +386,6 @@ packages:
     resolution: {integrity: sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==}
     dependencies:
       '@types/ms': 0.7.31
-    dev: true
-
-  /@types/find-config/1.0.1:
-    resolution: {integrity: sha512-H4DFIQMwxCKRgVWMSqALg6aowTOgZi5D4pSPBBuOQFJLRwfNZaByhC9+s870CZgTRJoyVg5J+iesdF5uvnJ0mA==}
     dev: true
 
   /@types/fs-extra/9.0.13:
@@ -2808,13 +2798,6 @@ packages:
     dependencies:
       to-regex-range: 5.0.1
 
-  /find-config/1.0.0:
-    resolution: {integrity: sha512-Z+suHH+7LSE40WfUeZPIxSxypCWvrzdVc60xAjUShZeT5eMWM0/FQUduq3HjluyfAHWvC/aOBkT1pTZktyF/jg==}
-    engines: {node: '>= 0.12'}
-    dependencies:
-      user-home: 2.0.0
-    dev: false
-
   /find-up/5.0.0:
     resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
     engines: {node: '>=10'}
@@ -4049,11 +4032,6 @@ packages:
       wcwidth: 1.0.1
     dev: true
 
-  /os-homedir/1.0.2:
-    resolution: {integrity: sha512-B5JU3cabzk8c67mRRd3ECmROafjYMXbuzlwtqdM8IbS8ktlTix8aFGb2bAGKrSRIlnfKwovGUUr72JUPyOb6kQ==}
-    engines: {node: '>=0.10.0'}
-    dev: false
-
   /os-locale/5.0.0:
     resolution: {integrity: sha512-tqZcNEDAIZKBEPnHPlVDvKrp7NzgLi7jRmhKiUoa2NUmhl13FtkAGLUVR+ZsYvApBQdBfYm43A4tXXQ4IrYLBA==}
     engines: {node: '>=10'}
@@ -5119,13 +5097,6 @@ packages:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
     dependencies:
       punycode: 2.1.1
-    dev: false
-
-  /user-home/2.0.0:
-    resolution: {integrity: sha512-KMWqdlOcjCYdtIJpicDSFBQ8nFwS2i9sslAd6f4+CBGcU4gist2REnr2fxj2YocvJFxSF3ZOHLYLVZnUxv4BZQ==}
-    engines: {node: '>=0.10.0'}
-    dependencies:
-      os-homedir: 1.0.2
     dev: false
 
   /util-deprecate/1.0.2:

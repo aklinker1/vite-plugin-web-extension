@@ -20,7 +20,6 @@ export default defineConfig({
         "another-page/index.html",
       ],
       watchFilePaths: [root("src/manifest.json")],
-      verbose: false,
       browser: process.env.TARGET || "chrome",
     }),
   ],

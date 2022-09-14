@@ -2,7 +2,7 @@ import { OutputAsset, OutputChunk, RollupWatcher } from "rollup";
 import { inspect } from "util";
 import * as Vite from "vite";
 import { Manifest } from "webextension-polyfill";
-import { PluginOptions } from "../options";
+import { InternalPluginOptions, PluginOptions } from "../options";
 import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { compact } from "./arrays";
 import { BuildMode } from "./build-mode";
@@ -35,7 +35,7 @@ export function createBuildContext({
   pluginOptions,
   logger,
 }: {
-  pluginOptions: PluginOptions;
+  pluginOptions: InternalPluginOptions;
   logger: Logger;
 }): BuildContext {
   /**
@@ -188,7 +188,7 @@ export function createBuildContext({
     return compact<string>(a?.flat() ?? []);
   }
 
-  function separateAdditionalInputs(additionalInputs?: string[]) {
+  function separateAdditionalInputs(additionalInputs: string[]) {
     const additionalScriptInputs: string[] = [];
     const additionalHtmlInputs: string[] = [];
     additionalInputs?.forEach((additionalInput) => {
@@ -249,7 +249,7 @@ export function createBuildContext({
       activeWatchers = [];
 
       const buildConfigs = await generateBuildConfigs(baseConfig, manifest);
-      if (pluginOptions.printSummary !== false) printSummary(buildConfigs);
+      if (pluginOptions.printSummary) printSummary(buildConfigs);
 
       // Print configs deep enough to include rollup inputs
       logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));

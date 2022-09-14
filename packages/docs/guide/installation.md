@@ -100,7 +100,7 @@ export default defineConfig({
 
 By default, `vite-plugin-web-extension` will look for `<root>/manifest.json`. 
 
-In your `src/manifest.json`, all paths should also be relative to your Vite `root`, and point to the source code files.
+In your `manifest.json`, all paths should also be relative to your Vite `root`, and point to the source code files.
 
 ```json
 // src/manifest.json

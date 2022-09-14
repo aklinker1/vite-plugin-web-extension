@@ -1,6 +1,6 @@
 import { InlineConfig } from "vite";
 import webExt from "web-ext";
-import { PluginOptions } from "../options";
+import { InternalPluginOptions } from "../options";
 import { getOutDir, getRootDir } from "./paths";
 import * as webExtLogger from "web-ext/util/logger";
 import { cosmiconfig } from "cosmiconfig";
@@ -17,7 +17,7 @@ const WARN_LOG_LEVEL = 40;
 const ERROR_LOG_LEVEL = 50;
 
 export async function startWebExt(options: {
-  pluginOptions: PluginOptions;
+  pluginOptions: InternalPluginOptions;
   config: InlineConfig;
   logger: Logger;
 }): Promise<ExtensionRunner> {

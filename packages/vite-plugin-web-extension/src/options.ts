@@ -19,18 +19,6 @@ export interface PluginOptions {
   manifest?: string | (() => Manifest) | (() => Promise<Manifest>) | undefined;
 
   /**
-   * This path is where the manifest will be written to, and it is relative to Vite's output path
-   * (default: `"manifest.json"`)
-   */
-  writeManifestTo?: string;
-
-  /**
-   * Whether or not to show logs. This is useful when modules aren't resolving and you need to debug
-   * your paths
-   */
-  verbose?: boolean;
-
-  /**
    * Used to include additional files, like content scripts, not mentioned in the final
    * `manifest.json`. Paths should be relative to Vite's `root` (or `process.cwd()` if not set)
    */
@@ -52,7 +40,9 @@ export interface PluginOptions {
   browser?: string;
 
   /**
-   * Do not validate your manifest to make sure it can be loaded by browsers
+   * Do not validate your manifest to make sure it can be loaded by browsers.
+   *
+   * @default false
    */
   skipManifestValidation?: boolean;
 
@@ -73,4 +63,18 @@ export interface PluginOptions {
    * worker, content scripts, etc)
    */
   scriptViteConfig?: InlineConfig;
+}
+
+export interface InternalPluginOptions {
+  manifest: string | (() => Manifest) | (() => Promise<Manifest>);
+  additionalInputs: string[];
+  disableAutoLaunch: boolean;
+  watchFilePaths: string[];
+  browser?: string;
+  skipManifestValidation: boolean;
+  printSummary: boolean;
+  htmlViteConfig?: InlineConfig;
+  scriptViteConfig?: InlineConfig;
+  verbose: boolean;
+  disableColors: boolean;
 }
