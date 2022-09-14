@@ -7,17 +7,31 @@ export interface Logger {
   error(message: string, error: unknown): void;
 }
 
-export const RESET = "\x1b[0m";
-export const BOLD = "\x1b[1m";
-export const DIM = "\x1b[2m";
-export const RED = "\x1b[91m";
-export const GREEN = "\x1b[92m";
-export const YELLOW = "\x1b[93m";
-export const BLUE = "\x1b[94m";
-export const VIOLET = "\x1b[95m";
-export const CYAN = "\x1b[96m";
+export let RESET = "\x1b[0m";
+export let BOLD = "\x1b[1m";
+export let DIM = "\x1b[2m";
+export let RED = "\x1b[91m";
+export let GREEN = "\x1b[92m";
+export let YELLOW = "\x1b[93m";
+export let BLUE = "\x1b[94m";
+export let VIOLET = "\x1b[95m";
+export let CYAN = "\x1b[96m";
 
-export function createLogger(verbose?: boolean): Logger {
+export function createLogger(
+  verbose?: boolean,
+  disableColor?: boolean
+): Logger {
+  if (disableColor) {
+    RESET = "";
+    BOLD = "";
+    DIM = "";
+    RED = "";
+    GREEN = "";
+    YELLOW = "";
+    BLUE = "";
+    VIOLET = "";
+    CYAN = "";
+  }
   return {
     verbose(message: string) {
       if (!verbose) return;

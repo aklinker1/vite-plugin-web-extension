@@ -25,7 +25,9 @@ import { createManifestValidator } from "./utils/manifest-validation";
  */
 export default function browserExtension(options: PluginOptions = {}): Plugin {
   const noInput = defineNoRollupInput();
-  const logger = createLogger(options.verbose);
+  const disableColors =
+    process.env.CI === "true" || process.env.DISABLE_COLORS === "true"; // TODO: document env var
+  const logger = createLogger(options.verbose, disableColors);
   /**
    * Whether the dev server is running, we're in watch mode, or it's a simple build.
    */
