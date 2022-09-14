@@ -7,8 +7,8 @@ import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { compact } from "./arrays";
 import { BuildMode } from "./build-mode";
 import { PLUGIN_NAME } from "./constants";
-import { entryFilenameToInput } from "./filenames";
-import { BOLD, DIM, Logger, RESET, TEAL, VIOLET } from "./logger";
+import { colorizeFilename, entryFilenameToInput } from "./filenames";
+import { BOLD, DIM, Logger, RESET, CYAN, VIOLET } from "./logger";
 import { mergeConfigs } from "./merge-configs";
 import path from "node:path";
 import { getInputAbsPaths, getRootDir } from "./paths";
@@ -228,14 +228,16 @@ export function createBuildContext({
 
       if (relativePaths.length === 1) {
         logger.log(
-          `  ${i + 1}. Bundling ${TEAL}${relativePaths[0]}${RESET} indvidually`
+          `  ${i + 1}. Bundling ${colorizeFilename(
+            relativePaths[0]
+          )} indvidually`
         );
       } else {
         logger.log(
           `  ${i + 1}. Bunding ${relativePaths.length} entrpyoints together:`
         );
         relativePaths.forEach((relativePath) =>
-          logger.log(`    ${DIM}•${RESET} ${TEAL}${relativePath}${RESET}`)
+          logger.log(`    ${DIM}•${RESET} ${colorizeFilename(relativePath)}`)
         );
       }
     });

@@ -15,7 +15,7 @@ export const GREEN = "\x1b[92m";
 export const YELLOW = "\x1b[93m";
 export const BLUE = "\x1b[94m";
 export const VIOLET = "\x1b[95m";
-export const TEAL = "\x1b[96m";
+export const CYAN = "\x1b[96m";
 
 export function createLogger(verbose?: boolean): Logger {
   return {
@@ -29,12 +29,7 @@ export function createLogger(verbose?: boolean): Logger {
       );
     },
     log(message: string) {
-      console.log(
-        message
-          .split("\n")
-          .map((line) => `${BOLD}${GREEN}[${LOGGER_PREFIX}]${RESET} ${line}`)
-          .join("\n")
-      );
+      console.log(message);
     },
     warn(message: string) {
       console.warn(

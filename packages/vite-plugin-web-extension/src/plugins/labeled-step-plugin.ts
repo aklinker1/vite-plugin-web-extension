@@ -1,8 +1,9 @@
 import { Plugin, UserConfig } from "vite";
 import { PLUGIN_NAME } from "../utils/constants";
-import { Logger, RESET, TEAL } from "../utils/logger";
+import { GREEN, Logger, RESET, CYAN, VIOLET } from "../utils/logger";
 import { getInputAbsPaths, getRootDir } from "../utils/paths";
 import path from "node:path";
+import { colorizeFilename } from "../utils/filenames";
 
 /**
  * A plugin that prints the inputs that will be built.
@@ -28,8 +29,8 @@ export function labeledStepPlugin(
     logger.log(
       `${progressLabel} Building ${absPaths
         .map((p) => path.relative(rootDir, p))
-        .map((p) => `${TEAL}${p}${RESET}`)
-        .join(", ")}...`
+        .map(colorizeFilename)
+        .join(", ")}`
     );
   }
 
@@ -44,8 +45,8 @@ export function labeledStepPlugin(
     logger.log(
       `Rebuilding ${absPaths
         .map((p) => path.relative(rootDir, p))
-        .map((p) => `${TEAL}${p}${RESET}`)
-        .join(", ")}...`
+        .map(colorizeFilename)
+        .join(", ")}`
     );
   }
 
@@ -54,8 +55,6 @@ export function labeledStepPlugin(
     configResolved(config) {
       finalConfig = config as unknown as UserConfig;
       rootDir = getRootDir(finalConfig);
-    },
-    buildStart() {
       if (buildCount == 0) printFirstBuild();
       else printRebuilds();
 
