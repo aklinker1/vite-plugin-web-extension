@@ -2,29 +2,33 @@ import { OutputAsset, OutputChunk, RollupWatcher } from "rollup";
 import { inspect } from "util";
 import * as Vite from "vite";
 import { Manifest } from "webextension-polyfill";
-import { InternalPluginOptions, PluginOptions } from "../options";
+import { InternalPluginOptions } from "../options";
 import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { compact } from "./arrays";
 import { BuildMode } from "./build-mode";
 import { MANIFEST_LOADER_PLUGIN_NAME } from "./constants";
 import { colorizeFilename, entryFilenameToInput } from "./filenames";
-import { BOLD, DIM, Logger, RESET, CYAN, VIOLET } from "./logger";
+import { BOLD, DIM, Logger, RESET, GREEN } from "./logger";
 import { mergeConfigs } from "./merge-configs";
 import path from "node:path";
 import { getInputAbsPaths } from "./paths";
 import uniqBy from "lodash.uniqby";
+import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
+
+interface RebuildOptions {
+  rootDir: string;
+  userConfig: Vite.UserConfig;
+  manifest: any;
+  mode: BuildMode;
+  onSuccess?: () => Promise<void> | void;
+}
 
 export interface BuildContext {
   /**
    * Based on the user config and new manifest, rebuild all the entrypoints and update the bundle
    * map.
    */
-  rebuild(options: {
-    rootDir: string;
-    userConfig: Vite.UserConfig;
-    manifest: any;
-    mode: BuildMode;
-  }): Promise<void>;
+  rebuild(rebuildOptions: RebuildOptions): Promise<void>;
   getBundles(): Array<OutputChunk | OutputAsset>;
 }
 
@@ -47,11 +51,18 @@ export function createBuildContext({
   let activeWatchers: RollupWatcher[] = [];
 
   //#region Build Config Generation
-  async function generateBuildConfigs(
-    rootDir: string,
-    userConfig: Vite.UserConfig,
-    manifest: any
-  ) {
+  async function generateBuildConfigs({
+    rootDir,
+    userConfig,
+    manifest,
+    onSuccess,
+    mode,
+  }: RebuildOptions) {
+    const multibuildManager = createMultibuildCompleteManager(async () => {
+      // This prints before the manifest plugin continues in watch mode
+      if (mode == BuildMode.WATCH) printCompleted();
+      await onSuccess?.();
+    });
     const entryConfigs = await generateBuildConfigsFromManifest(
       rootDir,
       manifest
@@ -69,8 +80,9 @@ export function createBuildContext({
           plugins: [
             // Print a message before starting each step
             labeledStepPlugin(logger, totalEntries, i),
+            // ...(mode === BuildMode.WATCH ? [multibuildManager.plugin()] : []),
+            multibuildManager.plugin(),
           ],
-          // logLevel: "warn",
         })
       )
       // Exclude this plugin from child builds to break recursion
@@ -222,7 +234,7 @@ export function createBuildContext({
   ): void {
     if (buildConfigs.length === 0) return;
 
-    logger.log(`${BOLD}Build Steps${RESET}`);
+    const lines = ["", `${BOLD}Build Steps${RESET}`];
     buildConfigs.forEach((config, i) => {
       if (config.build?.rollupOptions?.input == null) return;
 
@@ -231,32 +243,35 @@ export function createBuildContext({
       ).map((absPath) => path.relative(rootDir, absPath));
 
       if (relativePaths.length === 1) {
-        logger.log(
-          `  ${i + 1}. Bundling ${colorizeFilename(
+        lines.push(
+          `  ${i + 1}. Building ${colorizeFilename(
             relativePaths[0]
           )} indvidually`
         );
       } else {
-        logger.log(
+        lines.push(
           `  ${i + 1}. Bunding ${relativePaths.length} entrpyoints together:`
         );
         relativePaths.forEach((relativePath) =>
-          logger.log(`    ${DIM}•${RESET} ${colorizeFilename(relativePath)}`)
+          lines.push(`    ${DIM}•${RESET} ${colorizeFilename(relativePath)}`)
         );
       }
     });
+
+    logger.log(lines.join("\n"));
+  }
+
+  function printCompleted() {
+    logger.log(`\n${GREEN}✓${RESET} All steps completed.\n`);
   }
 
   return {
-    async rebuild({ rootDir, userConfig, manifest }) {
+    async rebuild(rebuildOptions) {
+      const { rootDir, mode } = rebuildOptions;
       await Promise.all(activeWatchers.map((watcher) => watcher.close()));
       activeWatchers = [];
 
-      const buildConfigs = await generateBuildConfigs(
-        rootDir,
-        userConfig,
-        manifest
-      );
+      const buildConfigs = await generateBuildConfigs(rebuildOptions);
       if (pluginOptions.printSummary) printSummary(rootDir, buildConfigs);
 
       // Print configs deep enough to include rollup inputs
@@ -288,6 +303,10 @@ export function createBuildContext({
         }
       }
       bundles = uniqBy(newBundles, "fileName");
+      // This prints before the manifest plugin continues in build mode
+      if (mode === BuildMode.BUILD) {
+        printCompleted();
+      }
     },
     getBundles() {
       return bundles;

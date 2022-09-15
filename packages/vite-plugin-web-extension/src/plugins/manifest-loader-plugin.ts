@@ -12,7 +12,7 @@ import { inspect } from "node:util";
 import { mergeConfigs } from "../utils/merge-configs";
 import { getOutDir, getPublicDir, getRootDir } from "../utils/paths";
 import { OutputAsset, OutputChunk } from "rollup";
-import type { Manifest } from "webextension-polyfill";
+import { extension, Manifest } from "webextension-polyfill";
 import { startWebExt, ExtensionRunner } from "../utils/extension-runner";
 import { createManifestValidator } from "../utils/manifest-validation";
 import { colorizeFilename } from "../utils/filenames";
@@ -223,6 +223,9 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
         userConfig,
         manifest: entrypointsManifest,
         mode,
+        onSuccess: async () => {
+          if (extensionRunner) await extensionRunner.reload();
+        },
       });
 
       // Generate the manifest based on the output files
@@ -256,13 +259,16 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     // Runs during: build, watch
     async closeBundle() {
       if (mode === BuildMode.WATCH && !options.disableAutoLaunch) {
-        if (!isError)
+        if (!isError) {
+          logger.log("\nOpening browser...");
           extensionRunner = await startWebExt({
             pluginOptions: options,
             rootDir,
             outDir,
             logger,
           });
+          logger.log("Done!");
+        }
       }
     },
     // Runs during: build, watch
@@ -272,7 +278,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     async watchChange(id) {
       const relativePath = path.relative(rootDir, id);
       logger.log(
-        `${colorizeFilename(relativePath)} changed, restarting browser`
+        `\n${colorizeFilename(relativePath)} changed, restarting browser`
       );
       await extensionRunner?.exit();
     },

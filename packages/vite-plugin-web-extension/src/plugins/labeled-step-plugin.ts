@@ -21,19 +21,21 @@ export function labeledStepPlugin(
   let buildCount = 0;
 
   function printFirstBuild() {
+    logger.log("");
+
     const progressLabel = `(${index + 1}/${total})`;
     const input = finalConfig.build?.rollupOptions?.input;
     if (input == null) {
-      logger.warn(progressLabel + " Building unknown config");
+      logger.warn(`Building unknown config ${progressLabel}`);
       return;
     }
 
     const absPaths = getInputAbsPaths(input);
     logger.log(
-      `${progressLabel} Building ${absPaths
+      `Building ${absPaths
         .map((p) => path.relative(rootDir, p))
         .map(colorizeFilename)
-        .join(", ")}`
+        .join(", ")} ${progressLabel}`
     );
   }
 

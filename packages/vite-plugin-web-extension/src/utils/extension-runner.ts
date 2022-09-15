@@ -76,7 +76,10 @@ export async function startWebExt(options: {
     }
   );
   return {
-    reload: () => runner.reloadAllExtensions(),
+    async reload() {
+      await runner.reloadAllExtensions();
+      logger.log(""); // "Last extension reload: ..." log doesn't print a newline :/
+    },
     exit: () => runner.exit(),
   };
 }
