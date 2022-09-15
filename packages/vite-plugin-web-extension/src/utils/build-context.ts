@@ -128,8 +128,8 @@ export function createBuildContext({
                 // Configure the output filenames so they appear in the same folder
                 // - content-scripts/some-script/index.<hash>.js
                 // - content-scripts/some-script/index.<hash>.css
-                entryFileNames: `[name].[hash].js`,
-                assetFileNames: `${outputDir}[name].[hash].[ext]`,
+                entryFileNames: `[name].js`,
+                assetFileNames: `${outputDir}[name].[ext]`,
               },
             },
           },
