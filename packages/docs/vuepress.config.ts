@@ -18,6 +18,20 @@ export default defineUserConfig({
         link: "/",
       },
       "/reference/plugin-options.md",
+      {
+        text: "v2",
+        children: [
+          {
+            text: "v1 Docs",
+            link: "https://v1.vite-plugin-web-extension.aklinker1.io",
+            target: "_blank",
+          },
+          {
+            text: "v2 Docs",
+            link: "/",
+          },
+        ],
+      },
     ],
     sidebar: {
       "/": [
