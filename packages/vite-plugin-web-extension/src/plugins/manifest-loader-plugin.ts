@@ -47,6 +47,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
   let rootDir: string;
   let outDir: string;
   let publicDir: string | undefined;
+  let isError = false;
 
   /**
    * Set the build mode based on how vite was ran/configured.
@@ -246,11 +247,13 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       return noInput.load(id);
     },
     // Runs during: build, watch
-    buildEnd() {},
+    buildEnd(err) {
+      isError = err != null;
+    },
     // Runs during: build, watch
     async closeBundle() {
       if (mode === BuildMode.WATCH && !options.disableAutoLaunch) {
-        await extensionRunner?.exit();
+        if (!isError)
         extensionRunner = await startWebExt({
           pluginOptions: options,
           rootDir,
