@@ -30,7 +30,11 @@ export interface PluginOptions {
   disableAutoLaunch?: boolean;
 
   /**
-   * **Absolute paths** to files to watch.
+   * Absolute path or relative path to the Vite root to files to watch. When these files change, a
+   * full reload of the extension is triggered in both watch and dev mode.
+   *
+   * If your manifest is generated from a function, you can add all the files that generate it here
+   * so the browser restarts when you make a change.
    */
   watchFilePaths?: string[];
 

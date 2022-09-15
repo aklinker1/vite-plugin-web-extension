@@ -212,6 +212,9 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
 
       // Add watch files
       options.watchFilePaths.forEach(this.addWatchFile);
+      if (typeof options.manifest === "string") {
+        this.addWatchFile(path.resolve(rootDir, options.manifest));
+      }
 
       // Build
       const entrypointsManifest = await loadManifest();
@@ -254,20 +257,24 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     async closeBundle() {
       if (mode === BuildMode.WATCH && !options.disableAutoLaunch) {
         if (!isError)
-        extensionRunner = await startWebExt({
-          pluginOptions: options,
-          rootDir,
-          outDir,
-          logger,
-        });
+          extensionRunner = await startWebExt({
+            pluginOptions: options,
+            rootDir,
+            outDir,
+            logger,
+          });
       }
     },
     // Runs during: build, watch
-    generateBundle(options, bundle, isWrite) {
+    generateBundle(_options, bundle, _isWrite) {
       noInput.cleanupBundle(bundle);
     },
-    watchChange(id) {
-      logger.log(`${colorizeFilename(id)} changed, restarting browser`);
+    async watchChange(id) {
+      const relativePath = path.relative(rootDir, id);
+      logger.log(
+        `${colorizeFilename(relativePath)} changed, restarting browser`
+      );
+      await extensionRunner?.exit();
     },
     // Runs during: dev
     handleHotUpdate(ctx) {},
