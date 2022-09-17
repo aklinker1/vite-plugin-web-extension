@@ -175,6 +175,10 @@ export function createBuildContext({
       manifest.page_action?.default_popup,
       manifest.sidebar_action?.default_panel,
       manifest.background?.page,
+      manifest.chrome_url_overrides?.bookmarks,
+      manifest.chrome_url_overrides?.history,
+      manifest.chrome_url_overrides?.newtab,
+      manifest.chrome_settings_overrides?.homepage,
       additionalHtmlInputs,
     ]);
     if (htmlEntries.length > 0) addHtmlConfig(htmlEntries);
