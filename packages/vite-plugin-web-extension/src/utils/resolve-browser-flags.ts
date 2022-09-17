@@ -1,5 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function resolveBrowserTagsInObject(browser: string, object: any): any {
+export function resolveBrowserTagsInObject(
+  browser: string | undefined,
+  object: any
+): any {
   if (Array.isArray(object)) {
     return object
       .map((item) => resolveBrowserTagsInObject(browser, item))

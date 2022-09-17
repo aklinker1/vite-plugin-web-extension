@@ -1,11 +1,13 @@
-import { Plugin } from "vite";
+import { PluginOption } from "vite";
 import { InternalPluginOptions, PluginOptions } from "./options";
 import { manifestLoaderPlugin } from "./plugins/manifest-loader-plugin";
 import fs from "fs-extra";
 
 export { PluginOptions };
 
-export default function webExtension(options: PluginOptions = {}): Plugin {
+export default function webExtension(
+  options: PluginOptions = {}
+): PluginOption {
   const internalOptions: InternalPluginOptions = {
     additionalInputs: options.additionalInputs ?? [],
     disableAutoLaunch: options.disableAutoLaunch ?? false,

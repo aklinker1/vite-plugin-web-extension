@@ -1,21 +1,22 @@
 import { testBuild } from "./utils/test-build";
 import fs from "fs/promises";
-import WebExtension from "vite-plugin-web-extension";
-import { defineConfig, InlineConfig } from "vite";
+import { UserConfig } from "vite";
 import path from "path";
 import { expectManifest } from "./utils/expect-manifest";
 import { describe, it, expect, beforeEach } from "vitest";
+import webExtension from "vite-plugin-web-extension";
 
 const DIST_DIRECTORY = path.resolve(process.cwd(), "dist");
 
 async function expectBuildToMatchSnapshot(
-  config: InlineConfig,
+  config: UserConfig,
   expectedDirStructure: string[]
 ) {
-  expect(await testBuild(config)).toMatchSnapshot();
+  const res = await testBuild(config);
   for (const file of expectedDirStructure) {
     expect(await fs.lstat(file)).toBeDefined();
   }
+  expect(res).toMatchSnapshot();
 }
 
 function manifest(overrides: any) {
@@ -25,14 +26,14 @@ function manifest(overrides: any) {
     description: "test manifest",
     manifest_version: 2,
     icons: {
-      "16": "extension/assets/16.png",
-      "48": "extension/assets/48.png",
-      "128": "extension/assets/128.png",
+      "16": "16.png",
+      "48": "48.png",
+      "128": "128.png",
     },
     ...overrides,
   });
 }
-function baseConfig(manifestOverrides: any): InlineConfig {
+function baseConfig(manifestOverrides: any): UserConfig {
   return {
     root: "extension",
     build: {
@@ -40,7 +41,7 @@ function baseConfig(manifestOverrides: any): InlineConfig {
       emptyOutDir: true,
     },
     plugins: [
-      WebExtension({
+      webExtension({
         manifest: manifest(manifestOverrides),
       }),
     ],
@@ -49,9 +50,9 @@ function baseConfig(manifestOverrides: any): InlineConfig {
 function baseOutputs(additionalOutputs?: string[]): string[] {
   return [
     "dist/manifest.json",
-    "dist/assets/16.png",
-    "dist/assets/48.png",
-    "dist/assets/128.png",
+    "dist/16.png",
+    "dist/48.png",
+    "dist/128.png",
     ...(additionalOutputs ?? []),
   ];
 }
@@ -75,20 +76,14 @@ describe("Vite Plugin Web Extension", () => {
       baseOutputs(["dist/page1.html"])
     ));
 
-  it.skip("should build a simple background script extension", () =>
+  it("should build a simple background script extension", () =>
     expectBuildToMatchSnapshot(
       baseConfig({
         background: {
           scripts: ["script1.js", "script2.ts"],
         },
       }),
-      [
-        "dist/assets/16.png",
-        "dist/assets/48.png",
-        "dist/assets/128.png",
-        "dist/script1.js",
-        "dist/script2.js",
-      ]
+      baseOutputs(["dist/script1.js", "dist/script2.js"])
     ));
 
   it("should build a extension with both html pages and scripts", () =>
@@ -128,7 +123,7 @@ describe("Vite Plugin Web Extension", () => {
             emptyOutDir,
           },
           plugins: [
-            WebExtension({
+            webExtension({
               manifest: manifest({
                 browser_action: {
                   default_popup: "page1.html",
@@ -145,12 +140,13 @@ describe("Vite Plugin Web Extension", () => {
   it("should work when the vite root is not specified", () =>
     expectBuildToMatchSnapshot(
       {
+        publicDir: "extension/public",
         build: {
           outDir: DIST_DIRECTORY,
           emptyOutDir: true,
         },
         plugins: [
-          WebExtension({
+          webExtension({
             manifest: manifest({
               browser_action: {
                 default_popup: "extension/page1.html",
@@ -160,9 +156,9 @@ describe("Vite Plugin Web Extension", () => {
         ],
       },
       [
-        "dist/extension/assets/16.png",
-        "dist/extension/assets/48.png",
-        "dist/extension/assets/128.png",
+        "dist/16.png",
+        "dist/48.png",
+        "dist/128.png",
         "dist/extension/page1.html",
         "dist/manifest.json",
       ]
@@ -177,7 +173,7 @@ describe("Vite Plugin Web Extension", () => {
           emptyOutDir: true,
         },
         plugins: [
-          WebExtension({
+          webExtension({
             manifest: manifest({
               browser_action: {
                 default_popup: "page1.html",
@@ -193,7 +189,7 @@ describe("Vite Plugin Web Extension", () => {
       baseOutputs(["dist/page1.html", "dist/script1.js", "dist/script2.js"])
     ));
 
-  it.each([
+  it.only.each([
     [
       undefined,
       expect.objectContaining({
@@ -249,7 +245,7 @@ describe("Vite Plugin Web Extension", () => {
             outDir: DIST_DIRECTORY,
           },
           plugins: [
-            WebExtension({
+            webExtension({
               manifest: manifest({
                 "{{chrome}}.manifest_version": 3,
                 "{{firefox}}.manifest_version": 2,
@@ -279,46 +275,25 @@ describe("Vite Plugin Web Extension", () => {
     }
   );
 
-  it("should include assets from the publicDir", () =>
+  it("should support supplementing the script build config via scriptViteConfig", () =>
     expectBuildToMatchSnapshot(
       {
+        root: "extension",
         build: {
           outDir: DIST_DIRECTORY,
           emptyOutDir: true,
         },
-        publicDir: "extension/assets",
         plugins: [
-          WebExtension({
+          webExtension({
             manifest: manifest({
               browser_action: {
-                default_popup: "extension/page1.html",
-              },
-            }),
-          }),
-        ],
-      },
-      ["dist/16.png", "dist/48.png", "dist/128.png"]
-    ));
-
-  it("should support supplementing the library mode build config via libModeViteConfig", () =>
-    expectBuildToMatchSnapshot(
-      {
-        build: {
-          outDir: DIST_DIRECTORY,
-          emptyOutDir: true,
-        },
-        publicDir: "extension/assets",
-        plugins: [
-          WebExtension({
-            manifest: manifest({
-              browser_action: {
-                default_popup: "extension/page1.html",
+                default_popup: "page1.html",
               },
               background: {
-                service_worker: "extension/dynamic-import.ts",
+                service_worker: "dynamic-import.ts",
               },
             }),
-            libModeViteConfig: defineConfig({
+            scriptViteConfig: {
               build: {
                 rollupOptions: {
                   output: {
@@ -326,10 +301,10 @@ describe("Vite Plugin Web Extension", () => {
                   },
                 },
               },
-            }),
+            },
           }),
         ],
       },
-      ["dist/16.png", "dist/48.png", "dist/128.png"]
+      baseOutputs()
     ));
 });

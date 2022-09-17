@@ -2,11 +2,12 @@ import { describe, expect, it } from "vitest";
 import { resolveBrowserTagsInObject } from "./resolve-browser-flags";
 
 describe("resolveBrowserTagsInObject", () => {
-  it("remove fields that have a different browser tag", () => {
+  it("should remove fields that have a different browser tag", () => {
     const input = {
       "{{a}}.field1": "A",
       "{{b}}.field1": "B",
       field2: "C",
+      "{{undefined}}": "D",
     };
 
     expect(resolveBrowserTagsInObject("a", input)).toEqual({
@@ -20,9 +21,12 @@ describe("resolveBrowserTagsInObject", () => {
     expect(resolveBrowserTagsInObject("x", input)).toEqual({
       field2: "C",
     });
+    expect(resolveBrowserTagsInObject(undefined, input)).toEqual({
+      field2: "C",
+    });
   });
 
-  it("remove string entries from arrays that have a different browser tag", () => {
+  it("should remove string entries from arrays that have a different browser tag", () => {
     const input = ["{{a}}.A", "{{b}}.B", "C"];
 
     expect(resolveBrowserTagsInObject("a", input)).toEqual(["A", "C"]);

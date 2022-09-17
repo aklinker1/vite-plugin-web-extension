@@ -86,9 +86,10 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       manifestTemplate = JSON.parse(text);
     }
     logger.verbose("Manifest template: " + inspect(manifestTemplate));
-    const entrypointsManifest = options.browser
-      ? resolveBrowserTagsInObject(options.browser, manifestTemplate)
-      : manifestTemplate;
+    const entrypointsManifest = resolveBrowserTagsInObject(
+      options.browser ?? "chrome",
+      manifestTemplate
+    );
     logger.verbose(
       "Manifest with entrypoints: " + inspect(entrypointsManifest)
     );
@@ -170,6 +171,9 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
         cs.css.push(generatedFile);
       });
       replaceArrayWithOutput(cs?.css);
+      // Can't have an empty content_script arrays
+      if (cs.css?.length === 0) delete cs.css;
+      if (cs.js?.length === 0) delete cs.js;
     });
 
     return manifest;

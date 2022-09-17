@@ -23,14 +23,12 @@ export function createMultibuildCompleteManager(
     return lock.acquire(lockKey, () => {
       activeBuilds++;
       hasTriggeredCallback = false;
-      console.log("\nActive builds", activeBuilds);
       delete buildStatuses[buildId];
     });
   }
   function decreaseBuildCount(buildId: number, err: Error | undefined) {
     return lock.acquire(lockKey, async () => {
       activeBuilds--;
-      console.log("\nActive builds", activeBuilds);
       if (err == null) delete buildStatuses[buildId];
       else buildStatuses[buildId] = err;
     });

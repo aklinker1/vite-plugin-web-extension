@@ -7,6 +7,9 @@
   "dependencies": {},
   "devDependencies": {},
   "pnpm": {
+    "overrides": {
+      "vite": "3.1.2"
+    },
     "peerDependencyRules": {
       "ignoreMissing": [
         "@types/download",

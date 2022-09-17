@@ -221,6 +221,38 @@ rendering chunks...
 ../dist/script1.js   0.09 KiB / gzip: 0.09 KiB"
 `;
 
+exports[`Vite Plugin Web Extension > should respect the browser flags, removing fields other than chrome 1`] = `
+"Building for browser: chrome
+vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page1.html indvidually
+  2. Building script1.js indvidually
+
+Building page1.html (1/2)
+vite v3.1.2 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/page1.html   0.26 KiB
+
+Building script1.js (2/2)
+vite v3.1.2 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"script1\\"
+rendering chunks...
+../dist/script1.js   0.00 KiB / gzip: 0.02 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.25 KiB"
+`;
+
 exports[`Vite Plugin Web Extension > should respect the browser flags, removing fields other than firefox (defaults to chrome) 1`] = `
 "vite v2.7.9 building for production...
 [vite-plugin-web-extension] 
@@ -245,6 +277,38 @@ transforming...
 Generated an empty chunk: \\"script1\\"
 rendering chunks...
 ../dist/script1.js   0.09 KiB / gzip: 0.09 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should respect the browser flags, removing fields other than firefox 1`] = `
+"Building for browser: firefox
+vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page1.html indvidually
+  2. Building script1.js indvidually
+
+Building page1.html (1/2)
+vite v3.1.2 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/page1.html   0.26 KiB
+
+Building script1.js (2/2)
+vite v3.1.2 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"script1\\"
+rendering chunks...
+../dist/script1.js   0.00 KiB / gzip: 0.02 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.26 KiB"
 `;
 
 exports[`Vite Plugin Web Extension > should respect the browser flags, removing fields other than undefined (defaults to chrome) 1`] = `
@@ -273,6 +337,40 @@ rendering chunks...
 ../dist/script1.js   0.09 KiB / gzip: 0.09 KiB"
 `;
 
+exports[`Vite Plugin Web Extension > should respect the browser flags, removing fields other than undefined 1`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building script1.js indvidually
+
+Building script1.js (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"script1\\"
+rendering chunks...
+../dist/script1.js   0.00 KiB / gzip: 0.02 KiB
+
+✓ All steps completed.
+
+[web-extension:manifest] ERROR: Manifest is not valid:
+[
+  {
+    \\"instancePath\\": \\"/content_scripts/0/matches\\",
+    \\"schemaPath\\": \\"#/properties/content_scripts/items/properties/matches/minItems\\",
+    \\"keyword\\": \\"minItems\\",
+    \\"params\\": {
+      \\"limit\\": 1
+    },
+    \\"message\\": \\"must NOT have fewer than 1 items\\"
+  }
+]
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.19 KiB"
+`;
+
 exports[`Vite Plugin Web Extension > should support supplementing the library mode build config via libModeViteConfig 1`] = `
 "vite v2.7.9 building for production...
 [vite-plugin-web-extension] 
@@ -296,6 +394,37 @@ transforming...
 ✓ 2 modules transformed.
 rendering chunks...
 dist/extension/dynamic-import.js   0.28 KiB / gzip: 0.21 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > should support supplementing the script build config via scriptViteConfig 1`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page1.html indvidually
+  2. Building dynamic-import.ts indvidually
+
+Building page1.html (1/2)
+vite v3.1.2 building for production...
+transforming...
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/page1.html   0.26 KiB
+
+Building dynamic-import.ts (2/2)
+vite v3.1.2 building for production...
+transforming...
+✓ 3 modules transformed.
+rendering chunks...
+../dist/dynamic-import.js           0.63 KiB / gzip: 0.42 KiB
+../dist/assets/module.a7d1f481.js   0.06 KiB / gzip: 0.08 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.23 KiB"
 `;
 
 exports[`Vite Plugin Web Extension > should work when the vite root is not specified 1`] = `

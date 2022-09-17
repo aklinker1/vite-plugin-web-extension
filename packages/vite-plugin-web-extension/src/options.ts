@@ -39,7 +39,9 @@ export interface PluginOptions {
   watchFilePaths?: string[];
 
   /**
-   * The browser to target, defaulting to chrome.
+   * The browser to target and open.
+   *
+   * @default "chrome"
    */
   browser?: string;
 

@@ -2,16 +2,15 @@
   "name": "tests",
   "private": "true",
   "scripts": {
-    "pretest": "pnpm install",
-    "test": "vitest --threads false",
-    "test:update": "pnpm test -- -u"
+    "test": "pnpm i && vitest --threads false",
+    "test:update": "pnpm test run -- -u"
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.6",
     "@types/node": "^16.11.6",
     "cross-env": "^7.0.3",
     "typescript": "^4.4.4",
-    "vite": "^2.7.9",
+    "vite": "*",
     "vite-plugin-web-extension": "workspace:*",
     "vitest": "^0.22.1"
   }
