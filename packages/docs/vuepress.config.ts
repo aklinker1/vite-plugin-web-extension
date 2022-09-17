@@ -37,7 +37,12 @@ export default defineUserConfig({
       "/": [
         {
           text: "Guide",
-          children: ["/", "/guide/installation.md", "/guide/configuration.md"],
+          children: [
+            "/",
+            "/guide/installation.md",
+            "/guide/configuration.md",
+            "/guide/migration.md",
+          ],
         },
       ],
       "/reference/": ["/reference/plugin-options.md"],
