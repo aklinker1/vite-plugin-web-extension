@@ -110,6 +110,14 @@ export function createBuildContext({
                 );
                 return input;
               }, {}),
+              output: {
+                // Configure the output filenames so they appear in the same folder
+                // - content-scripts/some-script/index.<hash>.js
+                // - content-scripts/some-script/index.<hash>.css
+                entryFileNames: `[name].js`,
+                chunkFileNames: `[name].js`,
+                assetFileNames: `[name].[ext]`,
+              },
             },
           },
         },
@@ -141,6 +149,7 @@ export function createBuildContext({
                 // - content-scripts/some-script/index.<hash>.js
                 // - content-scripts/some-script/index.<hash>.css
                 entryFileNames: `[name].js`,
+                chunkFileNames: `[name].js`,
                 assetFileNames: `${outputDir}[name].[ext]`,
               },
             },
