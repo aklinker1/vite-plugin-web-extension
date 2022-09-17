@@ -1,3 +1,3 @@
 #!/bin/bash
-pnpm version
+npm version
 pnpm publish --tag next
