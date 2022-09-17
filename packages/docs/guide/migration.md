@@ -9,6 +9,12 @@ There have been several breaking changes in the upgrade to v2. Most of these cha
 
 [[toc]]
 
+## Drop CommonJS Support
+
+In your `package.json`, it's now required to add `"type": "module"` due to `web-ext` dropping support.
+
+If you have any config files like tailwind that were common JS, rename them to use the `.cjs` file extension.
+
 ## No More `assets` Option
 
 In v1, everything in the `assets` directory was copied to the output directory. That sound familiar? Well, that's exactly what the [`public` directory](https://vitejs.dev/guide/assets.html#the-public-directory) does.
@@ -64,7 +70,7 @@ If you're using a function to generate your manifest, to take advantage of this 
 
 ## `web-ext` Changes
 
-`web-ext` was upgraded from v6.5 &rarr; v7.2. The big change here is that the library now ships with only module support, not as common JS. However, this should not be an issue for you! Just a headache for me :joy:.
+`web-ext` was upgraded from v6.5 &rarr; v7.2. The big change here is that the library now ships with only module support, not as common JS. See [Drop CommonJS Support](#drop-commonjs-support) what you need to do.
 
 In addition to the upgrade, the `webExtConfig` option has been removed. Instead, you should now configure this as a separate, gitignored file. Since this file is usually used for configuring and tweaking how the browser runs on your personal computer, not the rest of the team, excluding it from the plugin config makes sense.
 
