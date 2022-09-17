@@ -72,56 +72,100 @@ describe("Vite Plugin Web Extension", () => {
       [
         "action.default_popup",
         {
-          input: manifest({ action: { default_popup: "page1.html" } }),
-          expected: manifest({ action: { default_popup: "page1.html" } }),
+          input: manifest({ action: { default_popup: "page2.html" } }),
+          expected: manifest({ action: { default_popup: "page2.html" } }),
         },
       ],
       [
         "devtools_page",
         {
-          input: manifest({ devtools_page: "page1.html" }),
-          expected: manifest({ devtools_page: "page1.html" }),
+          input: manifest({ devtools_page: "page2.html" }),
+          expected: manifest({ devtools_page: "page2.html" }),
         },
       ],
       [
         "options_page",
         {
-          input: manifest({ options_page: "page1.html" }),
-          expected: manifest({ options_page: "page1.html" }),
+          input: manifest({ options_page: "page2.html" }),
+          expected: manifest({ options_page: "page2.html" }),
         },
       ],
       [
         "options_ui.page",
         {
-          input: manifest({ options_ui: { page: "page1.html" } }),
-          expected: manifest({ options_ui: { page: "page1.html" } }),
+          input: manifest({ options_ui: { page: "page2.html" } }),
+          expected: manifest({ options_ui: { page: "page2.html" } }),
         },
       ],
       [
         "browser_action.default_popup",
         {
           input: manifest({
-            browser_action: { default_popup: "page1.html" },
+            browser_action: { default_popup: "page2.html" },
           }),
           expected: manifest({
-            browser_action: { default_popup: "page1.html" },
+            browser_action: { default_popup: "page2.html" },
           }),
         },
       ],
       [
         "page_action.default_popup",
         {
-          input: manifest({ page_action: { default_popup: "page1.html" } }),
+          input: manifest({ page_action: { default_popup: "page2.html" } }),
           expected: manifest({
-            page_action: { default_popup: "page1.html" },
+            page_action: { default_popup: "page2.html" },
           }),
         },
       ],
       [
         "background.page",
         {
-          input: manifest({ background: { page: "page1.html" } }),
-          expected: manifest({ background: { page: "page1.html" } }),
+          input: manifest({ background: { page: "page2.html" } }),
+          expected: manifest({ background: { page: "page2.html" } }),
+        },
+      ],
+      [
+        "chrome_url_overrides.bookmarks",
+        {
+          input: manifest({
+            chrome_url_overrides: { bookmarks: "page2.html" },
+          }),
+          expected: manifest({
+            chrome_url_overrides: { bookmarks: "page2.html" },
+          }),
+        },
+      ],
+      [
+        "chrome_url_overrides.history",
+        {
+          input: manifest({
+            chrome_url_overrides: { history: "page2.html" },
+          }),
+          expected: manifest({
+            chrome_url_overrides: { history: "page2.html" },
+          }),
+        },
+      ],
+      [
+        "chrome_url_overrides.newtab",
+        {
+          input: manifest({
+            chrome_url_overrides: { newtab: "page2.html" },
+          }),
+          expected: manifest({
+            chrome_url_overrides: { newtab: "page2.html" },
+          }),
+        },
+      ],
+      [
+        "chrome_settings_overrides.homepage",
+        {
+          input: manifest({
+            chrome_settings_overrides: { homepage: "page2.html" },
+          }),
+          expected: manifest({
+            chrome_settings_overrides: { homepage: "page2.html" },
+          }),
         },
       ],
       // API-disabled HTML entrypoints
@@ -211,6 +255,10 @@ describe("Vite Plugin Web Extension", () => {
       async (_, { input, expected }) => {
         await expectBuildToMatchSnapshot(baseConfig(input), baseOutputs());
         expectManifest(expected);
+      },
+      {
+        // Chunk output can be random, and thus makes the snapshots flakey
+        retry: 5,
       }
     );
 

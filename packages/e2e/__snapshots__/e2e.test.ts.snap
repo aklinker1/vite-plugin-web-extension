@@ -11,10 +11,10 @@ Build Steps
 Building page1.html (1/3)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page1.html   0.26 KiB
 
 Building script1.js (2/3)
 vite v3.1.2 building for production...
@@ -48,10 +48,10 @@ Build Steps
 Building page1.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page1.html   0.26 KiB
 
 ✓ All steps completed.
 
@@ -70,10 +70,10 @@ Build Steps
 Building page1.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page1.html   0.26 KiB
 
 ✓ All steps completed.
 
@@ -92,10 +92,10 @@ Build Steps
 Building page1.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page1.html   0.26 KiB
 
 ✓ All steps completed.
 
@@ -114,10 +114,10 @@ Build Steps
 Building page1.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page1.html   0.26 KiB
 
 ✓ All steps completed.
 
@@ -138,10 +138,10 @@ Build Steps
 Building page1.html (1/2)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page1.html   0.26 KiB
 
 Building script1.js (2/2)
 vite v3.1.2 building for production...
@@ -169,10 +169,10 @@ Build Steps
 Building page1.html (1/2)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page1.html   0.26 KiB
 
 Building script1.js (2/2)
 vite v3.1.2 building for production...
@@ -199,10 +199,10 @@ Build Steps
 Building page1.html (1/2)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page1.html   0.26 KiB
 
 Building script1.js (2/2)
 vite v3.1.2 building for production...
@@ -249,10 +249,10 @@ Build Steps
 Building extension/page1.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 1 modules transformed.
+Generated an empty chunk: \\"extension/page1\\"
 rendering chunks...
-dist/extension/page1.html   0.34 KiB
-dist/extension/page1.js     0.76 KiB / gzip: 0.42 KiB
+dist/extension/page1.html   0.26 KiB
 
 ✓ All steps completed.
 
@@ -266,15 +266,16 @@ exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and ren
 "vite v3.1.2 building for production...
 
 Build Steps
-  1. Building page1.html indvidually
+  1. Building page2.html indvidually
 
-Building page1.html (1/1)
+Building page2.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 4 modules transformed.
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 
 ✓ All steps completed.
 
@@ -288,15 +289,39 @@ exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and ren
 "vite v3.1.2 building for production...
 
 Build Steps
-  1. Building page1.html indvidually
+  1. Building page2.html indvidually
 
-Building page1.html (1/1)
+Building page2.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 4 modules transformed.
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.17 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.background.page in the final manifest 2`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 
 ✓ All steps completed.
 
@@ -326,8 +351,46 @@ vite v3.1.2 building for production...
 transforming...
 ✓ 3 modules transformed.
 rendering chunks...
-../dist/module.js           0.09 KiB / gzip: 0.09 KiB
 ../dist/dynamic-import.js   0.64 KiB / gzip: 0.43 KiB
+../dist/module.js           0.09 KiB / gzip: 0.09 KiB
+
+Building script1.js (3/3)
+vite v3.1.2 building for production...
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/script1.js   0.03 KiB / gzip: 0.05 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.21 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.background.scripts in the final manifest 2`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building module.ts indvidually
+  2. Building dynamic-import.ts indvidually
+  3. Building script1.js indvidually
+
+Building module.ts (1/3)
+vite v3.1.2 building for production...
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/module.js   0.07 KiB / gzip: 0.07 KiB
+
+Building dynamic-import.ts (2/3)
+vite v3.1.2 building for production...
+transforming...
+✓ 3 modules transformed.
+rendering chunks...
+../dist/dynamic-import.js   0.64 KiB / gzip: 0.43 KiB
+../dist/module.js           0.09 KiB / gzip: 0.09 KiB
 
 Building script1.js (3/3)
 vite v3.1.2 building for production...
@@ -355,6 +418,50 @@ vite v3.1.2 building for production...
 transforming...
 ✓ 3 modules transformed.
 rendering chunks...
+../dist/module.js           0.09 KiB / gzip: 0.09 KiB
+../dist/dynamic-import.js   0.64 KiB / gzip: 0.43 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.19 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.background.service_worker in the final manifest 2`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building dynamic-import.ts indvidually
+
+Building dynamic-import.ts (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 3 modules transformed.
+rendering chunks...
+../dist/module.js           0.09 KiB / gzip: 0.09 KiB
+../dist/dynamic-import.js   0.64 KiB / gzip: 0.43 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.19 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.background.service_worker in the final manifest 3`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building dynamic-import.ts indvidually
+
+Building dynamic-import.ts (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 3 modules transformed.
+rendering chunks...
 ../dist/dynamic-import.js   0.64 KiB / gzip: 0.43 KiB
 ../dist/module.js           0.09 KiB / gzip: 0.09 KiB
 
@@ -370,15 +477,223 @@ exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and ren
 "vite v3.1.2 building for production...
 
 Build Steps
-  1. Building page1.html indvidually
+  1. Building page2.html indvidually
 
-Building page1.html (1/1)
+Building page2.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 4 modules transformed.
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.18 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.chrome_settings_overrides.homepage in the final manifest 1`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.19 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.chrome_settings_overrides.homepage in the final manifest 2`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.19 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.chrome_url_overrides.bookmarks in the final manifest 1`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.18 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.chrome_url_overrides.bookmarks in the final manifest 2`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.18 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.chrome_url_overrides.bookmarks in the final manifest 3`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.18 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.chrome_url_overrides.history in the final manifest 1`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.18 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.chrome_url_overrides.history in the final manifest 2`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.18 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.chrome_url_overrides.history in the final manifest 3`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.18 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.chrome_url_overrides.newtab in the final manifest 1`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
 
 ✓ All steps completed.
 
@@ -467,15 +782,39 @@ exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and ren
 "vite v3.1.2 building for production...
 
 Build Steps
-  1. Building page1.html indvidually
+  1. Building page2.html indvidually
 
-Building page1.html (1/1)
+Building page2.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 4 modules transformed.
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.html   0.38 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.16 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.devtools_page in the final manifest 2`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
 
 ✓ All steps completed.
 
@@ -489,15 +828,39 @@ exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and ren
 "vite v3.1.2 building for production...
 
 Build Steps
-  1. Building page1.html indvidually
+  1. Building page2.html indvidually
 
-Building page1.html (1/1)
+Building page2.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 4 modules transformed.
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.html   0.38 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.16 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.options_page in the final manifest 2`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 
 ✓ All steps completed.
 
@@ -511,15 +874,16 @@ exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and ren
 "vite v3.1.2 building for production...
 
 Build Steps
-  1. Building page1.html indvidually
+  1. Building page2.html indvidually
 
-Building page1.html (1/1)
+Building page2.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 4 modules transformed.
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 
 ✓ All steps completed.
 
@@ -533,15 +897,39 @@ exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and ren
 "vite v3.1.2 building for production...
 
 Build Steps
-  1. Building page1.html indvidually
+  1. Building page2.html indvidually
 
-Building page1.html (1/1)
+Building page2.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 4 modules transformed.
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+
+✓ All steps completed.
+
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.18 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.page_action.default_popup in the final manifest 2`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Building page2.html indvidually
+
+Building page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 4 modules transformed.
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 
 ✓ All steps completed.
 
@@ -562,12 +950,133 @@ Build Steps
 Building page1.html, page2.html (1/1)
 vite v3.1.2 building for production...
 transforming...
-✓ 4 modules transformed.
-Generated an empty chunk: \\"page2\\"
+✓ 5 modules transformed.
+Generated an empty chunk: \\"page1\\"
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page2.html   0.26 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page1.html   0.26 KiB
+../dist/page2.html   0.38 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+
+✓ All steps completed.
+
+[web-extension:manifest] ERROR: Manifest is not valid:
+[
+  {
+    \\"instancePath\\": \\"/sandbox/pages\\",
+    \\"schemaPath\\": \\"#/properties/sandbox/properties/pages/uniqueItems\\",
+    \\"keyword\\": \\"uniqueItems\\",
+    \\"params\\": {
+      \\"i\\": 2,
+      \\"j\\": 0
+    },
+    \\"message\\": \\"must NOT have duplicate items (items ## 0 and 2 are identical)\\"
+  }
+]
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.19 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.sandbox.pages in the final manifest 2`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Bunding 2 entrpyoints together:
+    • page1.html
+    • page2.html
+
+Building page1.html, page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 5 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/page1.html   0.26 KiB
+../dist/page2.html   0.38 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+
+✓ All steps completed.
+
+[web-extension:manifest] ERROR: Manifest is not valid:
+[
+  {
+    \\"instancePath\\": \\"/sandbox/pages\\",
+    \\"schemaPath\\": \\"#/properties/sandbox/properties/pages/uniqueItems\\",
+    \\"keyword\\": \\"uniqueItems\\",
+    \\"params\\": {
+      \\"i\\": 2,
+      \\"j\\": 0
+    },
+    \\"message\\": \\"must NOT have duplicate items (items ## 0 and 2 are identical)\\"
+  }
+]
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.19 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.sandbox.pages in the final manifest 3`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Bunding 2 entrpyoints together:
+    • page1.html
+    • page2.html
+
+Building page1.html, page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 5 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/page1.html   0.26 KiB
+../dist/page2.html   0.38 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+
+✓ All steps completed.
+
+[web-extension:manifest] ERROR: Manifest is not valid:
+[
+  {
+    \\"instancePath\\": \\"/sandbox/pages\\",
+    \\"schemaPath\\": \\"#/properties/sandbox/properties/pages/uniqueItems\\",
+    \\"keyword\\": \\"uniqueItems\\",
+    \\"params\\": {
+      \\"i\\": 2,
+      \\"j\\": 0
+    },
+    \\"message\\": \\"must NOT have duplicate items (items ## 0 and 2 are identical)\\"
+  }
+]
+transforming...
+✓ 1 modules transformed.
+rendering chunks...
+../dist/manifest.json   0.19 KiB"
+`;
+
+exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and render the manifest.sandbox.pages in the final manifest 4`] = `
+"vite v3.1.2 building for production...
+
+Build Steps
+  1. Bunding 2 entrpyoints together:
+    • page1.html
+    • page2.html
+
+Building page1.html, page2.html (1/1)
+vite v3.1.2 building for production...
+transforming...
+✓ 5 modules transformed.
+Generated an empty chunk: \\"page1\\"
+rendering chunks...
+../dist/page2.html   0.38 KiB
+../dist/page1.html   0.26 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 
 ✓ All steps completed.
 
@@ -588,10 +1097,10 @@ Build Steps
 Building page1.html (1/3)
 vite v3.1.2 building for production...
 transforming...
-✓ 3 modules transformed.
+✓ 1 modules transformed.
+Generated an empty chunk: \\"page1\\"
 rendering chunks...
-../dist/page1.html   0.33 KiB
-../dist/page1.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page1.html   0.26 KiB
 
 Building script1.js (2/3)
 vite v3.1.2 building for production...
