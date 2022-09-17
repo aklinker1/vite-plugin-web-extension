@@ -100,7 +100,6 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     manifest: any,
     bundles: Array<OutputChunk | OutputAsset>
   ): any {
-    console.log(bundles);
     const findReplacement = (entry: string) =>
       bundles.find((output) => {
         if (
