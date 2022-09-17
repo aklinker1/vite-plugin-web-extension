@@ -28,9 +28,7 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/index.cjs",
-    "dist/index.js",
-    "dist/index.d.ts"
+    "dist"
   ],
   "scripts": {
     "compile": "tsc",
