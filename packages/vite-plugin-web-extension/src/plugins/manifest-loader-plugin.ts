@@ -12,7 +12,7 @@ import { inspect } from "node:util";
 import { mergeConfigs } from "../utils/merge-configs";
 import { getOutDir, getPublicDir, getRootDir } from "../utils/paths";
 import { OutputAsset, OutputChunk } from "rollup";
-import { extension, Manifest } from "webextension-polyfill";
+import { Manifest } from "webextension-polyfill";
 import { startWebExt, ExtensionRunner } from "../utils/extension-runner";
 import { createManifestValidator } from "../utils/manifest-validation";
 import { colorizeFilename } from "../utils/filenames";
@@ -100,6 +100,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     manifest: any,
     bundles: Array<OutputChunk | OutputAsset>
   ): any {
+    console.log(bundles);
     const findReplacement = (entry: string) =>
       bundles.find((output) => {
         if (

@@ -1,4 +1,4 @@
-import { OutputAsset, OutputChunk, RollupWatcher } from "rollup";
+import { OutputAsset, OutputBundle, OutputChunk, RollupWatcher } from "rollup";
 import { inspect } from "util";
 import * as Vite from "vite";
 import { Manifest } from "webextension-polyfill";
@@ -14,6 +14,8 @@ import path from "node:path";
 import { getInputAbsPaths } from "./paths";
 import uniqBy from "lodash.uniqby";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
+import md5 from "md5";
+import { bundleTrackerPlugin } from "../plugins/bundle-tracker-plugin";
 
 interface RebuildOptions {
   rootDir: string;
@@ -274,6 +276,21 @@ export function createBuildContext({
     logger.log(`\n${GREEN}✓${RESET} All steps completed.\n`);
   }
 
+  function waitForWatchBuildComplete(watcher: RollupWatcher) {
+    return new Promise<void>((res, rej) => {
+      watcher.addListener("event", async (e) => {
+        switch (e.code) {
+          case "END":
+            res();
+            break;
+          case "ERROR":
+            rej(e.error);
+            break;
+        }
+      });
+    });
+  }
+
   return {
     async rebuild(rebuildOptions) {
       const { rootDir, mode } = rebuildOptions;
@@ -288,28 +305,18 @@ export function createBuildContext({
 
       const newBundles: Array<OutputChunk | OutputAsset> = [];
       for (const config of buildConfigs) {
+        const bundleTracker = bundleTrackerPlugin();
+        (config.plugins ??= []).push(bundleTracker);
+
         const output = await Vite.build(config);
-        if (Array.isArray(output)) {
-          newBundles.push(...output.map((o) => o.output).flat());
-        } else if ("output" in output) {
-          newBundles.push(...output.output);
-        } else {
-          // In watch mode, wait until it's built once
-          // @ts-expect-error: Rollup/Vite type conflict
+        if ("addListener" in output) {
           activeWatchers.push(output);
-          await new Promise<void>((res, rej) => {
-            output.addListener("event", (e) => {
-              switch (e.code) {
-                case "BUNDLE_END":
-                  res();
-                  break;
-                case "ERROR":
-                  rej(e.error);
-                  break;
-              }
-            });
-          });
+          // In watch mode, wait until it's built once
+          await waitForWatchBuildComplete(output);
         }
+
+        const chunks = bundleTracker.getChunks() ?? [];
+        newBundles.push(...chunks);
       }
       bundles = uniqBy(newBundles, "fileName");
       // This prints before the manifest plugin continues in build mode

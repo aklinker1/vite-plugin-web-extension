@@ -7,6 +7,8 @@
     "dev:firefox": "pnpm install && tsc && TARGET=firefox vite dev",
     "build": "pnpm install && tsc && vite build",
     "build:firefox": "pnpm install && tsc && TARGET=firefox vite build",
+    "build:watch": "pnpm build --watch",
+    "build:watch:firefox": "pnpm build:firefox --watch",
     "validate": "web-ext lint -s dist"
   },
   "dependencies": {
