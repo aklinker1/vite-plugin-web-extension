@@ -189,7 +189,7 @@ describe("Vite Plugin Web Extension", () => {
       baseOutputs(["dist/page1.html", "dist/script1.js", "dist/script2.js"])
     ));
 
-  it.only.each([
+  it.each([
     [
       undefined,
       expect.objectContaining({
