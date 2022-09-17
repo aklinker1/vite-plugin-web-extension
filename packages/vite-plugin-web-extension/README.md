@@ -11,6 +11,10 @@ export default defineConfig({
 });
 ```
 
+```bash
+npm i -D vite-plugin-web-extension
+```
+
 ## Features
 
 - :wrench: Automatically build inputs from in your `manifest.json`
