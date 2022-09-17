@@ -20,7 +20,7 @@ async function expectBuildToMatchSnapshot(
 }
 
 function manifest(overrides: any) {
-  return () => ({
+  return {
     name: "test",
     version: "1.0.0",
     description: "test manifest",
@@ -31,7 +31,7 @@ function manifest(overrides: any) {
       "128": "128.png",
     },
     ...overrides,
-  });
+  };
 }
 function baseConfig(manifestOverrides: any): UserConfig {
   return {
@@ -42,7 +42,7 @@ function baseConfig(manifestOverrides: any): UserConfig {
     },
     plugins: [
       webExtension({
-        manifest: manifest(manifestOverrides),
+        manifest: () => manifest(manifestOverrides),
       }),
     ],
   };
@@ -66,28 +66,44 @@ describe("Vite Plugin Web Extension", () => {
     }
   });
 
-  it("should build a simple popup extension", () =>
-    expectBuildToMatchSnapshot(
+  it("should build a simple popup extension", async () => {
+    await expectBuildToMatchSnapshot(
       baseConfig({
         browser_action: {
           default_popup: "page1.html",
         },
       }),
       baseOutputs(["dist/page1.html"])
-    ));
+    );
+    expectManifest(
+      manifest({
+        browser_action: {
+          default_popup: "page1.html",
+        },
+      })
+    );
+  });
 
-  it("should build a simple background script extension", () =>
-    expectBuildToMatchSnapshot(
+  it("should build a simple background script extension", async () => {
+    await expectBuildToMatchSnapshot(
       baseConfig({
         background: {
           scripts: ["script1.js", "script2.ts"],
         },
       }),
       baseOutputs(["dist/script1.js", "dist/script2.js"])
-    ));
+    );
+    expectManifest(
+      manifest({
+        background: {
+          scripts: ["script1.js", "script2.js"],
+        },
+      })
+    );
+  });
 
-  it("should build a extension with both html pages and scripts", () =>
-    expectBuildToMatchSnapshot(
+  it("should build a extension with both html pages and scripts", async () => {
+    await expectBuildToMatchSnapshot(
       baseConfig({
         browser_action: {
           default_popup: "page1.html",
@@ -97,7 +113,18 @@ describe("Vite Plugin Web Extension", () => {
         },
       }),
       baseOutputs(["dist/script1.js", "dist/script2.js"])
-    ));
+    );
+    expectManifest(
+      manifest({
+        browser_action: {
+          default_popup: "page1.html",
+        },
+        background: {
+          scripts: ["script1.js", "script2.js"],
+        },
+      })
+    );
+  });
 
   it.each<[boolean, boolean]>([
     [true, false],
@@ -124,21 +151,29 @@ describe("Vite Plugin Web Extension", () => {
           },
           plugins: [
             webExtension({
-              manifest: manifest({
-                browser_action: {
-                  default_popup: "page1.html",
-                },
-              }),
+              manifest: () =>
+                manifest({
+                  browser_action: {
+                    default_popup: "page1.html",
+                  },
+                }),
             }),
           ],
         },
         baseOutputs(["dist/page1.html"])
       );
+      expectManifest(
+        manifest({
+          browser_action: {
+            default_popup: "page1.html",
+          },
+        })
+      );
     }
   );
 
-  it("should work when the vite root is not specified", () =>
-    expectBuildToMatchSnapshot(
+  it("should work when the vite root is not specified", async () => {
+    await expectBuildToMatchSnapshot(
       {
         publicDir: "extension/public",
         build: {
@@ -147,11 +182,12 @@ describe("Vite Plugin Web Extension", () => {
         },
         plugins: [
           webExtension({
-            manifest: manifest({
-              browser_action: {
-                default_popup: "extension/page1.html",
-              },
-            }),
+            manifest: () =>
+              manifest({
+                browser_action: {
+                  default_popup: "extension/page1.html",
+                },
+              }),
           }),
         ],
       },
@@ -162,10 +198,18 @@ describe("Vite Plugin Web Extension", () => {
         "dist/extension/page1.html",
         "dist/manifest.json",
       ]
-    ));
+    );
+    expectManifest(
+      manifest({
+        browser_action: {
+          default_popup: "extension/page1.html",
+        },
+      })
+    );
+  });
 
-  it("should build additional inputs along side the rest of the manifest", () =>
-    expectBuildToMatchSnapshot(
+  it("should build additional inputs along side the rest of the manifest", async () => {
+    await expectBuildToMatchSnapshot(
       {
         root: "extension",
         build: {
@@ -174,20 +218,32 @@ describe("Vite Plugin Web Extension", () => {
         },
         plugins: [
           webExtension({
-            manifest: manifest({
-              browser_action: {
-                default_popup: "page1.html",
-              },
-              background: {
-                scripts: ["script1.js"],
-              },
-            }),
+            manifest: () =>
+              manifest({
+                browser_action: {
+                  default_popup: "page1.html",
+                },
+                background: {
+                  scripts: ["script1.js"],
+                },
+              }),
             additionalInputs: ["script2.ts"],
           }),
         ],
       },
       baseOutputs(["dist/page1.html", "dist/script1.js", "dist/script2.js"])
-    ));
+    );
+    expectManifest(
+      manifest({
+        browser_action: {
+          default_popup: "page1.html",
+        },
+        background: {
+          scripts: ["script1.js"],
+        },
+      })
+    );
+  });
 
   it.each([
     [
@@ -246,25 +302,26 @@ describe("Vite Plugin Web Extension", () => {
           },
           plugins: [
             webExtension({
-              manifest: manifest({
-                "{{chrome}}.manifest_version": 3,
-                "{{firefox}}.manifest_version": 2,
-                "{{firefox}}.browser_action": {
-                  default_popup: "page1.html",
-                },
-                "{{chrome}}.action": {
-                  default_popup: "page1.html",
-                },
-                content_scripts: [
-                  {
-                    matches: [
-                      "{{chrome}}.https://google.com/*",
-                      "{{firefox}}.https://duckduckgo.com/*",
-                    ],
-                    js: ["script1.js", "{{other}}.script2.ts"],
+              manifest: () =>
+                manifest({
+                  "{{chrome}}.manifest_version": 3,
+                  "{{firefox}}.manifest_version": 2,
+                  "{{firefox}}.browser_action": {
+                    default_popup: "page1.html",
                   },
-                ],
-              }),
+                  "{{chrome}}.action": {
+                    default_popup: "page1.html",
+                  },
+                  content_scripts: [
+                    {
+                      matches: [
+                        "{{chrome}}.https://google.com/*",
+                        "{{firefox}}.https://duckduckgo.com/*",
+                      ],
+                      js: ["script1.js", "{{other}}.script2.ts"],
+                    },
+                  ],
+                }),
               browser,
             }),
           ],
@@ -275,8 +332,8 @@ describe("Vite Plugin Web Extension", () => {
     }
   );
 
-  it("should support supplementing the script build config via scriptViteConfig", () =>
-    expectBuildToMatchSnapshot(
+  it("should support supplementing the script build config via scriptViteConfig", async () => {
+    await expectBuildToMatchSnapshot(
       {
         root: "extension",
         build: {
@@ -285,14 +342,15 @@ describe("Vite Plugin Web Extension", () => {
         },
         plugins: [
           webExtension({
-            manifest: manifest({
-              browser_action: {
-                default_popup: "page1.html",
-              },
-              background: {
-                service_worker: "dynamic-import.ts",
-              },
-            }),
+            manifest: () =>
+              manifest({
+                browser_action: {
+                  default_popup: "page1.html",
+                },
+                background: {
+                  service_worker: "dynamic-import.ts",
+                },
+              }),
             scriptViteConfig: {
               build: {
                 rollupOptions: {
@@ -306,5 +364,16 @@ describe("Vite Plugin Web Extension", () => {
         ],
       },
       baseOutputs()
-    ));
+    );
+    expectManifest(
+      manifest({
+        browser_action: {
+          default_popup: "page1.html",
+        },
+        background: {
+          service_worker: "dynamic-import.js",
+        },
+      })
+    );
+  });
 });
