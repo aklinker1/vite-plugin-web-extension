@@ -7,7 +7,7 @@ title: Introduction
 
 `vite-plugin-web-extension` lets you get started making Chrome extensions with just a manifest.json and a simple Vite build config:
 
-```ts
+```ts:no-line-numbers
 // vite.config.ts
 import webExtension from "vite-plugin-web-extension";
 

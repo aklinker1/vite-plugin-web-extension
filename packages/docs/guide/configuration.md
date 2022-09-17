@@ -7,7 +7,7 @@ title: Configuration
 
 ## Dev Mode
 
-```bash
+```bash:no-line-numbers
 vite dev
 ```
 
@@ -33,13 +33,13 @@ It will also result in the exact same code as `vite build`, whereas dev mode mod
 
 To run in watch mode, use the `--watch` flag.
 
-```bash
+```bash:no-line-numbers
 vite build --watch
 ```
 
 To reload when you update files other than source files (config files like `tailwind.config.js`) pass **absolute paths** of the files into `watchFilePaths` option.
 
-```ts
+```ts:no-line-numbers
 import path from "path";
 
 export default defineConfig({
@@ -61,7 +61,7 @@ export default defineConfig({
 
 If you want to add a framework like Vue or React, just add it's Vite plugin!
 
-```ts
+```ts:no-line-numbers
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
@@ -94,7 +94,7 @@ The `manifest` option accepts a file path or a function.
 
 Often times the function is used to pull in details from your `package.json`, like the version, so they only have to be maintained in a single place:
 
-```ts
+```ts:no-line-numbers
 import webExtension, { readJsonFile } from "vite-plugin-web-extension";
 
 export default defineConfig({
@@ -227,7 +227,7 @@ Whenever your manifest is generated, it gets validated against Google's JSON sch
 
 To disable validation, pass the `skipManifestValidation` option:
 
-```ts
+```ts:no-line-numbers
 export default defineConfig({
   plugins: [
     webExtension({
@@ -255,7 +255,7 @@ If that config is does not work for your case, you can modify it via `scriptsVit
 
 For example, if a script requires dynamic imports, they need to be inlined because UMD doesn't support code-splitting:
 
-```ts
+```ts:no-line-numbers
 import { defineConfig } from "vite";
 import webExtension from "vite-plugin-web-extension";
 

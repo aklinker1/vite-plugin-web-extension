@@ -79,7 +79,7 @@ Lets say your project looks like this:
 
 Configuring Vite is simple:
 
-```ts
+```ts:no-line-numbers
 // vite.config.ts
 import webExtension from "vite-plugin-web-extension";
 import path from "node:path";
@@ -102,7 +102,7 @@ By default, `vite-plugin-web-extension` will look for `<root>/manifest.json`.
 
 In your `manifest.json`, all paths should also be relative to your Vite `root`, and point to the source code files.
 
-```json
+```json:no-line-numbers
 // src/manifest.json
 {
   "name": "Example",
