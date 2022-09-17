@@ -34,7 +34,7 @@
   ],
   "scripts": {
     "compile": "tsc",
-    "build": "tsup --format esm,cjs src/index.ts && tsc",
+    "build": "tsup --format esm,cjs --target=node14 --dts --sourcemap external src/index.ts",
     "test": "vitest",
     "prepare": "pnpm build"
   },
