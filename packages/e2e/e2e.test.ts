@@ -67,41 +67,152 @@ describe("Vite Plugin Web Extension", () => {
   });
 
   describe("Manifest inputs", () => {
-    it("should build a simple popup extension", async () => {
-      await expectBuildToMatchSnapshot(
-        baseConfig({
-          browser_action: {
-            default_popup: "page1.html",
-          },
-        }),
-        baseOutputs(["dist/page1.html"])
-      );
-      expectManifest(
-        manifest({
-          browser_action: {
-            default_popup: "page1.html",
-          },
-        })
-      );
-    });
-
-    it("should build a simple background script extension", async () => {
-      await expectBuildToMatchSnapshot(
-        baseConfig({
-          background: {
-            scripts: ["script1.js", "script2.ts"],
-          },
-        }),
-        baseOutputs(["dist/script1.js", "dist/script2.js"])
-      );
-      expectManifest(
-        manifest({
-          background: {
-            scripts: ["script1.js", "script2.js"],
-          },
-        })
-      );
-    });
+    it.each<[string, { input: any; expected: any }]>([
+      // API-enabled HTML entrypoints
+      [
+        "action.default_popup",
+        {
+          input: manifest({ action: { default_popup: "page1.html" } }),
+          expected: manifest({ action: { default_popup: "page1.html" } }),
+        },
+      ],
+      [
+        "devtools_page",
+        {
+          input: manifest({ devtools_page: "page1.html" }),
+          expected: manifest({ devtools_page: "page1.html" }),
+        },
+      ],
+      [
+        "options_page",
+        {
+          input: manifest({ options_page: "page1.html" }),
+          expected: manifest({ options_page: "page1.html" }),
+        },
+      ],
+      [
+        "options_ui.page",
+        {
+          input: manifest({ options_ui: { page: "page1.html" } }),
+          expected: manifest({ options_ui: { page: "page1.html" } }),
+        },
+      ],
+      [
+        "browser_action.default_popup",
+        {
+          input: manifest({
+            browser_action: { default_popup: "page1.html" },
+          }),
+          expected: manifest({
+            browser_action: { default_popup: "page1.html" },
+          }),
+        },
+      ],
+      [
+        "page_action.default_popup",
+        {
+          input: manifest({ page_action: { default_popup: "page1.html" } }),
+          expected: manifest({
+            page_action: { default_popup: "page1.html" },
+          }),
+        },
+      ],
+      [
+        "background.page",
+        {
+          input: manifest({ background: { page: "page1.html" } }),
+          expected: manifest({ background: { page: "page1.html" } }),
+        },
+      ],
+      // API-disabled HTML entrypoints
+      [
+        "sandbox.pages",
+        {
+          input: manifest({
+            sandbox: { pages: ["page1.html", "page2.html"] },
+          }),
+          expected: manifest({
+            sandbox: { pages: ["page1.html", "page2.html"] },
+          }),
+        },
+      ],
+      // Scripts
+      [
+        "background.service_worker",
+        {
+          input: manifest({
+            background: { service_worker: "dynamic-import.ts" },
+          }),
+          expected: manifest({
+            background: { service_worker: "dynamic-import.js" },
+          }),
+        },
+      ],
+      [
+        "background.scripts",
+        {
+          input: manifest({
+            background: {
+              scripts: ["module.ts", "dynamic-import.ts", "script1.js"],
+            },
+          }),
+          expected: manifest({
+            background: {
+              scripts: ["module.js", "dynamic-import.js", "script1.js"],
+            },
+          }),
+        },
+      ],
+      [
+        "content_scripts[x].js",
+        {
+          input: manifest({
+            content_scripts: [
+              {
+                matches: "<all_urls>",
+                js: ["module.ts", "script2.ts"],
+              },
+            ],
+          }),
+          expected: manifest({
+            content_scripts: [
+              {
+                matches: "<all_urls>",
+                js: ["module.js", "script2.js"],
+                css: ["script2.css"],
+              },
+            ],
+          }),
+        },
+      ],
+      [
+        "content_scripts[x].css",
+        {
+          input: manifest({
+            content_scripts: [
+              {
+                matches: "<all_urls>",
+                css: ["page1.scss"],
+              },
+            ],
+          }),
+          expected: manifest({
+            content_scripts: [
+              {
+                matches: "<all_urls>",
+                css: ["page1.css"],
+              },
+            ],
+          }),
+        },
+      ],
+    ])(
+      "should auto-build and render the manifest.%s in the final manifest",
+      async (_, { input, expected }) => {
+        await expectBuildToMatchSnapshot(baseConfig(input), baseOutputs());
+        expectManifest(expected);
+      }
+    );
 
     it("should build a extension with both html pages and scripts", async () => {
       await expectBuildToMatchSnapshot(
@@ -347,9 +458,6 @@ describe("Vite Plugin Web Extension", () => {
             webExtension({
               manifest: () =>
                 manifest({
-                  browser_action: {
-                    default_popup: "page1.html",
-                  },
                   background: {
                     service_worker: "dynamic-import.ts",
                   },
@@ -370,9 +478,6 @@ describe("Vite Plugin Web Extension", () => {
       );
       expectManifest(
         manifest({
-          browser_action: {
-            default_popup: "page1.html",
-          },
           background: {
             service_worker: "dynamic-import.js",
           },

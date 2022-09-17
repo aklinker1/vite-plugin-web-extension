@@ -174,6 +174,7 @@ export function createBuildContext({
       manifest.browser_action?.default_popup,
       manifest.page_action?.default_popup,
       manifest.sidebar_action?.default_panel,
+      manifest.background?.page,
       additionalHtmlInputs,
     ]);
     if (htmlEntries.length > 0) addHtmlConfig(htmlEntries);
@@ -185,7 +186,6 @@ export function createBuildContext({
     // Every Background Script gets it's own config
     const backgroundScripts = createEntryList([
       manifest.background?.service_worker,
-      manifest.background?.page,
       manifest.background?.scripts,
     ]);
     backgroundScripts?.forEach(addScriptConfig);

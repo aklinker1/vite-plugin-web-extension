@@ -9,6 +9,7 @@
     "@types/lodash.debounce": "^4.0.6",
     "@types/node": "^16.11.6",
     "cross-env": "^7.0.3",
+    "sass": "^1.49.9",
     "typescript": "^4.4.4",
     "vite": "*",
     "vite-plugin-web-extension": "workspace:*",
