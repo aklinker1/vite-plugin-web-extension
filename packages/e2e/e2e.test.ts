@@ -66,100 +66,14 @@ describe("Vite Plugin Web Extension", () => {
     }
   });
 
-  it("should build a simple popup extension", async () => {
-    await expectBuildToMatchSnapshot(
-      baseConfig({
-        browser_action: {
-          default_popup: "page1.html",
-        },
-      }),
-      baseOutputs(["dist/page1.html"])
-    );
-    expectManifest(
-      manifest({
-        browser_action: {
-          default_popup: "page1.html",
-        },
-      })
-    );
-  });
-
-  it("should build a simple background script extension", async () => {
-    await expectBuildToMatchSnapshot(
-      baseConfig({
-        background: {
-          scripts: ["script1.js", "script2.ts"],
-        },
-      }),
-      baseOutputs(["dist/script1.js", "dist/script2.js"])
-    );
-    expectManifest(
-      manifest({
-        background: {
-          scripts: ["script1.js", "script2.js"],
-        },
-      })
-    );
-  });
-
-  it("should build a extension with both html pages and scripts", async () => {
-    await expectBuildToMatchSnapshot(
-      baseConfig({
-        browser_action: {
-          default_popup: "page1.html",
-        },
-        background: {
-          scripts: ["script1.js", "script2.ts"],
-        },
-      }),
-      baseOutputs(["dist/script1.js", "dist/script2.js"])
-    );
-    expectManifest(
-      manifest({
-        browser_action: {
-          default_popup: "page1.html",
-        },
-        background: {
-          scripts: ["script1.js", "script2.js"],
-        },
-      })
-    );
-  });
-
-  it.each<[boolean, boolean]>([
-    [true, false],
-    [true, true],
-    [false, false],
-    [false, true],
-  ])(
-    "should not fail when emptyOutDir=%s and the outDirExists=%s",
-    async (emptyOutDir: boolean, distExists: boolean) => {
-      if (distExists) {
-        await fs.mkdir(DIST_DIRECTORY);
-        expect((await fs.lstat(DIST_DIRECTORY)).isDirectory()).toBe(true);
-      } else {
-        await expect(() => fs.lstat(DIST_DIRECTORY)).rejects.toThrowError(
-          "ENOENT: no such file or directory"
-        );
-      }
+  describe("Manifest inputs", () => {
+    it("should build a simple popup extension", async () => {
       await expectBuildToMatchSnapshot(
-        {
-          root: "extension",
-          build: {
-            outDir: DIST_DIRECTORY,
-            emptyOutDir,
+        baseConfig({
+          browser_action: {
+            default_popup: "page1.html",
           },
-          plugins: [
-            webExtension({
-              manifest: () =>
-                manifest({
-                  browser_action: {
-                    default_popup: "page1.html",
-                  },
-                }),
-            }),
-          ],
-        },
+        }),
         baseOutputs(["dist/page1.html"])
       );
       expectManifest(
@@ -169,211 +83,301 @@ describe("Vite Plugin Web Extension", () => {
           },
         })
       );
-    }
-  );
+    });
 
-  it("should work when the vite root is not specified", async () => {
-    await expectBuildToMatchSnapshot(
-      {
-        publicDir: "extension/public",
-        build: {
-          outDir: DIST_DIRECTORY,
-          emptyOutDir: true,
-        },
-        plugins: [
-          webExtension({
-            manifest: () =>
-              manifest({
-                browser_action: {
-                  default_popup: "extension/page1.html",
-                },
-              }),
-          }),
-        ],
-      },
-      [
-        "dist/16.png",
-        "dist/48.png",
-        "dist/128.png",
-        "dist/extension/page1.html",
-        "dist/manifest.json",
-      ]
-    );
-    expectManifest(
-      manifest({
-        browser_action: {
-          default_popup: "extension/page1.html",
-        },
-      })
-    );
+    it("should build a simple background script extension", async () => {
+      await expectBuildToMatchSnapshot(
+        baseConfig({
+          background: {
+            scripts: ["script1.js", "script2.ts"],
+          },
+        }),
+        baseOutputs(["dist/script1.js", "dist/script2.js"])
+      );
+      expectManifest(
+        manifest({
+          background: {
+            scripts: ["script1.js", "script2.js"],
+          },
+        })
+      );
+    });
+
+    it("should build a extension with both html pages and scripts", async () => {
+      await expectBuildToMatchSnapshot(
+        baseConfig({
+          browser_action: {
+            default_popup: "page1.html",
+          },
+          background: {
+            scripts: ["script1.js", "script2.ts"],
+          },
+        }),
+        baseOutputs(["dist/script1.js", "dist/script2.js"])
+      );
+      expectManifest(
+        manifest({
+          browser_action: {
+            default_popup: "page1.html",
+          },
+          background: {
+            scripts: ["script1.js", "script2.js"],
+          },
+        })
+      );
+    });
   });
 
-  it("should build additional inputs along side the rest of the manifest", async () => {
-    await expectBuildToMatchSnapshot(
-      {
-        root: "extension",
-        build: {
-          outDir: DIST_DIRECTORY,
-          emptyOutDir: true,
-        },
-        plugins: [
-          webExtension({
-            manifest: () =>
-              manifest({
-                browser_action: {
-                  default_popup: "page1.html",
-                },
-                background: {
-                  scripts: ["script1.js"],
-                },
+  describe("Configuration", () => {
+    it.each<[boolean, boolean]>([
+      [true, false],
+      [true, true],
+      [false, false],
+      [false, true],
+    ])(
+      "should not fail when emptyOutDir=%s and the outDirExists=%s",
+      async (emptyOutDir: boolean, distExists: boolean) => {
+        if (distExists) {
+          await fs.mkdir(DIST_DIRECTORY);
+          expect((await fs.lstat(DIST_DIRECTORY)).isDirectory()).toBe(true);
+        } else {
+          await expect(() => fs.lstat(DIST_DIRECTORY)).rejects.toThrowError(
+            "ENOENT: no such file or directory"
+          );
+        }
+        await expectBuildToMatchSnapshot(
+          {
+            root: "extension",
+            build: {
+              outDir: DIST_DIRECTORY,
+              emptyOutDir,
+            },
+            plugins: [
+              webExtension({
+                manifest: () =>
+                  manifest({
+                    browser_action: {
+                      default_popup: "page1.html",
+                    },
+                  }),
               }),
-            additionalInputs: ["script2.ts"],
-          }),
-        ],
-      },
-      baseOutputs(["dist/page1.html", "dist/script1.js", "dist/script2.js"])
+            ],
+          },
+          baseOutputs(["dist/page1.html"])
+        );
+        expectManifest(
+          manifest({
+            browser_action: {
+              default_popup: "page1.html",
+            },
+          })
+        );
+      }
     );
-    expectManifest(
-      manifest({
-        browser_action: {
-          default_popup: "page1.html",
-        },
-        background: {
-          scripts: ["script1.js"],
-        },
-      })
-    );
-  });
 
-  it.each([
-    [
-      undefined,
-      expect.objectContaining({
-        manifest_version: 3,
-        action: {
-          default_popup: "page1.html",
-        },
-        content_scripts: [
-          {
-            matches: ["https://google.com/*"],
-            js: ["script1.js"],
-          },
-        ],
-      }),
-    ],
-    [
-      "chrome",
-      expect.objectContaining({
-        manifest_version: 3,
-        action: {
-          default_popup: "page1.html",
-        },
-        content_scripts: [
-          {
-            matches: ["https://google.com/*"],
-            js: ["script1.js"],
-          },
-        ],
-      }),
-    ],
-    [
-      "firefox",
-      expect.objectContaining({
-        manifest_version: 2,
-        browser_action: {
-          default_popup: "page1.html",
-        },
-        content_scripts: [
-          {
-            matches: ["https://duckduckgo.com/*"],
-            js: ["script1.js"],
-          },
-        ],
-      }),
-    ],
-  ])(
-    "should respect the browser flags, removing fields other than %s (defaults to chrome)",
-    async (browser, expectedManifest) => {
+    it("should work when the vite root is not specified", async () => {
       await expectBuildToMatchSnapshot(
         {
-          root: "extension",
+          publicDir: "extension/public",
           build: {
             outDir: DIST_DIRECTORY,
+            emptyOutDir: true,
           },
           plugins: [
             webExtension({
               manifest: () =>
                 manifest({
-                  "{{chrome}}.manifest_version": 3,
-                  "{{firefox}}.manifest_version": 2,
-                  "{{firefox}}.browser_action": {
-                    default_popup: "page1.html",
+                  browser_action: {
+                    default_popup: "extension/page1.html",
                   },
-                  "{{chrome}}.action": {
-                    default_popup: "page1.html",
-                  },
-                  content_scripts: [
-                    {
-                      matches: [
-                        "{{chrome}}.https://google.com/*",
-                        "{{firefox}}.https://duckduckgo.com/*",
-                      ],
-                      js: ["script1.js", "{{other}}.script2.ts"],
-                    },
-                  ],
                 }),
-              browser,
             }),
           ],
         },
-        [] // Don't worry about validating the actual files, other tests handle that
+        [
+          "dist/16.png",
+          "dist/48.png",
+          "dist/128.png",
+          "dist/extension/page1.html",
+          "dist/manifest.json",
+        ]
       );
-      expectManifest(expectedManifest);
-    }
-  );
+      expectManifest(
+        manifest({
+          browser_action: {
+            default_popup: "extension/page1.html",
+          },
+        })
+      );
+    });
 
-  it("should support supplementing the script build config via scriptViteConfig", async () => {
-    await expectBuildToMatchSnapshot(
-      {
-        root: "extension",
-        build: {
-          outDir: DIST_DIRECTORY,
-          emptyOutDir: true,
+    it("should build additional inputs along side the rest of the manifest", async () => {
+      await expectBuildToMatchSnapshot(
+        {
+          root: "extension",
+          build: {
+            outDir: DIST_DIRECTORY,
+            emptyOutDir: true,
+          },
+          plugins: [
+            webExtension({
+              manifest: () =>
+                manifest({
+                  browser_action: {
+                    default_popup: "page1.html",
+                  },
+                  background: {
+                    scripts: ["script1.js"],
+                  },
+                }),
+              additionalInputs: ["script2.ts"],
+            }),
+          ],
         },
-        plugins: [
-          webExtension({
-            manifest: () =>
-              manifest({
-                browser_action: {
-                  default_popup: "page1.html",
-                },
-                background: {
-                  service_worker: "dynamic-import.ts",
-                },
+        baseOutputs(["dist/page1.html", "dist/script1.js", "dist/script2.js"])
+      );
+      expectManifest(
+        manifest({
+          browser_action: {
+            default_popup: "page1.html",
+          },
+          background: {
+            scripts: ["script1.js"],
+          },
+        })
+      );
+    });
+
+    it.each([
+      [
+        undefined,
+        expect.objectContaining({
+          manifest_version: 3,
+          action: {
+            default_popup: "page1.html",
+          },
+          content_scripts: [
+            {
+              matches: ["https://google.com/*"],
+              js: ["script1.js"],
+            },
+          ],
+        }),
+      ],
+      [
+        "chrome",
+        expect.objectContaining({
+          manifest_version: 3,
+          action: {
+            default_popup: "page1.html",
+          },
+          content_scripts: [
+            {
+              matches: ["https://google.com/*"],
+              js: ["script1.js"],
+            },
+          ],
+        }),
+      ],
+      [
+        "firefox",
+        expect.objectContaining({
+          manifest_version: 2,
+          browser_action: {
+            default_popup: "page1.html",
+          },
+          content_scripts: [
+            {
+              matches: ["https://duckduckgo.com/*"],
+              js: ["script1.js"],
+            },
+          ],
+        }),
+      ],
+    ])(
+      "should respect the browser flags, removing fields other than %s (defaults to chrome)",
+      async (browser, expectedManifest) => {
+        await expectBuildToMatchSnapshot(
+          {
+            root: "extension",
+            build: {
+              outDir: DIST_DIRECTORY,
+            },
+            plugins: [
+              webExtension({
+                manifest: () =>
+                  manifest({
+                    "{{chrome}}.manifest_version": 3,
+                    "{{firefox}}.manifest_version": 2,
+                    "{{firefox}}.browser_action": {
+                      default_popup: "page1.html",
+                    },
+                    "{{chrome}}.action": {
+                      default_popup: "page1.html",
+                    },
+                    content_scripts: [
+                      {
+                        matches: [
+                          "{{chrome}}.https://google.com/*",
+                          "{{firefox}}.https://duckduckgo.com/*",
+                        ],
+                        js: ["script1.js", "{{other}}.script2.ts"],
+                      },
+                    ],
+                  }),
+                browser,
               }),
-            scriptViteConfig: {
-              build: {
-                rollupOptions: {
-                  output: {
-                    inlineDynamicImports: true,
+            ],
+          },
+          [] // Don't worry about validating the actual files, other tests handle that
+        );
+        expectManifest(expectedManifest);
+      }
+    );
+
+    it("should support supplementing the script build config via scriptViteConfig", async () => {
+      await expectBuildToMatchSnapshot(
+        {
+          root: "extension",
+          build: {
+            outDir: DIST_DIRECTORY,
+            emptyOutDir: true,
+          },
+          plugins: [
+            webExtension({
+              manifest: () =>
+                manifest({
+                  browser_action: {
+                    default_popup: "page1.html",
+                  },
+                  background: {
+                    service_worker: "dynamic-import.ts",
+                  },
+                }),
+              scriptViteConfig: {
+                build: {
+                  rollupOptions: {
+                    output: {
+                      inlineDynamicImports: true,
+                    },
                   },
                 },
               },
-            },
-          }),
-        ],
-      },
-      baseOutputs()
-    );
-    expectManifest(
-      manifest({
-        browser_action: {
-          default_popup: "page1.html",
+            }),
+          ],
         },
-        background: {
-          service_worker: "dynamic-import.js",
-        },
-      })
-    );
+        baseOutputs()
+      );
+      expectManifest(
+        manifest({
+          browser_action: {
+            default_popup: "page1.html",
+          },
+          background: {
+            service_worker: "dynamic-import.js",
+          },
+        })
+      );
+    });
   });
 });
