@@ -13,11 +13,11 @@ import browserExtension from "vite-plugin-web-extension";
 export default defineConfig({
   plugins: [
     browserExtension({
-      manifest: path.resolve(__dirname, "manifest.json"),
+      manifest: "manifest.json",
       assets: "assets",
     }),
   ],
 });
 ```
 
-Head over to [GitHub](https://github.com/aklinker1/vite-plugin-web-extension/blob/main/README.md) to see the full docs and advanced options
+Head over to the [docs](https://v1.vite-plugin-web-extension.aklinker1.io/) to get started.
