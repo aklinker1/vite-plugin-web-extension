@@ -1,7 +1,10 @@
 import { ConfigEnv, Plugin, ResolvedConfig, UserConfig } from "vite";
 import { InternalPluginOptions } from "../options";
 import { createLogger } from "../utils/logger";
-import { MANIFEST_LOADER_PLUGIN_NAME } from "../utils/constants";
+import {
+  HMR_DEFAULT_PORT,
+  MANIFEST_LOADER_PLUGIN_NAME,
+} from "../utils/constants";
 import { BuildMode } from "../utils/build-mode";
 import { createBuildContext } from "../utils/build-context";
 import { defineNoRollupInput } from "../utils/no-rollup-input";
@@ -53,7 +56,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
    * Set the build mode based on how vite was ran/configured.
    */
   function configureBuildMode(config: UserConfig, env: ConfigEnv) {
-    if (env.command === "serve") {
+    if (process.env.HMR === "true") {
       logger.verbose("Dev mode");
       mode = BuildMode.DEV;
     } else if (config.build?.watch) {
@@ -176,12 +179,30 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       if (cs.js?.length === 0) delete cs.js;
     });
 
+    if (mode === BuildMode.DEV) {
+      (manifest.permissions ??= []).push("http://localhost/*");
+      const CSP = `script-src 'self' http://localhost:${HMR_DEFAULT_PORT}; object-src 'self'`;
+      if (manifest.content_security_policy != null) {
+        // TODO: "merge" CSPs automatically
+        logger.warn(
+          `Could not automatically add CSP to manifest to allow extension to run against dev server.\n\nUpdate the CSP yourself in dev mode include "http://localhost:${HMR_DEFAULT_PORT}" in script-src`
+        );
+      } else if (manifest.manifest_version === 2) {
+        manifest.content_security_policy = CSP;
+      } else if (manifest.manifest_version === 3) {
+        throw Error(
+          "Dev server does not work for Manifest V3 because of a Chrome Bug: https://bugs.chromium.org/p/chromium/issues/detail?id=1290188\n\nUse vite build --watch instead"
+        );
+      }
+    }
+
     return manifest;
   }
   //#endregion
 
   return {
     name: MANIFEST_LOADER_PLUGIN_NAME,
+    apply: "build",
     async config(config, env) {
       if (options.browser != null) {
         logger.log(`Building for browser: ${options.browser}`);
@@ -262,7 +283,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     },
     // Runs during: build, watch
     async closeBundle() {
-      if (mode === BuildMode.WATCH && !options.disableAutoLaunch) {
+      if (mode !== BuildMode.BUILD && !options.disableAutoLaunch) {
         if (!isError) {
           logger.log("\nOpening browser...");
           extensionRunner = await startWebExt({

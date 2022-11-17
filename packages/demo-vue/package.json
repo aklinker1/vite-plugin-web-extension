@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "pnpm install && tsc && vite dev",
-    "dev:firefox": "pnpm install && tsc && TARGET=firefox vite dev",
+    "dev": "pnpm install && tsc && HMR=true vite build --watch",
+    "dev:firefox": "pnpm install && tsc && TARGET=firefox HMR=true vite build --watch",
     "build": "pnpm install && tsc && vite build",
     "build:firefox": "pnpm install && tsc && TARGET=firefox vite build",
     "build:watch": "pnpm build --watch",

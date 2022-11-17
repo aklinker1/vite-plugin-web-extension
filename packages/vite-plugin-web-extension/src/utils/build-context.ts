@@ -6,7 +6,7 @@ import { InternalPluginOptions } from "../options";
 import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { compact } from "./arrays";
 import { BuildMode } from "./build-mode";
-import { MANIFEST_LOADER_PLUGIN_NAME } from "./constants";
+import { HMR_DEFAULT_PORT, MANIFEST_LOADER_PLUGIN_NAME } from "./constants";
 import { colorizeFilename, entryFilenameToInput } from "./filenames";
 import { BOLD, DIM, Logger, RESET, GREEN } from "./logger";
 import { mergeConfigs } from "./merge-configs";
@@ -14,8 +14,8 @@ import path from "node:path";
 import { getInputAbsPaths } from "./paths";
 import uniqBy from "lodash.uniqby";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
-import md5 from "md5";
 import { bundleTrackerPlugin } from "../plugins/bundle-tracker-plugin";
+import { hmrPlugin } from "../plugins/hmr-plugin";
 
 interface RebuildOptions {
   rootDir: string;
@@ -50,7 +50,7 @@ export function createBuildContext({
    * generated assets.
    */
   let bundles: Array<OutputChunk | OutputAsset> = [];
-  let activeWatchers: RollupWatcher[] = [];
+  let activeWatchers: Array<{ close(): void }> = [];
 
   //#region Build Config Generation
   async function generateBuildConfigs({
@@ -67,7 +67,8 @@ export function createBuildContext({
     });
     const entryConfigs = await generateBuildConfigsFromManifest(
       rootDir,
-      manifest
+      manifest,
+      mode
     );
     const totalEntries = entryConfigs.length;
     const finalConfigs = entryConfigs
@@ -94,36 +95,48 @@ export function createBuildContext({
 
   async function generateBuildConfigsFromManifest(
     rootDir: string,
-    manifest: any
+    manifest: any,
+    mode: BuildMode
   ): Promise<Vite.InlineConfig[]> {
     const configs: Vite.InlineConfig[] = [];
     const alreadyIncluded: Record<string, boolean> = {};
 
     const addConfig = (config: Vite.InlineConfig) => configs.push(config);
-    const addHtmlConfig = (entries: string[]) => {
-      const htmlConfig = mergeConfigs(
-        {
-          build: {
-            rollupOptions: {
-              input: entries.reduce<Record<string, string>>((input, entry) => {
-                input[entryFilenameToInput(entry)] = path.resolve(
-                  rootDir,
-                  entry
-                );
-                return input;
-              }, {}),
-              output: {
-                // Configure the output filenames so they appear in the same folder
-                // - content-scripts/some-script/index.<hash>.js
-                // - content-scripts/some-script/index.<hash>.css
-                entryFileNames: `[name].js`,
-                chunkFileNames: `[name].js`,
-                assetFileNames: `[name].[ext]`,
-              },
+    const addHtmlConfig = (entries: string[], enableHmr = false) => {
+      const config: Vite.UserConfig = {
+        build: {
+          rollupOptions: {
+            input: entries.reduce<Record<string, string>>((input, entry) => {
+              input[entryFilenameToInput(entry)] = path.resolve(rootDir, entry);
+              return input;
+            }, {}),
+            output: {
+              // Configure the output filenames so they appear in the same folder
+              // - content-scripts/some-script/index.<hash>.js
+              // - content-scripts/some-script/index.<hash>.css
+              entryFileNames: `[name].js`,
+              chunkFileNames: `[name].js`,
+              assetFileNames: `[name].[ext]`,
             },
           },
         },
-        pluginOptions.htmlViteConfig ?? {}
+      };
+      if (enableHmr) {
+        if (config.build != null) config.build.watch = undefined;
+        config.base = `http://localhost:${HMR_DEFAULT_PORT}/`;
+        config.server = {
+          port: HMR_DEFAULT_PORT,
+          hmr: {
+            host: "localhost",
+          },
+        };
+      }
+      const htmlConfig = mergeConfigs(
+        config,
+        pluginOptions.htmlViteConfig ?? {},
+        {
+          plugins: [hmrPlugin()],
+        }
       );
       addConfig(htmlConfig);
     };
@@ -181,7 +194,8 @@ export function createBuildContext({
       manifest.chrome_settings_overrides?.homepage,
       additionalHtmlInputs,
     ]);
-    if (htmlEntries.length > 0) addHtmlConfig(htmlEntries);
+    if (htmlEntries.length > 0)
+      addHtmlConfig(htmlEntries, mode === BuildMode.DEV);
 
     // Sandbox - multi-page-mode
     const sandboxEntries = createEntryList([manifest.sandbox?.pages]);
@@ -312,15 +326,22 @@ export function createBuildContext({
         const bundleTracker = bundleTrackerPlugin();
         (config.plugins ??= []).push(bundleTracker);
 
-        const output = await Vite.build(config);
-        if ("addListener" in output) {
-          activeWatchers.push(output);
-          // In watch mode, wait until it's built once
-          await waitForWatchBuildComplete(output);
-        }
+        if (config.server != null) {
+          const server = await Vite.createServer(config);
+          await server.listen();
+          server.printUrls();
+          activeWatchers.push(server);
+        } else {
+          const output = await Vite.build(config);
+          if ("addListener" in output) {
+            activeWatchers.push(output);
+            // In watch mode, wait until it's built once
+            await waitForWatchBuildComplete(output);
+          }
 
-        const chunks = bundleTracker.getChunks() ?? [];
-        newBundles.push(...chunks);
+          const chunks = bundleTracker.getChunks() ?? [];
+          newBundles.push(...chunks);
+        }
       }
       bundles = uniqBy(newBundles, "fileName");
       // This prints before the manifest plugin continues in build mode
