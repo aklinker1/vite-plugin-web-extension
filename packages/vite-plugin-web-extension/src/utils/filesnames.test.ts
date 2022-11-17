@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { entryFilenameToInput } from "./filenames";
+import { trimExtension } from "./filenames";
 
 describe("Filename Utils", () => {
-  describe("entryFilenameToInput", () => {
+  describe("trimExtension", () => {
     it.each([
       ["", ""],
       ["file.js", "file"],
@@ -11,7 +11,9 @@ describe("Filename Utils", () => {
       [".hidden.jpeg", ".hidden"],
       [".png", ""],
     ])(`should convert "%s" to "%s"`, (input, expected) => {
-      expect(entryFilenameToInput(input)).toEqual(expected);
+      expect(trimExtension(input)).toEqual(expected);
     });
   });
+
+  describe;
 });

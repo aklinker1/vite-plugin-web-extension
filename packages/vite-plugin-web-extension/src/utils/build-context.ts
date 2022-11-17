@@ -7,14 +7,13 @@ import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { compact } from "./arrays";
 import { BuildMode } from "./build-mode";
 import { MANIFEST_LOADER_PLUGIN_NAME } from "./constants";
-import { colorizeFilename, entryFilenameToInput } from "./filenames";
+import { colorizeFilename, trimExtension } from "./filenames";
 import { BOLD, DIM, Logger, RESET, GREEN } from "./logger";
 import { mergeConfigs } from "./merge-configs";
 import path from "node:path";
 import { getInputAbsPaths } from "./paths";
 import uniqBy from "lodash.uniqby";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
-import md5 from "md5";
 import { bundleTrackerPlugin } from "../plugins/bundle-tracker-plugin";
 
 interface RebuildOptions {
@@ -106,10 +105,7 @@ export function createBuildContext({
           build: {
             rollupOptions: {
               input: entries.reduce<Record<string, string>>((input, entry) => {
-                input[entryFilenameToInput(entry)] = path.resolve(
-                  rootDir,
-                  entry
-                );
+                input[trimExtension(entry)] = path.resolve(rootDir, entry);
                 return input;
               }, {}),
               output: {
@@ -118,7 +114,16 @@ export function createBuildContext({
                 // - content-scripts/some-script/index.<hash>.css
                 entryFileNames: `[name].js`,
                 chunkFileNames: `[name].js`,
-                assetFileNames: `[name].[ext]`,
+                /**
+                 * [name] for assetFileNames is just the filename, not the whole path. So if you
+                 * have two `index.html` files in different directories, they would overwrite each
+                 * other as `dist/index.css`.
+                 *
+                 * See [#47](https://github.com/aklinker1/vite-plugin-web-extension/issues/47) for
+                 * more details.
+                 */
+                assetFileNames: ({ name }) =>
+                  `${trimExtension(name) ?? "[name]"}.[ext]`,
               },
             },
           },
@@ -131,7 +136,7 @@ export function createBuildContext({
       if (alreadyIncluded[entry]) return;
       alreadyIncluded[entry] = true;
 
-      const moduleId = entryFilenameToInput(entry);
+      const moduleId = trimExtension(entry);
       /**
        * "content-scripts/some-script/index" -> "content-scripts/some-script/"
        * "some-script" -> ""
