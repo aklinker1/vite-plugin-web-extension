@@ -20,7 +20,7 @@ export default defineConfig({
 
 - :wrench: Automatically build inputs from in your `manifest.json`
 - :rocket: Open a browser and install the extension during development
-- :zap: Super fast dev mode that automatically reloads your extension
+- :zap: Super fast watch mode that automatically reloads your extension<!-- - :zap: Super fast dev mode that automatically reloads your extension -->
 - :globe_with_meridians: Supports all browsers
 - :fire: Frontend frameworks for the popup, options page, _**and content scripts**_!
 - :robot: Typescript support out of the box!

@@ -70,7 +70,7 @@ If you're using a function to generate your manifest, to take advantage of this 
 
 ## `web-ext` Changes
 
-`web-ext` was upgraded from v6.5 &rarr; v7.2. The big change here is that the library now ships with only module support, not as common JS. See [Drop CommonJS Support](#drop-commonjs-support) what you need to do.
+`web-ext` was upgraded from v6.5 &rarr; v7.2. The big change here is that the library now ships with only module support, not as common JS. See [Drop CommonJS Support](#drop-commonjs-support) for what you need to do.
 
 In addition to the upgrade, the `webExtConfig` option has been removed. Instead, you should now configure this as a separate, gitignored file. Since this file is usually used for configuring and tweaking how the browser runs on your personal computer, not the rest of the team, excluding it from the plugin config makes sense.
 
@@ -105,5 +105,5 @@ All these changes have several effects on builds:
 - `writeAssetsTo`: Without an `assets` option, this does nothing
 - `writeManifestTo`: To change where the extension builds to, use [Vite's `build.outDir`](https://vitejs.dev/config/build-options.html#build-outdir) option instead
 - `verbose`: Use the `--debug` flag when performing a build (`vite build --debug`) to see more output
-- `serviceWorkerType`: Deprecated field has been removed. As of  [v1.0.3](https://github.com/aklinker1/vite-plugin-web-extension/releases/tag/v1.0.3), this option has had no effect, so you can just remove it
+- `serviceWorkerType`: Deprecated field has been removed. As of [v1.0.3](https://github.com/aklinker1/vite-plugin-web-extension/releases/tag/v1.0.3), this option has had no effect, so you can just remove it
 - `webExtConfig`: Use an external config file, see [`web-ext` Changes](#web-ext-changes) for more details

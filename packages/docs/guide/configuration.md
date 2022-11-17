@@ -7,6 +7,10 @@ title: Configuration
 
 ## Dev Mode
 
+Not implemented yet in V2 alpha releases. Use V1 or watch mode instead.
+
+<!--
+
 ```bash:no-line-numbers
 vite dev
 ```
@@ -24,6 +28,8 @@ Dev mode works best when you're using a front-end framework, and making changes 
 HMR will not be used when making changes to UI injected by content scripts.
 
 > Set `disableAutoLaunch` to `true` to skip the automatic installation of the extension.
+
+-->
 
 ## Watch Mode
 
@@ -87,7 +93,7 @@ See [#22](https://github.com/aklinker1/vite-plugin-web-extension/issues/22) for 
 
 ## Dynamic Manifests
 
-The `manifest` option accepts a file path or a function. 
+The `manifest` option accepts a file path or a function.
 
 - The file path should be relative to the Vite `root`
 - The function should return a javascript object containing the same thing as `manifest.json`
@@ -171,7 +177,6 @@ Here's a common use case: Firefox doesn't support MV3 yet, but Chrome does!
 
   </CodeGroupItem>
 </CodeGroup>
-
 
 To build for a specific browser, pass the `browser` option and prefix any **field name** or **string value** with `{{browser-name}}.`. This is not limited to just `chrome` and `firefox`, you can use any string inside the double curly braces as long as your pass it into the plugin's `browser` option.
 
