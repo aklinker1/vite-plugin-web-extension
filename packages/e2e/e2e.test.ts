@@ -339,4 +339,22 @@ describe("Vite Plugin Web Extension", () => {
       },
       ["dist/16.png", "dist/48.png", "dist/128.png"]
     ));
+
+  it("should print validation errors when the manifest is invalid", async () => {
+    const build = testBuild({
+      build: {
+        outDir: DIST_DIRECTORY,
+        emptyOutDir: true,
+      },
+      publicDir: "extension/assets",
+      plugins: [
+        WebExtension({
+          assets: "extension/assets",
+          manifest: () => ({}),
+        }),
+      ],
+    });
+
+    await expect(build).rejects.toMatchSnapshot();
+  });
 });

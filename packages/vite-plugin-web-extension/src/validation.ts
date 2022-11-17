@@ -20,17 +20,10 @@ export async function validateManifest(
     throw Error(`Manifest must be an object, got ${typeof manifest}`);
 
   const schema = await get(SCHEMA_URL);
-  const data = ajv.validate(schema, manifest);
-  if (!data) {
+  const success = ajv.validate(schema, manifest);
+  if (!success) {
     log(JSON.stringify(manifest, null, 2));
-    const errors = (ajv.errors ?? [])
-      ?.filter((err) => !!err.instancePath)
-      .map(
-        (err) =>
-          `- manifest${err.instancePath.replace(/\//g, ".")} ${err.message}`
-      )
-      .join("\n");
-    throw Error(`Invalid manifest:\n${errors}`);
+    throw Error(`Invalid manifest:\n${JSON.stringify(ajv.errors, null, 2)}`);
   }
 }
 
