@@ -1,11 +1,10 @@
 import { Plugin } from "vite";
 import { MULTIBUILD_COMPLETE_PLUGIN_NAME } from "../utils/constants";
 import Lock from "async-lock";
-import { compact } from "../utils/arrays";
 
 /**
  * Generate plugins that track how many builds are in progress at a single time, and their statuses
- * (error or success). After no more builds are runnin, and all builds have a success status,
+ * (error or success). After no more builds are running, and all builds have a success status,
  * the `onBuildsSucceeded` callback will be invoked.
  */
 export function createMultibuildCompleteManager(
