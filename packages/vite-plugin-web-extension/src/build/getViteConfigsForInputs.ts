@@ -1,0 +1,277 @@
+import path from "node:path";
+import { defineConfig, InlineConfig, mergeConfig } from "vite";
+import type { Manifest } from "webextension-polyfill";
+import { compact } from "../utils/arrays";
+import { trimExtension } from "../utils/filenames";
+
+const HTML_ENTRY_REGEX = /\.(html)$/;
+const SCRIPT_ENTRY_REGEX = /\.(js|ts|mjs|mts)$/;
+
+class CombinedViteConfigs {
+  /**
+   * A single config that builds all the HTML pages.
+   */
+  html?: InlineConfig;
+  /**
+   * A single config that builds all the HTML pages for sandbox. These are separate from `html`
+   * because we want to properly tree-shake out any browser API usages, since those APIs aren't
+   * available in sandbox pages.
+   */
+  sandbox?: InlineConfig;
+  /**
+   * All other JS inputs from the manifest and additional inputs are separated into their own
+   * configs.
+   *
+   * Unlike tsup, Vite cannot be given multiple entry-points, and produce individual bundles for
+   * each entrypoint. Vite can only produce code-split outputs that share other files, which
+   * extensions cannot consume. So we build each of these separately.
+   */
+  scripts?: InlineConfig[];
+  /**
+   * Similar to scripts, but for other file "types". Sometimes CSS, SCSS, JSON, images, etc, can be
+   * passed into Vite directly. The most common case of this in extensions are CSS files listed for
+   * content scripts.
+   */
+  other?: InlineConfig[];
+
+  /**
+   * The total number of configs required to build the extension.
+   */
+  get count(): number {
+    let count = 0;
+    if (this.html) count++;
+    if (this.sandbox) count++;
+    if (this.scripts) count += this.scripts.length;
+    if (this.other) count += this.other.length;
+    return count;
+  }
+
+  /**
+   * Return all the configs as an array.
+   */
+  get all(): InlineConfig[] {
+    return compact([this.html, this.sandbox, this.scripts, this.other].flat());
+  }
+
+  applyBaseConfig(baseConfig: InlineConfig) {
+    if (this.html) this.html = mergeConfig(baseConfig, this.html);
+    if (this.sandbox) this.sandbox = mergeConfig(baseConfig, this.sandbox);
+    this.scripts = this.scripts?.map((config) =>
+      mergeConfig(baseConfig, config)
+    );
+    this.other = this.other?.map((config) => mergeConfig(baseConfig, config));
+  }
+}
+
+/**
+ * Given an input `manifest.json` with source code paths and `options.additionalInputs`, return a
+ * set of Vite configs that can be used to build all the entry-points for the extension.
+ */
+export function getViteConfigsForInputs(options: {
+  rootDir: string;
+  additionalInputs: string[];
+  manifest: any;
+  baseHtmlViteConfig: InlineConfig;
+  baseSandboxViteConfig: InlineConfig;
+  baseScriptViteConfig: InlineConfig;
+  baseOtherViteConfig: InlineConfig;
+}): CombinedViteConfigs {
+  const { rootDir, additionalInputs, manifest } = options;
+  const configs = new CombinedViteConfigs();
+
+  const processedInputs = new Set<string>();
+  const hasBeenProcessed = (input: string) => processedInputs.has(input);
+
+  /**
+   * For a list of entry-points, build them all in multi-page mode:
+   * <https://vitejs.dev/guide/build.html#multi-page-app>
+   */
+  function getMultiPageConfig(
+    entries: string[],
+    baseConfig: InlineConfig
+  ): InlineConfig | undefined {
+    const newEntries = entries.filter((entry) => !hasBeenProcessed(entry));
+    newEntries.forEach((entry) => processedInputs.add(entry));
+
+    if (newEntries.length === 0) return;
+
+    const inputConfig: InlineConfig = {
+      build: {
+        rollupOptions: {
+          input: newEntries.reduce<Record<string, string>>((input, entry) => {
+            input[trimExtension(entry)] = path.resolve(rootDir, entry);
+            return input;
+          }, {}),
+          output: {
+            // Configure the output filenames so they appear in the same folder
+            // - content-scripts/some-script/index.<hash>.js
+            // - content-scripts/some-script/index.<hash>.css
+            entryFileNames: `[name].js`,
+            chunkFileNames: `[name].js`,
+            /**
+             * [name] for assetFileNames is just the filename, not the whole path. So if you
+             * have two `index.html` files in different directories, they would overwrite each
+             * other as `dist/index.css`.
+             *
+             * See [#47](https://github.com/aklinker1/vite-plugin-web-extension/issues/47) for
+             * more details.
+             */
+            assetFileNames: ({ name }) =>
+              `${trimExtension(name) ?? "[name]"}.[ext]`,
+          },
+        },
+      },
+    };
+    return mergeConfig(baseConfig, inputConfig);
+  }
+
+  /**
+   * For a given entry-point, get the vite config use to bundle it into a single file.
+   */
+  function getIndividualConfig(
+    entry: string,
+    baseConfig: InlineConfig
+  ): InlineConfig | undefined {
+    if (hasBeenProcessed(entry)) return;
+    processedInputs.add(entry);
+
+    const moduleId = trimExtension(entry);
+    /**
+     * "content-scripts/some-script/index" -> "content-scripts/some-script/"
+     * "some-script" -> ""
+     */
+    const outputDir = moduleId.includes("/")
+      ? path.dirname(moduleId) + "/"
+      : "";
+    const inputConfig: InlineConfig = {
+      build: {
+        rollupOptions: {
+          input: {
+            [moduleId]: path.resolve(rootDir, entry),
+          },
+          output: {
+            // Configure the output filenames so they appear in the same folder
+            // - content-scripts/some-script/index.<hash>.js
+            // - content-scripts/some-script/index.<hash>.css
+            entryFileNames: `[name].js`,
+            chunkFileNames: `[name].js`,
+            assetFileNames: `${outputDir}[name].[ext]`,
+          },
+        },
+      },
+    };
+    return mergeConfig(baseConfig, inputConfig);
+  }
+
+  function getHtmlConfig(entries: string[]): InlineConfig | undefined {
+    return getMultiPageConfig(entries, options.baseHtmlViteConfig);
+  }
+  function getSandboxConfig(entries: string[]): InlineConfig | undefined {
+    return getMultiPageConfig(entries, options.baseSandboxViteConfig);
+  }
+  function getScriptConfig(entry: string): InlineConfig | undefined {
+    return getIndividualConfig(entry, options.baseScriptViteConfig);
+  }
+  function getOtherConfig(entry: string): InlineConfig | undefined {
+    return getIndividualConfig(entry, options.baseOtherViteConfig);
+  }
+
+  const {
+    htmlAdditionalInputs,
+    otherAdditionalInputs,
+    scriptAdditionalInputs,
+  } = separateAdditionalInputs(additionalInputs);
+
+  // HTML Pages
+  configs.html = getHtmlConfig(
+    simplifyEntriesList([
+      manifest.action?.default_popup,
+      manifest.devtools_page,
+      manifest.options_page,
+      manifest.options_ui?.page,
+      manifest.browser_action?.default_popup,
+      manifest.page_action?.default_popup,
+      manifest.sidebar_action?.default_panel,
+      manifest.background?.page,
+      manifest.chrome_url_overrides?.bookmarks,
+      manifest.chrome_url_overrides?.history,
+      manifest.chrome_url_overrides?.newtab,
+      manifest.chrome_settings_overrides?.homepage,
+      htmlAdditionalInputs,
+    ])
+  );
+
+  // Sandbox
+  configs.sandbox = getSandboxConfig(
+    simplifyEntriesList([manifest.sandbox?.pages])
+  );
+
+  // Scripts
+  compact(
+    simplifyEntriesList([
+      manifest.background?.service_worker,
+      manifest.background?.scripts,
+      ...manifest.content_scripts?.map((cs: Manifest.ContentScript) => cs.js),
+      scriptAdditionalInputs,
+    ]).map(getScriptConfig)
+  ).forEach((scriptConfig) => {
+    configs.scripts ??= [];
+    configs.scripts.push(scriptConfig);
+  });
+
+  // Other Types
+  compact(
+    simplifyEntriesList([
+      ...manifest.content_scripts?.map((cs: Manifest.ContentScript) => cs.css),
+      otherAdditionalInputs,
+    ]).map(getOtherConfig)
+  ).forEach((otherConfig) => {
+    configs.other ??= [];
+    configs.other.push(otherConfig);
+  });
+
+  validateCombinedViteConfigs(configs);
+  return configs;
+}
+
+/**
+ * `options.additionalInputs` accepts html files, scripts, and other file entry-points. This method
+ * breaks those apart into their related groups (html, script, other).
+ *
+ * All `.html` files are
+ */
+function separateAdditionalInputs(additionalInputs: string[]) {
+  const scriptAdditionalInputs: string[] = [];
+  const otherAdditionalInputs: string[] = [];
+  const htmlAdditionalInputs: string[] = [];
+
+  additionalInputs?.forEach((input) => {
+    if (HTML_ENTRY_REGEX.test(input)) htmlAdditionalInputs.push(input);
+    else if (SCRIPT_ENTRY_REGEX.test(input)) scriptAdditionalInputs.push(input);
+    else scriptAdditionalInputs.push(input);
+  });
+
+  return {
+    scriptAdditionalInputs,
+    otherAdditionalInputs,
+    htmlAdditionalInputs,
+  };
+}
+
+/**
+ * Take in a list of any combination of single entries, lists of entries, or undefined and return a
+ * single, simple list of all the truthy entry-points.
+ */
+function simplifyEntriesList(
+  a: Array<string | string[] | undefined> | undefined
+): string[] {
+  return compact<string>(a?.flat() ?? []);
+}
+
+function validateCombinedViteConfigs(configs: CombinedViteConfigs) {
+  if (configs.count === 0) {
+    throw Error(
+      "No inputs found in manifest.json. Run Vite with `--debug` for more details."
+    );
+  }
+}

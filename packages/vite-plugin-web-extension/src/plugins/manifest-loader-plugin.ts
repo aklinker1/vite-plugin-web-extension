@@ -1,15 +1,20 @@
-import { ConfigEnv, Plugin, ResolvedConfig, UserConfig } from "vite";
+import {
+  ConfigEnv,
+  mergeConfig,
+  Plugin,
+  ResolvedConfig,
+  UserConfig,
+} from "vite";
 import { InternalPluginOptions } from "../options";
 import { createLogger } from "../utils/logger";
 import { MANIFEST_LOADER_PLUGIN_NAME } from "../utils/constants";
 import { BuildMode } from "../utils/build-mode";
-import { createBuildContext } from "../utils/build-context";
+import { createBuildContext } from "../build/build-context";
 import { defineNoRollupInput } from "../utils/no-rollup-input";
 import path from "node:path";
 import fs from "fs-extra";
 import { resolveBrowserTagsInObject } from "../utils/resolve-browser-flags";
 import { inspect } from "node:util";
-import { mergeConfigs } from "../utils/merge-configs";
 import { getOutDir, getPublicDir, getRootDir } from "../utils/paths";
 import { OutputAsset, OutputChunk } from "rollup";
 import { Manifest } from "webextension-polyfill";
@@ -189,12 +194,16 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       configureBuildMode(config, env);
       userConfig = config;
 
-      return mergeConfigs(
-        // We only want to output the manifest.json, so we don't need an input.
-        noInput.config,
+      // Don't empty the out directory automatically, if allowed, it clears all the outputs from
+      // the build context. Instead, we do it manually in `onBuildStart`
+      const rootConfig = { build: { emptyOutDir: false } };
+
+      return mergeConfig(
         // Don't empty the out directory automatically, if allowed, it clears all the outputs from
         // the build context. Instead, we do it manually in `onBuildStart`
-        { build: { emptyOutDir: false } }
+        { build: { emptyOutDir: false } },
+        // We only want to output the manifest.json, so we don't need an input.
+        noInput.config
       );
     },
     configResolved(config) {
