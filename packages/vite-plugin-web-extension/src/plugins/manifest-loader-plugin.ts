@@ -236,6 +236,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       const entrypointsManifest = await loadManifest();
       await ctx.rebuild({
         rootDir,
+        outDir,
         userConfig,
         manifest: entrypointsManifest,
         mode,
@@ -274,18 +275,17 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     },
     // Runs during: build, watch
     async closeBundle() {
-      if (mode === BuildMode.WATCH && !options.disableAutoLaunch) {
-        if (!isError) {
-          logger.log("\nOpening browser...");
-          extensionRunner = await startWebExt({
-            pluginOptions: options,
-            rootDir,
-            outDir,
-            logger,
-          });
-          logger.log("Done!");
-        }
-      }
+      if (mode === BuildMode.BUILD || options.disableAutoLaunch || isError)
+        return;
+
+      logger.log("\nOpening browser...");
+      extensionRunner = await startWebExt({
+        pluginOptions: options,
+        rootDir,
+        outDir,
+        logger,
+      });
+      logger.log("Done!");
     },
     // Runs during: build, watch
     generateBundle(_options, bundle, _isWrite) {

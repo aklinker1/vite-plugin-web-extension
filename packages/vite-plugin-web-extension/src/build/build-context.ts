@@ -4,19 +4,25 @@ import * as Vite from "vite";
 import { InternalPluginOptions } from "../options";
 import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { BuildMode } from "./BuildMode";
-import { MANIFEST_LOADER_PLUGIN_NAME } from "../utils/constants";
+import {
+  DISABLE_DEV_PLUGIN_NAME,
+  HMR_PLUGIN_NAME,
+  MANIFEST_LOADER_PLUGIN_NAME,
+} from "../utils/constants";
 import { colorizeFilename } from "../utils/filenames";
 import { BOLD, DIM, Logger, RESET, GREEN } from "../utils/logger";
 import path from "node:path";
 import { getInputAbsPaths } from "../utils/paths";
-import { removePlugin } from "../utils/removePlugin";
+import { removePlugins } from "../utils/removePlugins";
 import uniqBy from "lodash.uniqby";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
 import { bundleTrackerPlugin } from "../plugins/bundle-tracker-plugin";
 import { getViteConfigsForInputs } from "./getViteConfigsForInputs";
+import { isDevServerConfig } from "../utils/isDevServerConfig";
 
 interface RebuildOptions {
   rootDir: string;
+  outDir: string;
   userConfig: Vite.UserConfig;
   manifest: any;
   mode: BuildMode;
@@ -56,9 +62,11 @@ export function createBuildContext({
     manifest,
     onSuccess,
     mode,
+    outDir,
   }: RebuildOptions) {
     const entryConfigs = await getViteConfigsForInputs({
       rootDir,
+      outDir,
       manifest,
       mode,
       additionalInputs: pluginOptions.additionalInputs,
@@ -82,7 +90,12 @@ export function createBuildContext({
       build: { emptyOutDir: false },
       plugins: [
         // Print a message before starting each step
-        labeledStepPlugin(logger, totalEntries, buildOrderIndex),
+        labeledStepPlugin({
+          logger,
+          total: totalEntries,
+          index: buildOrderIndex,
+          mode,
+        }),
         // ...(mode === BuildMode.WATCH ? [multibuildManager.plugin()] : []),
         multibuildManager.plugin(),
       ],
@@ -94,8 +107,13 @@ export function createBuildContext({
           getForcedConfig(i)
         )
       )
-      // Exclude this plugin from child builds to break recursion
-      .map((config) => removePlugin(config, MANIFEST_LOADER_PLUGIN_NAME));
+      // Exclude some top level plugins inherited from the base config
+      .map((config) =>
+        removePlugins(config, [
+          MANIFEST_LOADER_PLUGIN_NAME,
+          DISABLE_DEV_PLUGIN_NAME,
+        ])
+      );
     return finalConfigs;
   }
 
@@ -168,15 +186,20 @@ export function createBuildContext({
         const bundleTracker = bundleTrackerPlugin();
         (config.plugins ??= []).push(bundleTracker);
 
-        const output = await Vite.build(config);
-        if ("addListener" in output) {
-          activeWatchers.push(output);
-          // In watch mode, wait until it's built once
-          await waitForWatchBuildComplete(output);
-        }
+        if (isDevServerConfig(mode, config)) {
+          const server = await Vite.createServer(config);
+          server.listen();
+        } else {
+          const output = await Vite.build(config);
+          if ("addListener" in output) {
+            activeWatchers.push(output);
+            // In watch mode, wait until it's built once
+            await waitForWatchBuildComplete(output);
+          }
 
-        const chunks = bundleTracker.getChunks() ?? [];
-        newBundles.push(...chunks);
+          const chunks = bundleTracker.getChunks() ?? [];
+          newBundles.push(...chunks);
+        }
       }
       bundles = uniqBy(newBundles, "fileName");
       // This prints before the manifest plugin continues in build mode

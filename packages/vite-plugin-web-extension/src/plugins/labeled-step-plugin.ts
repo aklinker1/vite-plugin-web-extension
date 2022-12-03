@@ -1,22 +1,23 @@
-import { Plugin, ResolvedConfig, UserConfig } from "vite";
-import {
-  LABELED_STEP_PLUGIN_NAME,
-  MANIFEST_LOADER_PLUGIN_NAME,
-} from "../utils/constants";
+import { PluginOption, ResolvedConfig, UserConfig } from "vite";
+import { LABELED_STEP_PLUGIN_NAME } from "../utils/constants";
 import { Logger } from "../utils/logger";
 import { getInputAbsPaths, getRootDir } from "../utils/paths";
 import path from "node:path";
 import { colorizeFilename } from "../utils/filenames";
+import { BuildMode } from "../build/BuildMode";
+import { isDevServerConfig } from "../utils/isDevServerConfig";
 
 /**
  * A plugin that prints the inputs that will be built.
  */
-export function labeledStepPlugin(
-  logger: Logger,
-  total: number,
-  index: number
-): Plugin {
-  let finalConfig: ResolvedConfig;
+export function labeledStepPlugin(options: {
+  logger: Logger;
+  total: number;
+  index: number;
+  mode: BuildMode;
+}): PluginOption {
+  const { logger, total, index, mode } = options;
+  let finalConfig: UserConfig;
   let rootDir: string;
   let buildCount = 0;
 
@@ -31,12 +32,21 @@ export function labeledStepPlugin(
     }
 
     const absPaths = getInputAbsPaths(input);
-    logger.log(
-      `Building ${absPaths
-        .map((p) => path.relative(rootDir, p))
-        .map(colorizeFilename)
-        .join(", ")} ${progressLabel}`
-    );
+    if (isDevServerConfig(mode, finalConfig)) {
+      logger.log(
+        `Starting dev server for ${absPaths
+          .map((p) => path.relative(rootDir, p))
+          .map(colorizeFilename)
+          .join(", ")} ${progressLabel}`
+      );
+    } else {
+      logger.log(
+        `Building ${absPaths
+          .map((p) => path.relative(rootDir, p))
+          .map(colorizeFilename)
+          .join(", ")} ${progressLabel}`
+      );
+    }
   }
 
   function printRebuilds() {
@@ -57,9 +67,11 @@ export function labeledStepPlugin(
 
   return {
     name: LABELED_STEP_PLUGIN_NAME,
-    configResolved(config) {
+    config(config) {
       finalConfig = config;
-      rootDir = getRootDir(finalConfig);
+    },
+    configResolved(config) {
+      rootDir = getRootDir(config);
       if (buildCount == 0) printFirstBuild();
       else printRebuilds();
 

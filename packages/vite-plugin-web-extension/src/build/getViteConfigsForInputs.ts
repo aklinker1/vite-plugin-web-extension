@@ -4,6 +4,7 @@ import type { Manifest } from "webextension-polyfill";
 import { compact } from "../utils/arrays";
 import { BuildMode } from "./BuildMode";
 import { trimExtension } from "../utils/filenames";
+import { hmrPlugin } from "../plugins/hmr-plugin";
 
 const HTML_ENTRY_REGEX = /\.(html)$/;
 const SCRIPT_ENTRY_REGEX = /\.(js|ts|mjs|mts)$/;
@@ -65,6 +66,7 @@ class CombinedViteConfigs {
  */
 export function getViteConfigsForInputs(options: {
   rootDir: string;
+  outDir: string;
   mode: BuildMode;
   additionalInputs: string[];
   manifest: any;
@@ -180,28 +182,38 @@ export function getViteConfigsForInputs(options: {
   } = separateAdditionalInputs(additionalInputs);
 
   // HTML Pages
-  configs.html = getHtmlConfig(
-    simplifyEntriesList([
-      manifest.action?.default_popup,
-      manifest.devtools_page,
-      manifest.options_page,
-      manifest.options_ui?.page,
-      manifest.browser_action?.default_popup,
-      manifest.page_action?.default_popup,
-      manifest.sidebar_action?.default_panel,
-      manifest.background?.page,
-      manifest.chrome_url_overrides?.bookmarks,
-      manifest.chrome_url_overrides?.history,
-      manifest.chrome_url_overrides?.newtab,
-      manifest.chrome_settings_overrides?.homepage,
-      htmlAdditionalInputs,
-    ])
-  );
+  const htmlEntries = simplifyEntriesList([
+    manifest.action?.default_popup,
+    manifest.devtools_page,
+    manifest.options_page,
+    manifest.options_ui?.page,
+    manifest.browser_action?.default_popup,
+    manifest.page_action?.default_popup,
+    manifest.sidebar_action?.default_panel,
+    manifest.background?.page,
+    manifest.chrome_url_overrides?.bookmarks,
+    manifest.chrome_url_overrides?.history,
+    manifest.chrome_url_overrides?.newtab,
+    manifest.chrome_settings_overrides?.homepage,
+    htmlAdditionalInputs,
+  ]);
+  const sandboxEntries = simplifyEntriesList([manifest.sandbox?.pages]);
 
-  // Sandbox
-  configs.sandbox = getSandboxConfig(
-    simplifyEntriesList([manifest.sandbox?.pages])
-  );
+  if (options.mode === BuildMode.DEV) {
+    // In dev mode, we can only have a single dev server, so we put all HTML entry points into a
+    // single config.
+    configs.html = getHtmlConfig([...htmlEntries, ...sandboxEntries]);
+    if (configs.html) {
+      configs.html.plugins ??= [];
+      configs.html.plugins.push(hmrPlugin(options.outDir));
+    }
+  } else {
+    // In production, we split them up to be safe.
+    // TODO: remove the sandbox split, and always build them together to get rid of this
+    // inconsistency.
+    configs.html = getHtmlConfig(htmlEntries);
+    configs.sandbox = getSandboxConfig(sandboxEntries);
+  }
 
   // Scripts
   compact(

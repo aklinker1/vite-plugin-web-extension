@@ -1,8 +1,8 @@
 import { InlineConfig } from "vite";
 
-export function removePlugin(
+export function removePlugins(
   config: InlineConfig,
-  pluginName: string
+  pluginNames: string[]
 ): InlineConfig {
   return {
     ...config,
@@ -11,7 +11,8 @@ export function removePlugin(
         ?.flat()
         ?.filter(
           (plugin) =>
-            plugin && (!("name" in plugin) || plugin.name !== pluginName)
+            plugin &&
+            (!("name" in plugin) || !pluginNames.includes(plugin.name))
         ) ?? [],
   };
 }
