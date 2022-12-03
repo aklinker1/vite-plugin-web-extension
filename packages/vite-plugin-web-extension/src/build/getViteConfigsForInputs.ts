@@ -2,6 +2,7 @@ import path from "node:path";
 import { InlineConfig, mergeConfig } from "vite";
 import type { Manifest } from "webextension-polyfill";
 import { compact } from "../utils/arrays";
+import { BuildMode } from "./BuildMode";
 import { trimExtension } from "../utils/filenames";
 
 const HTML_ENTRY_REGEX = /\.(html)$/;
@@ -64,6 +65,7 @@ class CombinedViteConfigs {
  */
 export function getViteConfigsForInputs(options: {
   rootDir: string;
+  mode: BuildMode;
   additionalInputs: string[];
   manifest: any;
   baseHtmlViteConfig: InlineConfig;
@@ -99,8 +101,8 @@ export function getViteConfigsForInputs(options: {
           }, {}),
           output: {
             // Configure the output filenames so they appear in the same folder
-            // - content-scripts/some-script/index.<hash>.js
-            // - content-scripts/some-script/index.<hash>.css
+            // - popup/index.html
+            // - popup/index.js
             entryFileNames: `[name].js`,
             chunkFileNames: `[name].js`,
             /**
@@ -146,8 +148,8 @@ export function getViteConfigsForInputs(options: {
           },
           output: {
             // Configure the output filenames so they appear in the same folder
-            // - content-scripts/some-script/index.<hash>.js
-            // - content-scripts/some-script/index.<hash>.css
+            // - content-scripts/some-script/index.js
+            // - content-scripts/some-script/index.css
             entryFileNames: `[name].js`,
             chunkFileNames: `[name].js`,
             assetFileNames: `${outputDir}[name].[ext]`,
