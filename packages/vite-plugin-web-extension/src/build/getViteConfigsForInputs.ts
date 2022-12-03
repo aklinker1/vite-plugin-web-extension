@@ -1,5 +1,5 @@
 import path from "node:path";
-import { defineConfig, InlineConfig, mergeConfig } from "vite";
+import { InlineConfig, mergeConfig } from "vite";
 import type { Manifest } from "webextension-polyfill";
 import { compact } from "../utils/arrays";
 import { trimExtension } from "../utils/filenames";
@@ -38,12 +38,7 @@ class CombinedViteConfigs {
    * The total number of configs required to build the extension.
    */
   get count(): number {
-    let count = 0;
-    if (this.html) count++;
-    if (this.sandbox) count++;
-    if (this.scripts) count += this.scripts.length;
-    if (this.other) count += this.other.length;
-    return count;
+    return this.all.length;
   }
 
   /**
