@@ -8,7 +8,7 @@ import {
 import { InternalPluginOptions } from "../options";
 import { createLogger } from "../utils/logger";
 import { MANIFEST_LOADER_PLUGIN_NAME } from "../utils/constants";
-import { BuildMode } from "../utils/build-mode";
+import { BuildMode } from "../build/BuildMode";
 import { createBuildContext } from "../build/build-context";
 import { defineNoRollupInput } from "../utils/no-rollup-input";
 import path from "node:path";
@@ -58,7 +58,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
    * Set the build mode based on how vite was ran/configured.
    */
   function configureBuildMode(config: UserConfig, env: ConfigEnv) {
-    if (env.command === "serve") {
+    if (process.env.HTML_HMR) {
       logger.verbose("Dev mode");
       mode = BuildMode.DEV;
     } else if (config.build?.watch) {
@@ -90,7 +90,9 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       const text = await fs.readFile(manifestPath, "utf-8");
       manifestTemplate = JSON.parse(text);
     }
-    logger.verbose("Manifest template: " + inspect(manifestTemplate));
+    logger.verbose(
+      "Manifest template: " + inspect(manifestTemplate, undefined, 5)
+    );
     const entrypointsManifest = resolveBrowserTagsInObject(
       options.browser ?? "chrome",
       manifestTemplate
@@ -187,6 +189,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
 
   return {
     name: MANIFEST_LOADER_PLUGIN_NAME,
+    // apply: "build",
     async config(config, env) {
       if (options.browser != null) {
         logger.log(`Building for browser: ${options.browser}`);

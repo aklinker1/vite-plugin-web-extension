@@ -3,10 +3,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "pnpm install && tsc && vite dev",
-    "dev:firefox": "pnpm install && tsc && TARGET=firefox vite dev",
-    "build": "pnpm install && tsc && vite build",
-    "build:firefox": "pnpm install && tsc && TARGET=firefox vite build",
+    "dev": "HTML_HMR=true pnpm start",
+    "dev:firefox": "HTML_HMR=true pnpm start",
+    "start": "pnpm i && vite build --watch",
+    "start:firefox": "pnpm i && TARGET=firefox vite build --watch",
+    "build": "pnpm i && tsc && vite build",
+    "build:firefox": "pnpm i && tsc && TARGET=firefox vite build",
     "build:watch": "pnpm build --watch",
     "build:watch:firefox": "pnpm build:firefox --watch",
     "validate": "web-ext lint -s dist"

@@ -3,12 +3,13 @@ import { inspect } from "util";
 import * as Vite from "vite";
 import { InternalPluginOptions } from "../options";
 import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
-import { BuildMode } from "../utils/build-mode";
+import { BuildMode } from "./BuildMode";
 import { MANIFEST_LOADER_PLUGIN_NAME } from "../utils/constants";
 import { colorizeFilename } from "../utils/filenames";
 import { BOLD, DIM, Logger, RESET, GREEN } from "../utils/logger";
 import path from "node:path";
 import { getInputAbsPaths } from "../utils/paths";
+import { removePlugin } from "../utils/removePlugin";
 import uniqBy from "lodash.uniqby";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
 import { bundleTrackerPlugin } from "../plugins/bundle-tracker-plugin";
@@ -49,7 +50,7 @@ export function createBuildContext({
   let bundles: Array<OutputChunk | OutputAsset> = [];
   let activeWatchers: RollupWatcher[] = [];
 
-  async function generateBuildConfigs({
+  async function getBuildConfigs({
     rootDir,
     userConfig,
     manifest,
@@ -59,6 +60,7 @@ export function createBuildContext({
     const entryConfigs = await getViteConfigsForInputs({
       rootDir,
       manifest,
+      mode,
       additionalInputs: pluginOptions.additionalInputs,
       baseHtmlViteConfig: pluginOptions.htmlViteConfig ?? {},
       baseSandboxViteConfig: {},
@@ -71,7 +73,7 @@ export function createBuildContext({
       await onSuccess?.();
     });
     const totalEntries = entryConfigs.count;
-    const getRootConfig = (buildOrderIndex: number) => ({
+    const getForcedConfig = (buildOrderIndex: number) => ({
       // We shouldn't clear the screen for these internal builds
       clearScreen: false,
       // Don't copy static assets for the lib builds - already done during manifest build
@@ -88,27 +90,13 @@ export function createBuildContext({
     const finalConfigs = entryConfigs.all
       .map<Vite.InlineConfig>((entryConfig, i) =>
         Vite.mergeConfig(
-          getRootConfig(i),
-          Vite.mergeConfig(entryConfig, userConfig)
+          Vite.mergeConfig(entryConfig, userConfig),
+          getForcedConfig(i)
         )
       )
       // Exclude this plugin from child builds to break recursion
       .map((config) => removePlugin(config, MANIFEST_LOADER_PLUGIN_NAME));
     return finalConfigs;
-  }
-
-  function removePlugin(
-    config: Vite.InlineConfig,
-    pluginName: string
-  ): Vite.InlineConfig {
-    return {
-      ...config,
-      plugins:
-        config.plugins?.filter(
-          (plugin) =>
-            plugin && (!("name" in plugin) || plugin.name !== pluginName)
-        ) ?? [],
-    };
   }
 
   function printSummary(
@@ -169,7 +157,7 @@ export function createBuildContext({
       await Promise.all(activeWatchers.map((watcher) => watcher.close()));
       activeWatchers = [];
 
-      const buildConfigs = await generateBuildConfigs(rebuildOptions);
+      const buildConfigs = await getBuildConfigs(rebuildOptions);
       if (pluginOptions.printSummary) printSummary(rootDir, buildConfigs);
 
       // Print configs deep enough to include rollup inputs

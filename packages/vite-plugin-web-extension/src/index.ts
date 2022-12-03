@@ -2,6 +2,7 @@ import { PluginOption } from "vite";
 import { InternalPluginOptions, PluginOptions } from "./options";
 import { manifestLoaderPlugin } from "./plugins/manifest-loader-plugin";
 import fs from "fs-extra";
+import { disableDevPlugin } from "./plugins/disable-dev-plugin";
 
 export { PluginOptions };
 
@@ -23,7 +24,8 @@ export default function webExtension(
       process.env.CI === "true" || process.env.DISABLE_COLORS === "true", // TODO: document env var
   };
 
-  return manifestLoaderPlugin(internalOptions);
+  // return manifestLoaderPlugin(internalOptions);
+  return [manifestLoaderPlugin(internalOptions), disableDevPlugin()];
 }
 
 /**
