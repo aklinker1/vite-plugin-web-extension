@@ -73,5 +73,5 @@ export async function buildScript(
     libModeViteConfig ?? {}
   );
   log("Final config:", inspect(buildConfig));
-  await Vite.build(buildConfig);
+  await Vite.build({ ...buildConfig, configFile: false });
 }
