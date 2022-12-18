@@ -1,17 +1,22 @@
-import { InlineConfig } from "vite";
+import { PluginOption } from "vite";
 
-export function removePlugin(
-  config: InlineConfig,
-  pluginName: string
-): InlineConfig {
-  return {
-    ...config,
-    plugins:
-      config.plugins
-        ?.flat()
-        ?.filter(
-          (plugin) =>
-            plugin && (!("name" in plugin) || plugin.name !== pluginName)
-        ) ?? [],
-  };
+/**
+ * Remove a plugin by name from a `Array<PluginOption | PluginOption[]>`. Leaves the structure the
+ * same, just removes any plugins that have the same name
+ */
+export async function removePlugin(
+  plugins: Array<PluginOption | PluginOption[]> | undefined,
+  pluginNameToRemove: string
+): Promise<Array<PluginOption | PluginOption[]> | undefined> {
+  if (!plugins) return plugins;
+
+  const newPlugins: Array<PluginOption | PluginOption[]> = [];
+  for (const itemPromise of plugins) {
+    const item = await itemPromise;
+    if (Array.isArray(item))
+      newPlugins.push(await removePlugin(item, pluginNameToRemove));
+    else if (!item || item.name !== pluginNameToRemove) newPlugins.push(item);
+  }
+
+  return newPlugins;
 }

@@ -87,7 +87,7 @@ export function createBuildContext({
         multibuildManager.plugin(),
       ],
     });
-    const finalConfigs = entryConfigs.all
+    const finalConfigPromises = entryConfigs.all
       .map<Vite.InlineConfig>((entryConfig, i) =>
         Vite.mergeConfig(
           Vite.mergeConfig(entryConfig, userConfig),
@@ -95,8 +95,14 @@ export function createBuildContext({
         )
       )
       // Exclude this plugin from child builds to break recursion
-      .map((config) => removePlugin(config, MANIFEST_LOADER_PLUGIN_NAME));
-    return finalConfigs;
+      .map(async (config): Promise<Vite.InlineConfig> => {
+        const newPlugins = await removePlugin(
+          config.plugins,
+          MANIFEST_LOADER_PLUGIN_NAME
+        );
+        return { ...config, plugins: newPlugins };
+      });
+    return await Promise.all(finalConfigPromises);
   }
 
   function printSummary(
