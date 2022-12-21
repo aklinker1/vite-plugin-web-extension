@@ -28,10 +28,9 @@ export async function buildScript(
   } = config;
 
   const filename = path.basename(outputRelPath);
-  const outDir = path.resolve(
-    baseViteConfig.build?.outDir ?? process.cwd(),
-    path.join(outputRelPath, "..")
-  );
+  const baseOutDir =
+    baseViteConfig.build?.outDir ?? path.join(process.cwd(), "dist");
+  const outDir = path.resolve(baseOutDir, path.join(outputRelPath, ".."));
   const plugins =
     baseViteConfig.plugins?.filter(
       (plugin) =>
