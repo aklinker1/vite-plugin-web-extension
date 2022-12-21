@@ -16,6 +16,12 @@ import {
   prepareProjectDirectory,
 } from "./tasks";
 
+const START_COMMANDS: Record<PackageManager, string> = {
+  npm: "npm run start",
+  pnpm: "pnpm start",
+  yarn: "yarn start",
+};
+
 export async function initProject(
   inputOptions: InputProjectOptions
 ): Promise<void> {
@@ -36,7 +42,7 @@ export async function initProject(
   console.log(`All done! To start the extension, run:`);
   console.log();
   if (projectName !== ".") console.log(`  cd ${projectName}`);
-  console.log(`  ${packageManager} start`);
+  console.log(`  ${START_COMMANDS[packageManager]}`);
   console.log();
 }
 
