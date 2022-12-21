@@ -16,8 +16,6 @@ export const installDependencies = ({
 
     task.output = `${installCommand}...`;
     const cwd = path.resolve(process.cwd(), projectName);
-    const res = await execaCommand(installCommand, { cwd });
-    await fs.writeFile("test.log", res.stdout, { encoding: "utf8" });
-    await fs.writeFile("test2.log", res.stderr, { encoding: "utf8" });
+    await execaCommand(installCommand, { cwd });
   },
 });
