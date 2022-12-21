@@ -9,7 +9,7 @@ program.parse();
 initProject({
   projectName: "test",
   forceOverwrite: true,
-  packageManager: "pnpm",
+  packageManager: "npm",
   selectedTemplate: "js",
   templateBranch: "create-package",
 }).catch((err) => {

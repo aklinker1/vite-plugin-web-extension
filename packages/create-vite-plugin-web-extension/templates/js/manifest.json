@@ -9,13 +9,13 @@
     "128": "icon/128.png"
   },
   "{{chrome}}.action": {
-    "default_popup": "popup/index.html"
+    "default_popup": "pages/popup.html"
   },
   "{{firefox}}.browser_action": {
-    "default_popup": "popup/index.html"
+    "default_popup": "pages/popup.html"
   },
   "background": {
-    "{{chrome}}.service_worker": "background/index.ts",
-    "{{firefox}}.scripts": ["background/index.ts"]
+    "{{chrome}}.service_worker": "pages/background.ts",
+    "{{firefox}}.scripts": ["pages/background.ts"]
   }
 }
