@@ -103,7 +103,7 @@ async function resolveOptions(
   }
 
   return {
-    templateBranch: ""
+    templateBranch: "create-package",
     projectName,
     forceOverwrite,
     selectedTemplate,
