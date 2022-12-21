@@ -57,7 +57,11 @@ async function resolveOptions(
     projectName = res.projectName as string;
   }
 
-  if (fs.existsSync(projectName) && fs.readdirSync(projectName).length > 0) {
+  if (
+    forceOverwrite == null &&
+    fs.existsSync(projectName) &&
+    fs.readdirSync(projectName).length > 0
+  ) {
     const res = await prompt({
       type: "confirm",
       name: "forceOverwrite",

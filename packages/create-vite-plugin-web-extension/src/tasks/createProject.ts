@@ -2,9 +2,14 @@ import { ListrTask } from "listr2";
 import { ProjectOptions } from "../types";
 import tmp from "tmp";
 import simpleGit from "simple-git";
+import fs from "fs-extra";
+import path from "node:path";
+import { sleep } from "../utils";
 
 const REMOTE = "template";
 const REPO = "https://github.com/aklinker1/vite-plugin-web-extension.git";
+const TEMPLATES_FOLDER_IN_REPO =
+  "packages/create-vite-plugin-web-extension/templates";
 
 function makeTempDir(): Promise<{ tempDir: string; rmTempDir: () => void }> {
   return new Promise((res, rej) => {
@@ -16,16 +21,26 @@ function makeTempDir(): Promise<{ tempDir: string; rmTempDir: () => void }> {
 }
 
 export const createProject = ({
+  selectedTemplate,
   templateBranch,
+  projectName,
 }: ProjectOptions): ListrTask => ({
   title: "Create Project",
-  async task() {
+  async task(_, task) {
+    task.output = "Creating temp directory...";
     const { tempDir, rmTempDir } = await makeTempDir();
-    const git = simpleGit(tempDir);
-    await git.init();
-    await git.addRemote(REMOTE, REPO);
-    await git.checkoutBranch(templateBranch, `${REMOTE}/${templateBranch}`);
+
     try {
+      task.output = "Cloning template repo...";
+      const git = simpleGit(tempDir);
+      await git.init().addRemote(REMOTE, REPO).pull(REMOTE, templateBranch);
+
+      task.output = "Copying template files into project...";
+      const templatesFolder = path.resolve(tempDir, TEMPLATES_FOLDER_IN_REPO);
+      const sharedFolder = path.resolve(templatesFolder, "shared");
+      const templateFolder = path.resolve(templatesFolder, selectedTemplate);
+      await fs.copy(sharedFolder, projectName);
+      await fs.copy(templateFolder, projectName);
     } finally {
       rmTempDir();
     }
