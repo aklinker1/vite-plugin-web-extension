@@ -10,6 +10,6 @@
   "devDependencies": {
     "vite": "^4.0.0",
     "vite-plugin-web-extension": "^1.0.0",
-    "webextension-polyfill": "^0.0.0"
+    "webextension-polyfill": "^0.10.0"
   }
 }
