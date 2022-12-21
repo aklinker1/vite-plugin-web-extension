@@ -1,0 +1,14 @@
+{
+  "name": "${{ template.projectName }}",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --mode development --watch",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^4.0.0",
+    "vite-plugin-web-extension": "^1.0.0"
+  }
+}
