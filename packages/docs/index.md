@@ -3,7 +3,7 @@ lang: en-US
 title: Get Started
 ---
 
-# Introduction
+# Get Started
 
 `vite-plugin-web-extension` lets you get started making Chrome extensions with just a manifest.json and a simple Vite build config:
 
@@ -24,14 +24,14 @@ It works by automatically detecting inputs from your manifest, then it orcastrai
 To get started quickly, use the `create-vite-plugin-web-extension` starter kit to bootstrap a project for you automatically:
 
 <CodeGroup>
-  <CodeGroupItem title="PNPM">
+  <CodeGroupItem title="PNPM" active>
 
 ```bash:no-line-numbers
 pnpm create vite-plugin-web-extension
 ```
 
   </CodeGroupItem>
-  <CodeGroupItem title="NPM" active>
+  <CodeGroupItem title="NPM">
 
 ```bash:no-line-numbers
 npm create vite-plugin-web-extension
