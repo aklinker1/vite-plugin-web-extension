@@ -9,14 +9,14 @@
   },
   "type": "module",
   "bin": {
-    "create-vite-plugin-web-extension": "dist/index.cjs"
+    "create-vite-plugin-web-extension": "dist/index.js"
   },
   "files": [
     "dist"
   ],
   "scripts": {
     "compile": "tsc",
-    "build": "tsup index.ts",
+    "build": "tsup --format esm index.ts",
     "prepare": "pnpm build",
     "start": "tsx index.ts"
   },
