@@ -10,7 +10,7 @@ function loadWebExtConfig() {
 }
 
 function generateManifest() {
-  const manifest = readJsonFile("manifest.json");
+  const manifest = readJsonFile("src/manifest.json");
   const pkg = readJsonFile("package.json");
   return {
     name: pkg.name,
