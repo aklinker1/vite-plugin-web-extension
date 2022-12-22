@@ -10,7 +10,7 @@ initProject({
   projectName: "test",
   forceOverwrite: true,
   packageManager: "npm",
-  selectedTemplate: "ts",
+  selectedTemplate: "js",
   templateBranch: "create-package",
 }).catch((err) => {
   console.error(err.message);
