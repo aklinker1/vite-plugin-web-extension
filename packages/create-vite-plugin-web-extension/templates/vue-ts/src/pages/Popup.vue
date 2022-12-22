@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img src="../public/icon-with-shadow.svg" />
+    <img src="../../public/icon-with-shadow.svg" />
     <h1>vite-plugin-web-extension</h1>
     <p>Hello from the popup!</p>
   </div>
