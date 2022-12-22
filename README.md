@@ -1,22 +1,14 @@
-<h1 align="center">Vite Plugin Web Extension</h1>
+<img src="./.github/assets/social-banner.png">
 
-<p align="center">A simple but powerful <a href="https://vitejs.dev/">Vite</a> plugin for developing browser extensions</p>
+To get started quickly, bootstrap a new project!
 
-```ts
-// vite.config.ts
-import webExtension from "vite-plugin-web-extension";
-
-export default defineConfig({
-  plugins: [
-    webExtension({
-      manifest: "manifest.json",
-      assets: "assets",
-    }),
-  ],
-});
+```bash
+npm create vite-plugin-web-extension
+pnpm create vite-plugin-web-extension
+yarn create vite-plugin-web-extension
 ```
 
-## Features
+### Features
 
 - :wrench: Automatically build inputs from in your `manifest.json`
 - :tada: Automatically open a browser and install the extension during development
