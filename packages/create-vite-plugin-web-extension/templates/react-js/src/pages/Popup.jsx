@@ -1,6 +1,8 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
 import './Popup.css';
 
-export function Popup() {
+function Popup() {
   return (
     <div>
       <img src="/icon-with-shadow.svg" />
@@ -9,3 +11,9 @@ export function Popup() {
     </div>
   )
 }
+
+ReactDOM.createRoot(document.body).render(
+  <React.StrictMode>
+    <Popup />
+  </React.StrictMode>
+);
