@@ -31,3 +31,10 @@ p {
     opacity: 0.7;
     margin: 0;
 }
+
+code {
+    font-size: 12px;
+    padding: 2px 4px;
+    background-color: #ffffff24;
+    border-radius: 2px;
+}

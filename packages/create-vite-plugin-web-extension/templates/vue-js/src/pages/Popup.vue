@@ -6,7 +6,9 @@ console.log("Hello from the popup!");
   <div>
     <img src="../../public/icon-with-shadow.svg" />
     <h1>vite-plugin-web-extension</h1>
-    <p>Template: ${{ template.templateName }}</p>
+    <p>
+      Template: <code>${{ template.templateName }}</code>
+    </p>
   </div>
 </template>
 
@@ -48,5 +50,12 @@ p {
   color: white;
   opacity: 0.7;
   margin: 0;
+}
+
+code {
+  font-size: 12px;
+  padding: 2px 4px;
+  background-color: #ffffff24;
+  border-radius: 2px;
 }
 </style>
