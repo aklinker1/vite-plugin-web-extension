@@ -1,9 +1,9 @@
 export const TEMPLATES = [
   "js",
   "ts",
-  "vue",
+  "vue-js",
   "vue-ts",
-  "react",
+  "react-js",
   "react-ts",
 ] as const;
 export type TemplateName = typeof TEMPLATES[number];
