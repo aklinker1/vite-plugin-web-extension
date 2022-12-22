@@ -42,5 +42,3 @@ To add a new template, add a new folder inside `templates` directory named after
 When making change to the `indext.ts` or `src` directory, a deployment is required.
 
 To deploy, use the "Publish Starter Kit" action on GitHub. It will verify all the templates build successfully, bump the version, then deploy the package to NPM.
-
-Changelogs are not published to Github releases. Instead, look at the [`CHANGELOG.md`](./CHANGELOG.md) file in this directory.

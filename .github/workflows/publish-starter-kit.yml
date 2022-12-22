@@ -1,6 +1,16 @@
 name: Publish Starter Kit
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      nextVersion:
+        type: choice
+        default: patch
+        required: true
+        description: Arguement passing into "pnpm version".
+        options:
+          - major
+          - minor
+          - patch
 
 jobs:
   validate-templates:
@@ -51,17 +61,27 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create Changelog
-        id: changelog
-        uses: TriPSs/conventional-changelog-action@v3
-        with:
-          github-token: ${{ secrets.github_token }}
-          output-file: ./packages/create-vite-plugin-web-extension/CHANGELOG.md
-          version-file: ./packages/create-vite-plugin-web-extension/package.json
-          release-count: 0
-          fallback-version: "1.0.0"
-          tag-prefix: 'starter-kit-v'
-          git-message: 'chore(release): starter-kit-v{version}'
+      - name: Bump Version & Push
+        working-directory: packages/create-vite-plugin-web-extension
+        run: |
+          pnpm version ${{ inputs.nextVersion }}
+
+      - name: Commit Version
+        working-directory: packages/create-vite-plugin-web-extension
+        run: |
+          git config --global user.email "changelog.action@github.com"
+          git config --global user.name "Changelog Action"
+          git add package.json
+          VERSION=$(node -p -e 'require("./package.json").version')
+          git commit -m "chore(release): starter-kit-v$VERSION"
+          git push
+
+      - name: Create Tag
+        working-directory: packages/create-vite-plugin-web-extension
+        run: |
+          VERSION=$(node -p -e 'require("./package.json").version')
+          git tag "starter-kit-v$VERSION"
+          git push --tags
 
       - name: Publish to NPM
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
