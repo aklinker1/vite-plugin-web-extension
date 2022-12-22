@@ -61,8 +61,8 @@ async function replaceTemplateVariablesInProject(options: ProjectOptions) {
 
     const content = await fs.readFile(file, "utf8");
     const newContent = content
-      .replace("${{ template.projectName }}", options.projectName)
-      .replace("${{ template.templateName }}", options.selectedTemplate);
+      .replaceAll("${{ template.projectName }}", options.projectName)
+      .replaceAll("${{ template.templateName }}", options.selectedTemplate);
     await fs.writeFile(file, newContent, { encoding: "utf8" });
   }
 }
