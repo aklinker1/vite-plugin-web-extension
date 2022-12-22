@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { program } from "commander";
 import {
   DEFAULT_TEMPLATES_ORIGIN_URL,
