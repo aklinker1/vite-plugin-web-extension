@@ -3,18 +3,13 @@ import fs from "fs-extra";
 import path from "node:path";
 import { Listr } from "listr2";
 import commandExists from "command-exists";
-import {
-  InputProjectOptions,
-  PackageManager,
-  ProjectOptions,
-  TemplateName,
-  TEMPLATES,
-} from "./types";
+import { InputProjectOptions, PackageManager, ProjectOptions } from "./types";
 import {
   createProject,
   installDependencies,
   prepareProjectDirectory,
 } from "./tasks";
+import { fetchJson } from "./utils";
 
 const START_COMMANDS: Record<PackageManager, string> = {
   npm: "npm run start",
@@ -78,17 +73,18 @@ async function resolveOptions(
   }
 
   if (!selectedTemplate) {
+    const templateBranch = options.templateBranch ?? "main";
+    const templates = await fetchJson<string[]>(
+      `https://raw.githubusercontent.com/aklinker1/vite-plugin-web-extension/${templateBranch}/packages/create-vite-plugin-web-extension/templates/templates.json`
+    );
     const res = await prompt({
       name: "selectedTemplate",
       type: "select",
       message: "Template",
-      choices: TEMPLATES.map((template) => ({
-        title: template,
-        value: template,
-      })),
+      choices: templates.map((title) => ({ title })),
     });
     if (res.selectedTemplate == null) throw Error();
-    selectedTemplate = res.selectedTemplate as TemplateName;
+    selectedTemplate = res.selectedTemplate as string;
   }
 
   if (!packageManager) {
@@ -96,7 +92,8 @@ async function resolveOptions(
     if (commandExists.sync("npm")) choices.push({ title: "NPM", value: "npm" });
     if (commandExists.sync("pnpm"))
       choices.push({ title: "PNPM", value: "pnpm" });
-    if (commandExists.sync("yarn")) choices.push({ title: "Yarn", value: "" });
+    if (commandExists.sync("yarn"))
+      choices.push({ title: "Yarn", value: "yarn" });
 
     if (choices.length > 1) {
       const res = await prompt({
