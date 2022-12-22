@@ -1,7 +1,7 @@
 {
   "name": "create-vite-plugin-web-extension",
   "description": "Create Vite powered web extensions.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "license": "MIT",
   "repository": {
     "url": "https://github.com/aklinker1/vite-plugin-web-extension",
