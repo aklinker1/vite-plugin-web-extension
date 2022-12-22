@@ -1,12 +1,19 @@
 ---
 lang: en-US
-title: Installation
+title: Manual Project Setup
 description: Setup your project to use vite-plugin-web-extension
 ---
 
-# Installation
+# Manual Project Setup
 
 <CodeGroup>
+  <CodeGroupItem title="PNPM">
+
+```bash:no-line-numbers
+pnpm i -D vite-plugin-web-extension
+```
+
+  </CodeGroupItem>
   <CodeGroupItem title="NPM" active>
 
 ```bash:no-line-numbers
@@ -21,44 +28,7 @@ yarn add -D vite-plugin-web-extension
 ```
 
   </CodeGroupItem>
-  <CodeGroupItem title="PNPM">
-
-```bash:no-line-numbers
-pnpm i -D vite-plugin-web-extension
-```
-
-  </CodeGroupItem>
 </CodeGroup>
-
-<!--## Scaffold Your Project
-
-<CodeGroup>
-  <CodeGroupItem title="NPM" active>
-
-```bash:no-line-numbers
-npm create vite-plugin-web-extension@latest
-```
-
-  </CodeGroupItem>
-  <CodeGroupItem title="YARN">
-
-```bash:no-line-numbers
-yarn create vite-plugin-web-extension
-```
-
-  </CodeGroupItem>
-  <CodeGroupItem title="PNPM">
-
-```bash:no-line-numbers
-pnpm create vite-plugin-web-extension
-```
-
-  </CodeGroupItem>
-</CodeGroup>
-
-Then follow the prompts! There are several variations of projects you can start with: TS, Vue, React, etc.-->
-
-## Manual Project Setup
 
 Lets say your project looks like this:
 
@@ -85,8 +55,10 @@ Here's the minimal setup required:
 import webExtension from "vite-plugin-web-extension";
 
 export default defineConfig({
+  // Setting the root to src will remove the `src` directory from the output paths (`dist/popup.html` instead of `dist/src/popup.html`).
+  // This effects the final URL pages and files are accessible from.
   root: "src",
-  // Configure our outputs - nothing special, this is normal vite config
+  // When setting the root to a different path, you need to specify the outDir and emptyOutDir to keep the default Vite behavior
   build: {
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,

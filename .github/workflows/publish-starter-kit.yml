@@ -1,0 +1,71 @@
+name: Publish Starter Kit
+on:
+  workflow_dispatch: {}
+
+jobs:
+  validate-templates:
+    name: Validate Templates
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install Node 14
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+
+      - name: Cache .pnpm-store
+        uses: actions/cache@v1
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-node14-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install pnpm
+        run: curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@6
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-20.04
+    needs: [validate-templates]
+    steps:
+      - name: Install Node 14
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Cache .pnpm-store
+        uses: actions/cache@v1
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-node14-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install pnpm
+        run: curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@6
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create Changelog
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v3
+        with:
+          github-token: ${{ secrets.github_token }}
+          output-file: ./packages/create-vite-plugin-web-extension/CHANGELOG.md
+          version-file: ./packages/create-vite-plugin-web-extension/package.json
+          release-count: 0
+          fallback-version: "1.0.0"
+          tag-prefix: 'starter-kit-v'
+          git-message: 'chore(release): starter-kit-v{version}'
+
+      - name: Publish to NPM
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        working-directory: packages/create-vite-plugin-web-extension
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
+          pnpm publish
