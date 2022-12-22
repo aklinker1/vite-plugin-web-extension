@@ -22,7 +22,6 @@ program
   .parse();
 
 const options = program.opts();
-console.log(options);
 
 initProject({
   projectName: program.args[0],

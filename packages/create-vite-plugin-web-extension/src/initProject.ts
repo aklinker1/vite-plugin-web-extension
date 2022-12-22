@@ -48,8 +48,17 @@ export async function initProject(
 async function resolveOptions(
   options: InputProjectOptions
 ): Promise<ProjectOptions> {
-  let { projectName, forceOverwrite, selectedTemplate, packageManager } =
-    options;
+  let {
+    projectName,
+    forceOverwrite,
+    selectedTemplate,
+    packageManager,
+    templateBranch,
+    templatesOriginUrl,
+  } = options;
+
+  templateBranch ??= DEFAULT_TEMPLATE_BRANCH;
+  templatesOriginUrl ??= DEFAULT_TEMPLATES_ORIGIN_URL;
 
   if (!projectName) {
     const res = await prompt({
@@ -77,10 +86,13 @@ async function resolveOptions(
   }
 
   if (!selectedTemplate) {
-    const templateBranch = options.templateBranch ?? "main";
-    const templates = await fetchJson<string[]>(
-      `https://raw.githubusercontent.com/aklinker1/vite-plugin-web-extension/${templateBranch}/packages/create-vite-plugin-web-extension/templates/templates.json`
-    );
+    const templatesUrl = `https://raw.githubusercontent.com/aklinker1/vite-plugin-web-extension/${templateBranch}/packages/create-vite-plugin-web-extension/templates/templates.json`;
+    const templates = await fetchJson<string[]>(templatesUrl).catch((err) => {
+      console.error(err);
+      throw Error(
+        `\nFailed to load templates from url (${templatesUrl}).\nSee above error.`
+      );
+    });
     const res = await prompt({
       name: "selectedTemplate",
       type: "select",
@@ -118,9 +130,8 @@ async function resolveOptions(
     forceOverwrite,
     selectedTemplate,
     packageManager,
-    templateBranch: options.templateBranch ?? DEFAULT_TEMPLATE_BRANCH,
-    templatesOriginUrl:
-      options.templatesOriginUrl ?? DEFAULT_TEMPLATES_ORIGIN_URL,
+    templateBranch,
+    templatesOriginUrl,
   };
 }
 
