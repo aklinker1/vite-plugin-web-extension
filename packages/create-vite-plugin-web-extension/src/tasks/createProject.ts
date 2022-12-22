@@ -55,13 +55,6 @@ export const createProject = (options: ProjectOptions): ListrTask => ({
 
 async function replaceTemplateVariablesInProject(options: ProjectOptions) {
   const files = await walkDir(options.projectName);
-  console.log({ files });
-  console.log({ files });
-  console.log({ files });
-  console.log({ files });
-  console.log({ files });
-  console.log({ files });
-  console.log({ files });
 
   for (const file of files) {
     if (isBinaryPath(file)) continue;
@@ -80,12 +73,10 @@ async function walkDir(dir: string): Promise<string[]> {
   const queue: string[] = [dir];
   let file: string;
   while ((file = queue.shift()!) != null) {
-    console.log("Walking:", file);
     const stats = await fs.lstat(file);
     if (stats.isDirectory()) {
       const children = await fs.readdir(file);
       const childrenPaths = children.map((child) => path.join(file, child));
-      console.log({ children, childrenPaths });
       queue.push(...childrenPaths);
     } else if (stats.isFile()) {
       allFiles.push(file);
