@@ -10,6 +10,10 @@ import {
   prepareProjectDirectory,
 } from "./tasks";
 import { fetchJson } from "./utils";
+import {
+  DEFAULT_TEMPLATES_ORIGIN_URL,
+  DEFAULT_TEMPLATE_BRANCH,
+} from "./defaults";
 
 const START_COMMANDS: Record<PackageManager, string> = {
   npm: "npm run start",
@@ -110,11 +114,13 @@ async function resolveOptions(
   }
 
   return {
-    templateBranch: "create-package",
     projectName,
     forceOverwrite,
     selectedTemplate,
     packageManager,
+    templateBranch: options.templateBranch ?? DEFAULT_TEMPLATE_BRANCH,
+    templatesOriginUrl:
+      options.templatesOriginUrl ?? DEFAULT_TEMPLATES_ORIGIN_URL,
   };
 }
 

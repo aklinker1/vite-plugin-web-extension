@@ -7,6 +7,7 @@ export interface InputProjectOptions {
   selectedTemplate?: string;
   packageManager?: PackageManager;
   templateBranch?: string;
+  templatesOriginUrl?: string;
 }
 
 export interface ProjectOptions {
@@ -15,4 +16,5 @@ export interface ProjectOptions {
   selectedTemplate: string;
   packageManager: PackageManager;
   templateBranch: string;
+  templatesOriginUrl: string;
 }
