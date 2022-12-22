@@ -6,7 +6,7 @@ console.log("Hello from the popup!");
   <div>
     <img src="../../public/icon-with-shadow.svg" />
     <h1>vite-plugin-web-extension</h1>
-    <p>Hello from the popup!</p>
+    <p>Template: ${{ template.templateName }}</p>
   </div>
 </template>
 

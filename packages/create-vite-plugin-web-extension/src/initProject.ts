@@ -97,7 +97,7 @@ async function resolveOptions(
       name: "selectedTemplate",
       type: "select",
       message: "Template",
-      choices: templates.map((title) => ({ title })),
+      choices: templates.map((value) => ({ title: value, value })),
     });
     if (res.selectedTemplate == null) throw Error();
     selectedTemplate = res.selectedTemplate as string;

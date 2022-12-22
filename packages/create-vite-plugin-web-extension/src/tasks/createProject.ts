@@ -2,8 +2,9 @@ import { ListrTask } from "listr2";
 import { ProjectOptions } from "../types";
 import tmp from "tmp";
 import simpleGit from "simple-git";
-import fs from "fs-extra";
+import fs, { stat } from "fs-extra";
 import path from "node:path";
+import isBinaryPath from "is-binary-path";
 
 const TEMPLATES_FOLDER_IN_REPO =
   "packages/create-vite-plugin-web-extension/templates";
@@ -17,14 +18,16 @@ function makeTempDir(): Promise<{ tempDir: string; rmTempDir: () => void }> {
   });
 }
 
-export const createProject = ({
-  selectedTemplate,
-  templateBranch,
-  projectName,
-  templatesOriginUrl,
-}: ProjectOptions): ListrTask => ({
+export const createProject = (options: ProjectOptions): ListrTask => ({
   title: "Create Project",
   async task(_, task) {
+    const {
+      selectedTemplate,
+      templateBranch,
+      projectName,
+      templatesOriginUrl,
+    } = options;
+
     task.output = "Creating temp directory...";
     const { tempDir, rmTempDir } = await makeTempDir();
 
@@ -42,8 +45,52 @@ export const createProject = ({
       const templateFolder = path.resolve(templatesFolder, selectedTemplate);
       await fs.copy(sharedFolder, projectName);
       await fs.copy(templateFolder, projectName, { overwrite: true });
+
+      await replaceTemplateVariablesInProject(options);
     } finally {
       rmTempDir();
     }
   },
 });
+
+async function replaceTemplateVariablesInProject(options: ProjectOptions) {
+  const files = await walkDir(options.projectName);
+  console.log({ files });
+  console.log({ files });
+  console.log({ files });
+  console.log({ files });
+  console.log({ files });
+  console.log({ files });
+  console.log({ files });
+
+  for (const file of files) {
+    if (isBinaryPath(file)) continue;
+
+    const content = await fs.readFile(file, "utf8");
+    const newContent = content
+      .replace("${{ template.projectName }}", options.projectName)
+      .replace("${{ template.templateName }}", options.selectedTemplate);
+    await fs.writeFile(file, newContent, { encoding: "utf8" });
+  }
+}
+
+async function walkDir(dir: string): Promise<string[]> {
+  const allFiles: string[] = [];
+
+  const queue: string[] = [dir];
+  let file: string;
+  while ((file = queue.shift()!) != null) {
+    console.log("Walking:", file);
+    const stats = await fs.lstat(file);
+    if (stats.isDirectory()) {
+      const children = await fs.readdir(file);
+      const childrenPaths = children.map((child) => path.join(file, child));
+      console.log({ children, childrenPaths });
+      queue.push(...childrenPaths);
+    } else if (stats.isFile()) {
+      allFiles.push(file);
+    }
+  }
+
+  return allFiles;
+}

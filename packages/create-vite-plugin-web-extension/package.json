@@ -41,6 +41,7 @@
     "commander": "^9.4.1",
     "execa": "^6.1.0",
     "fs-extra": "^11.1.0",
+    "is-binary-path": "^2.1.0",
     "listr2": "^5.0.6",
     "ofetch": "^1.0.0",
     "prompts": "^2.4.2",
