@@ -84,7 +84,6 @@ jobs:
           git push --tags
 
       - name: Publish to NPM
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
         working-directory: packages/create-vite-plugin-web-extension
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
