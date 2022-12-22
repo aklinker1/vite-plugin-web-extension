@@ -24,7 +24,9 @@ function generateManifest() {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxImportSource: "react",
+    }),
     webExtension({
       assets: "public",
       webExtConfig: loadWebExtConfig(),
