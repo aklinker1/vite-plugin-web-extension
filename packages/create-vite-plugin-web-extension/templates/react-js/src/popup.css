@@ -1,0 +1,11 @@
+html,
+body {
+  width: 300px;
+  height: 400px;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: rgb(36, 36, 36);
+}

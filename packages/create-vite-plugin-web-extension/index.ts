@@ -10,7 +10,7 @@ initProject({
   projectName: "test",
   forceOverwrite: true,
   packageManager: "npm",
-  selectedTemplate: "vue-js",
+  selectedTemplate: "react-js",
   templateBranch: "create-package",
 }).catch((err) => {
   console.error(err.message);
