@@ -7,14 +7,14 @@ description: Setup your project to use vite-plugin-web-extension
 # Manual Project Setup
 
 <CodeGroup>
-  <CodeGroupItem title="PNPM">
+  <CodeGroupItem title="PNPM" active>
 
 ```bash:no-line-numbers
 pnpm i -D vite-plugin-web-extension
 ```
 
   </CodeGroupItem>
-  <CodeGroupItem title="NPM" active>
+  <CodeGroupItem title="NPM">
 
 ```bash:no-line-numbers
 npm install -D vite-plugin-web-extension
