@@ -26,7 +26,7 @@ export default defineUserConfig({
             link: "/",
           },
           {
-            text: "v2 Docs",
+            text: "v2-alpha Docs",
             link: "https://v2.vite-plugin-web-extension.aklinker1.io",
             target: "_blank",
           },
