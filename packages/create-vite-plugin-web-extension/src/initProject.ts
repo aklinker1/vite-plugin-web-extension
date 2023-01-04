@@ -16,9 +16,9 @@ import {
 } from "./defaults";
 
 const START_COMMANDS: Record<PackageManager, string> = {
-  npm: "npm run start",
-  pnpm: "pnpm start",
-  yarn: "yarn start",
+  npm: "npm run dev",
+  pnpm: "pnpm dev",
+  yarn: "yarn dev",
 };
 
 export async function initProject(
