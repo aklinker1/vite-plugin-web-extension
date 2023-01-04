@@ -55,13 +55,15 @@ export const createProject = (options: ProjectOptions): ListrTask => ({
 
 async function replaceTemplateVariablesInProject(options: ProjectOptions) {
   const files = await walkDir(options.projectName);
+  const projectPath = path.resolve(options.projectName);
+  const projectName = path.basename(projectPath);
 
   for (const file of files) {
     if (isBinaryPath(file)) continue;
 
     const content = await fs.readFile(file, "utf8");
     const newContent = content
-      .replaceAll("${{ template.projectName }}", options.projectName)
+      .replaceAll("${{ template.projectName }}", projectName)
       .replaceAll("${{ template.templateName }}", options.selectedTemplate);
     await fs.writeFile(file, newContent, { encoding: "utf8" });
   }
