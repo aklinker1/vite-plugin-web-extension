@@ -57,24 +57,23 @@ export async function startWebExt(options: {
     if (level >= ERROR_LOG_LEVEL) logger.error(name, msg);
     if (level >= WARN_LOG_LEVEL) logger.warn(msg);
   };
-  const runner = await webExt.cmd.run(
-    {
-      // Open the browser passed in plugin options, falling back to a Chromium install
-      target:
-        pluginOptions.browser === null || pluginOptions.browser === "firefox"
-          ? null
-          : "chromium",
-      ...userConfig?.config,
-      // These options are required or the CLI freezes on linux
-      sourceDir: outDir,
-      noReload: true,
-      noInput: true,
-    },
-    {
-      // Don't call `process.exit(0)` after starting web-ext
-      shouldExitProgram: false,
-    }
-  );
+  const runConfig = {
+    // Open the browser passed in plugin options, falling back to a Chromium install
+    target:
+      pluginOptions.browser === null || pluginOptions.browser === "firefox"
+        ? null
+        : "chromium",
+    ...userConfig?.config,
+    // These options are required or the CLI freezes on linux
+    sourceDir: outDir,
+    noReload: true,
+    noInput: true,
+  };
+  const executeOptions = {
+    // Don't call `process.exit(0)` after starting web-ext
+    shouldExitProgram: false,
+  };
+  const runner = await webExt.cmd.run(runConfig, executeOptions);
   return {
     async reload() {
       await runner.reloadAllExtensions();

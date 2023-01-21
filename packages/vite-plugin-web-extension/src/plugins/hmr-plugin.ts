@@ -19,14 +19,15 @@ export function hmrPlugin(outDir: string): PluginOption {
     apply: "serve",
     enforce: "post",
     config(config) {
-      const hrmConfig: InlineConfig = {
-        // TODO: Do we need to override the server config?
-        // server: {
-        //   host: "/",
-        //   base: "/",
-        // },
-      };
-      return mergeConfig(config, hrmConfig);
+      // Set the path host and path to / to use the filesystem (file:///)
+      // const hrmConfig: InlineConfig = {
+      //   server: {
+      //     origin: "file://",
+      //     host: "/",
+      //     base: "/",
+      //   },
+      // };
+      // return mergeConfig(config, hrmConfig);
     },
     async configureServer(server) {
       const ogWsSend: (payload: HMRPayload) => void = server.ws.send;
