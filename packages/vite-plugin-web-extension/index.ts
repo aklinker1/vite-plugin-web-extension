@@ -426,7 +426,7 @@ export default function browserExtension(
             : "chromium",
         ...options.webExtConfig,
         // No touch - can't exit the terminal if these are changed, so they cannot be overridden
-        sourceDir: outDir,
+        sourceDir: path.resolve(process.cwd(), outDir),
         noReload: false,
         noInput: true,
       };
