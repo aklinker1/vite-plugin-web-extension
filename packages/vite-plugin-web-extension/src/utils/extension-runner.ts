@@ -4,6 +4,7 @@ import * as webExtLogger from "web-ext/util/logger";
 import { cosmiconfig } from "cosmiconfig";
 import { Logger } from "./logger";
 import { inspect } from "util";
+import path from "path";
 
 export interface ExtensionRunner {
   reload(): Promise<void>;
@@ -66,7 +67,7 @@ export async function startWebExt(options: {
           : "chromium",
       ...userConfig?.config,
       // These options are required or the CLI freezes on linux
-      sourceDir: outDir,
+      sourceDir: path.resolve(outDir),
       noReload: true,
       noInput: true,
     },
