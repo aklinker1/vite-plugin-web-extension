@@ -19,11 +19,13 @@ import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-
 import { bundleTrackerPlugin } from "../plugins/bundle-tracker-plugin";
 import { getViteConfigsForInputs } from "./getViteConfigsForInputs";
 import { isDevServerConfig } from "../utils/isDevServerConfig";
+import { hmrRewritePlugin } from "../plugins/hmr-rewrite-plugin";
 
 interface RebuildOptions {
   rootDir: string;
   outDir: string;
   userConfig: Vite.UserConfig;
+  resolvedConfig: Vite.ResolvedConfig;
   manifest: any;
   mode: BuildMode;
   onSuccess?: () => Promise<void> | void;
@@ -63,6 +65,7 @@ export function createBuildContext({
     onSuccess,
     mode,
     outDir,
+    resolvedConfig,
   }: RebuildOptions) {
     const entryConfigs = await getViteConfigsForInputs({
       rootDir,
@@ -98,6 +101,14 @@ export function createBuildContext({
         }),
         // ...(mode === BuildMode.WATCH ? [multibuildManager.plugin()] : []),
         multibuildManager.plugin(),
+        hmrRewritePlugin({
+          logger,
+          server: resolvedConfig.server,
+          hmr:
+            typeof resolvedConfig.server.hmr === "object"
+              ? resolvedConfig.server.hmr
+              : undefined,
+        }),
       ],
     });
     const finalConfigs = entryConfigs.all
@@ -186,20 +197,15 @@ export function createBuildContext({
         const bundleTracker = bundleTrackerPlugin();
         (config.plugins ??= []).push(bundleTracker);
 
-        if (isDevServerConfig(mode, config)) {
-          const server = await Vite.createServer(config);
-          server.listen();
-        } else {
-          const output = await Vite.build(config);
-          if ("addListener" in output) {
-            activeWatchers.push(output);
-            // In watch mode, wait until it's built once
-            await waitForWatchBuildComplete(output);
-          }
-
-          const chunks = bundleTracker.getChunks() ?? [];
-          newBundles.push(...chunks);
+        const output = await Vite.build(config);
+        if ("addListener" in output) {
+          activeWatchers.push(output);
+          // In watch mode, wait until it's built once
+          await waitForWatchBuildComplete(output);
         }
+
+        const chunks = bundleTracker.getChunks() ?? [];
+        newBundles.push(...chunks);
       }
       bundles = uniqBy(newBundles, "fileName");
       // This prints before the manifest plugin continues in build mode

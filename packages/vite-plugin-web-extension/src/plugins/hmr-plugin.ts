@@ -1,4 +1,4 @@
-import { dirname, join } from "path";
+import path, { dirname, join } from "path";
 import { HMRPayload, mergeConfig, PluginOption, InlineConfig } from "vite";
 import fs from "fs-extra";
 import { HMR_PLUGIN_NAME } from "../utils/constants";
@@ -9,7 +9,9 @@ import { HMR_PLUGIN_NAME } from "../utils/constants";
  * Instead, we write changes to the file system, and send a message to the extension to hot reload
  * via the [HMR API](https://vitejs.dev/guide/api-hmr.html)
  */
-export function hmrPlugin(outDir: string): PluginOption {
+export function hmrPlugin(): PluginOption {
+  let outDir: string;
+
   function normalizeFsUrl(url: string, type: string) {
     return join(outDir, normalizeViteUrl(url, type).replace(/^\//, ""));
   }
@@ -19,15 +21,18 @@ export function hmrPlugin(outDir: string): PluginOption {
     apply: "serve",
     enforce: "post",
     config(config) {
+      outDir = config.build?.outDir ?? path.resolve(process.cwd(), "dist");
       // Set the path host and path to / to use the filesystem (file:///)
-      // const hrmConfig: InlineConfig = {
-      //   server: {
-      //     origin: "file://",
-      //     host: "/",
-      //     base: "/",
-      //   },
-      // };
-      // return mergeConfig(config, hrmConfig);
+      const hrmConfig: InlineConfig = {
+        // server: {
+        //   hmr: {
+        //     protocol: "file:",
+        //     path: "/",
+        //     host: "",
+        //   },
+        // },
+      };
+      return mergeConfig(config, hrmConfig);
     },
     async configureServer(server) {
       const ogWsSend: (payload: HMRPayload) => void = server.ws.send;
@@ -83,9 +88,9 @@ export function hmrPlugin(outDir: string): PluginOption {
         }
       }
 
-      Object.keys(server.config.build.rollupOptions.input!).map((entry) =>
-        writeToDisk(`/${entry}/main.ts`)
-      );
+      // Object.keys(server.config.build.rollupOptions.input!).map((entry) =>
+      //   writeToDisk(`/${entry}/main.ts`)
+      // );
     },
   };
 }

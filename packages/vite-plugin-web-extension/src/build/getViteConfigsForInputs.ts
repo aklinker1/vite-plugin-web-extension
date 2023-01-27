@@ -199,21 +199,8 @@ export function getViteConfigsForInputs(options: {
   ]);
   const sandboxEntries = simplifyEntriesList([manifest.sandbox?.pages]);
 
-  if (options.mode === BuildMode.DEV) {
-    // In dev mode, we can only have a single dev server, so we put all HTML entry points into a
-    // single config.
-    configs.html = getHtmlConfig([...htmlEntries, ...sandboxEntries]);
-    if (configs.html) {
-      configs.html.plugins ??= [];
-      configs.html.plugins.push(hmrPlugin(options.outDir));
-    }
-  } else {
-    // In production, we split them up to be safe.
-    // TODO: remove the sandbox split, and always build them together to get rid of this
-    // inconsistency.
-    configs.html = getHtmlConfig(htmlEntries);
-    configs.sandbox = getSandboxConfig(sandboxEntries);
-  }
+  configs.html = getHtmlConfig(htmlEntries);
+  configs.sandbox = getSandboxConfig(sandboxEntries);
 
   // Scripts
   compact(

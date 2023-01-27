@@ -32,21 +32,12 @@ export function labeledStepPlugin(options: {
     }
 
     const absPaths = getInputAbsPaths(input);
-    if (isDevServerConfig(mode, finalConfig)) {
-      logger.log(
-        `Starting dev server for ${absPaths
-          .map((p) => path.relative(rootDir, p))
-          .map(colorizeFilename)
-          .join(", ")} ${progressLabel}`
-      );
-    } else {
-      logger.log(
-        `Building ${absPaths
-          .map((p) => path.relative(rootDir, p))
-          .map(colorizeFilename)
-          .join(", ")} ${progressLabel}`
-      );
-    }
+    logger.log(
+      `Building ${absPaths
+        .map((p) => path.relative(rootDir, p))
+        .map(colorizeFilename)
+        .join(", ")} ${progressLabel}`
+    );
   }
 
   function printRebuilds() {

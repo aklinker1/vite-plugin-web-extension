@@ -2,7 +2,7 @@ import { PluginOption } from "vite";
 import { InternalPluginOptions, PluginOptions } from "./options";
 import { manifestLoaderPlugin } from "./plugins/manifest-loader-plugin";
 import fs from "fs-extra";
-import { disableDevPlugin } from "./plugins/disable-dev-plugin";
+import { hmrPlugin } from "./plugins/hmr-plugin";
 
 export { PluginOptions };
 
@@ -25,7 +25,7 @@ export default function webExtension(
   };
 
   // return manifestLoaderPlugin(internalOptions);
-  return [manifestLoaderPlugin(internalOptions), disableDevPlugin()];
+  return [manifestLoaderPlugin(internalOptions), hmrPlugin()];
 }
 
 /**

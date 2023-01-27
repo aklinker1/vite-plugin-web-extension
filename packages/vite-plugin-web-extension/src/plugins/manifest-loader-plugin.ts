@@ -58,7 +58,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
    * Set the build mode based on how vite was ran/configured.
    */
   function configureBuildMode(config: UserConfig, env: ConfigEnv) {
-    if (process.env.HTML_HMR) {
+    if (env.command === "serve") {
       logger.verbose("Dev mode");
       mode = BuildMode.DEV;
     } else if (config.build?.watch) {
@@ -68,6 +68,17 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       logger.verbose("Build mode");
       mode = BuildMode.BUILD;
     }
+  }
+
+  async function openBrowser() {
+    logger.log("\nOpening browser...");
+    extensionRunner = await startWebExt({
+      pluginOptions: options,
+      rootDir,
+      outDir,
+      logger,
+    });
+    logger.log("Done!");
   }
 
   //#region Manifest
@@ -238,6 +249,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
         rootDir,
         outDir,
         userConfig,
+        resolvedConfig,
         manifest: entrypointsManifest,
         mode,
         onSuccess: async () => {
@@ -248,17 +260,34 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       // Generate the manifest based on the output files
       const manifest = renderManifest(entrypointsManifest, ctx.getBundles());
       if (!options.skipManifestValidation) await validateManifest(manifest);
-      this.emitFile({
-        type: "asset",
-        source: JSON.stringify(manifest),
-        fileName: "manifest.json",
-        name: "manifest.json",
-      });
+      if (mode !== BuildMode.DEV) {
+        this.emitFile({
+          type: "asset",
+          source: JSON.stringify(manifest),
+          fileName: "manifest.json",
+          name: "manifest.json",
+        });
+      } else {
+        logger.log(
+          "\nWriting \x1b[95mmanifest.json\x1b[0m before starting dev server..."
+        );
+        await fs.writeFile(
+          path.resolve(outDir, "manifest.json"),
+          JSON.stringify(manifest),
+          "utf8"
+        );
+      }
 
       // Manually copy the public directory when necessary
       if (publicDir && (mode === BuildMode.WATCH || mode === BuildMode.DEV)) {
         const outputDir = getOutDir(resolvedConfig);
         fs.copy(publicDir, outputDir);
+      }
+
+      // In dev mode, open up the browser immediately after the build context is finished with the
+      // first build.
+      if (mode === BuildMode.DEV) {
+        await openBrowser();
       }
     },
     // Runs during: build, dev, watch
@@ -275,17 +304,9 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     },
     // Runs during: build, watch
     async closeBundle() {
-      if (mode === BuildMode.BUILD || options.disableAutoLaunch || isError)
-        return;
-
-      logger.log("\nOpening browser...");
-      extensionRunner = await startWebExt({
-        pluginOptions: options,
-        rootDir,
-        outDir,
-        logger,
-      });
-      logger.log("Done!");
+      if (mode === BuildMode.WATCH && !isError && !options.disableAutoLaunch) {
+        await openBrowser();
+      }
     },
     // Runs during: build, watch
     generateBundle(_options, bundle, _isWrite) {
