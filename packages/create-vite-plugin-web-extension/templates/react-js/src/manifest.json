@@ -15,7 +15,7 @@
     "default_popup": "src/popup.html"
   },
   "background": {
-    "{{chrome}}.service_worker": "src/background.ts",
-    "{{firefox}}.scripts": ["src/background.ts"]
+    "{{chrome}}.service_worker": "src/background.js",
+    "{{firefox}}.scripts": ["src/background.js"]
   }
 }
