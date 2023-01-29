@@ -1,26 +1,24 @@
-import {
-  ConfigEnv,
-  mergeConfig,
-  Plugin,
-  ResolvedConfig,
-  UserConfig,
-} from "vite";
-import { InternalPluginOptions } from "../options";
-import { createLogger } from "../utils/logger";
-import { MANIFEST_LOADER_PLUGIN_NAME } from "../utils/constants";
+import * as vite from "vite";
+import { ResolvedOptions, Manifest, ProjectPaths } from "../options";
+import { createLogger } from "../logger";
+import { MANIFEST_LOADER_PLUGIN_NAME } from "../constants";
 import { BuildMode } from "../build/BuildMode";
 import { createBuildContext } from "../build/build-context";
-import { defineNoRollupInput } from "../utils/no-rollup-input";
+import {
+  defineNoRollupInput,
+  resolveBrowserTagsInObject,
+  getOutDir,
+  getPublicDir,
+  getRootDir,
+  colorizeFilename,
+} from "../utils";
 import path from "node:path";
 import fs from "fs-extra";
-import { resolveBrowserTagsInObject } from "../utils/resolve-browser-flags";
 import { inspect } from "node:util";
-import { getOutDir, getPublicDir, getRootDir } from "../utils/paths";
-import { OutputAsset, OutputChunk } from "rollup";
-import { Manifest } from "webextension-polyfill";
-import { startWebExt, ExtensionRunner } from "../utils/extension-runner";
-import { createManifestValidator } from "../utils/manifest-validation";
-import { colorizeFilename } from "../utils/filenames";
+import * as rollup from "rollup";
+import type browser from "webextension-polyfill";
+import { createWebExtRunner, ExtensionRunner } from "../extension-runner";
+import { createManifestValidator } from "../manifest-validation";
 
 /**
  * This plugin composes multiple Vite builds together into a single Vite build by calling the
@@ -29,35 +27,23 @@ import { colorizeFilename } from "../utils/filenames";
  * The plugin itself configures just the manifest to be transformed and it starts the "build
  * context", where the rest of the build is performed.
  */
-export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
+export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
   const noInput = defineNoRollupInput();
   const logger = createLogger(options.verbose, options.disableColors);
-  /**
-   * Whether the dev server is running, we're in watch mode, or it's a simple build.
-   */
-  let mode = BuildMode.BUILD;
   const ctx = createBuildContext({ logger, pluginOptions: options });
-  /**
-   * This stores the config passed in by the user from their `vite.config.ts`. This is the config
-   * used as a base for all the builds performed by the build context.
-   */
-  let userConfig: UserConfig;
-  /**
-   * This stores the final, resolved config with lots of defaults and additional information filled
-   * out by Vite. Used to find paths related to the build process.
-   */
-  let resolvedConfig: ResolvedConfig;
-  let extensionRunner: ExtensionRunner;
   const validateManifest = createManifestValidator({ logger });
-  let rootDir: string;
-  let outDir: string;
-  let publicDir: string | undefined;
+
+  let mode = BuildMode.BUILD;
+  let userConfig: vite.UserConfig;
+  let resolvedConfig: vite.ResolvedConfig;
+  let extensionRunner: ExtensionRunner;
+  let paths: ProjectPaths;
   let isError = false;
 
   /**
    * Set the build mode based on how vite was ran/configured.
    */
-  function configureBuildMode(config: UserConfig, env: ConfigEnv) {
+  function configureBuildMode(config: vite.UserConfig, env: vite.ConfigEnv) {
     if (process.env.HTML_HMR) {
       logger.verbose("Dev mode");
       mode = BuildMode.DEV;
@@ -70,42 +56,43 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     }
   }
 
-  //#region Manifest
   /**
    * Loads the manifest.json with it's browser template tags resolved, and the real source file
    * extensions
    */
-  async function loadManifest(): Promise<any> {
-    let manifestTemplate: any;
-    const manifestOption = options.manifest ?? "manifest.json";
-    if (typeof manifestOption === "function") {
+  async function loadManifest(): Promise<Manifest> {
+    let manifestTemplate: Manifest;
+    if (typeof options.manifest === "function") {
       logger.verbose("Loading manifest from function");
-      manifestTemplate = manifestOption();
+      manifestTemplate = await options.manifest();
     } else {
       // Manifest string should be a path relative to the config.root
-      const manifestPath = path.resolve(rootDir, manifestOption);
+      const manifestPath = path.resolve(paths.rootDir, options.manifest);
       logger.verbose(
-        `Loading manifest from file @ ${manifestPath} (root: ${rootDir})`
+        `Loading manifest from file @ ${manifestPath} (root: ${paths.rootDir})`
       );
-      const text = await fs.readFile(manifestPath, "utf-8");
-      manifestTemplate = JSON.parse(text);
+      manifestTemplate = await fs.readJson(manifestPath);
     }
     logger.verbose(
       "Manifest template: " + inspect(manifestTemplate, undefined, 5)
     );
-    const entrypointsManifest = resolveBrowserTagsInObject(
+
+    const resolvedManifest = resolveBrowserTagsInObject(
       options.browser ?? "chrome",
       manifestTemplate
     );
-    logger.verbose(
-      "Manifest with entrypoints: " + inspect(entrypointsManifest)
-    );
-    return entrypointsManifest;
+    logger.verbose("Manifest with entrypoints: " + inspect(resolvedManifest));
+    return resolvedManifest;
   }
 
+  /**
+   * Given some details about the bundled file outputs, convert input paths in the manifest to their
+   * output paths. Also make sure if any generated files need to be added to the manifest (like
+   * content script CSS files), add them.
+   */
   function renderManifest(
-    manifest: any,
-    bundles: Array<OutputChunk | OutputAsset>
+    manifest: Manifest,
+    bundles: Array<rollup.OutputChunk | rollup.OutputAsset>
   ): any {
     const findReplacement = (entry: string) =>
       bundles.find((output) => {
@@ -171,7 +158,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
     replaceFieldWithOutput(manifest.background, "page");
     replaceArrayWithOutput(manifest.background?.scripts);
 
-    manifest?.content_scripts?.forEach((cs: Manifest.ContentScript) => {
+    manifest?.content_scripts?.forEach((cs: browser.Manifest.ContentScript) => {
       replaceArrayWithOutput(cs?.js, (generatedFile) => {
         if (!generatedFile.endsWith(".css")) return;
         cs.css ??= [];
@@ -185,11 +172,11 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
 
     return manifest;
   }
-  //#endregion
 
   return {
     name: MANIFEST_LOADER_PLUGIN_NAME,
-    // apply: "build",
+
+    // Runs during: Build, dev, watch
     async config(config, env) {
       if (options.browser != null) {
         logger.log(`Building for browser: ${options.browser}`);
@@ -197,26 +184,31 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       configureBuildMode(config, env);
       userConfig = config;
 
-      // Don't empty the out directory automatically, if allowed, it clears all the outputs from
-      // the build context. Instead, we do it manually in `onBuildStart`
-      const rootConfig = { build: { emptyOutDir: false } };
-
-      return mergeConfig(
-        // Don't empty the out directory automatically, if allowed, it clears all the outputs from
-        // the build context. Instead, we do it manually in `onBuildStart`
-        { build: { emptyOutDir: false } },
+      return vite.mergeConfig(
+        {
+          build: {
+            // Since this plugin schedules multiple builds, we can't let any of the builds empty the
+            // outDir. Instead, the plugin cleans up the outDir manually in `onBuildStart`
+            emptyOutDir: false,
+          },
+        },
         // We only want to output the manifest.json, so we don't need an input.
         noInput.config
       );
     },
+
+    // Runs during: Build, dev, watch
     configResolved(config) {
       resolvedConfig = config;
-      rootDir = getRootDir(config);
-      outDir = getOutDir(config);
-      publicDir = getPublicDir(config);
+      paths = {
+        rootDir: getRootDir(config),
+        outDir: getOutDir(config),
+        publicDir: getPublicDir(config),
+      };
     },
+
     // Runs during: Build, dev, watch
-    async buildStart(buildOptions) {
+    async buildStart() {
       // Empty out directory
       if (resolvedConfig.build.emptyOutDir) {
         logger.verbose("Removing build.outDir...");
@@ -226,18 +218,18 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
         });
       }
 
-      // Add watch files
+      // Add watch files that trigger a full rebuild
       options.watchFilePaths.forEach(this.addWatchFile);
       if (typeof options.manifest === "string") {
-        this.addWatchFile(path.resolve(rootDir, options.manifest));
+        this.addWatchFile(path.resolve(paths.rootDir, options.manifest));
       }
 
       // Build
-      const entrypointsManifest = await loadManifest();
+      const manifestWithInputs = await loadManifest();
       await ctx.rebuild({
-        rootDir,
+        paths,
         userConfig,
-        manifest: entrypointsManifest,
+        manifest: manifestWithInputs,
         mode,
         onSuccess: async () => {
           if (extensionRunner) await extensionRunner.reload();
@@ -245,60 +237,87 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       });
 
       // Generate the manifest based on the output files
-      const manifest = renderManifest(entrypointsManifest, ctx.getBundles());
-      if (!options.skipManifestValidation) await validateManifest(manifest);
+      const finalManifest = renderManifest(
+        manifestWithInputs,
+        ctx.getBundles()
+      );
+      if (!options.skipManifestValidation) {
+        await validateManifest(finalManifest);
+      }
       this.emitFile({
         type: "asset",
-        source: JSON.stringify(manifest),
+        source: JSON.stringify(finalManifest),
         fileName: "manifest.json",
         name: "manifest.json",
       });
 
-      // Manually copy the public directory when necessary
-      if (publicDir && (mode === BuildMode.WATCH || mode === BuildMode.DEV)) {
-        const outputDir = getOutDir(resolvedConfig);
-        fs.copy(publicDir, outputDir);
-      }
+      await copyPublicDirToOutDir({ mode, paths });
     },
+
     // Runs during: build, dev, watch
     resolveId(id) {
       return noInput.resolveId(id);
     },
+
     // Runs during: build, dev, watch
     load(id) {
       return noInput.load(id);
     },
+
     // Runs during: build, watch
     buildEnd(err) {
       isError = err != null;
     },
+
     // Runs during: build, watch
     async closeBundle() {
-      if (mode === BuildMode.WATCH && !options.disableAutoLaunch) {
-        if (!isError) {
-          logger.log("\nOpening browser...");
-          extensionRunner = await startWebExt({
-            pluginOptions: options,
-            rootDir,
-            outDir,
-            logger,
-          });
-          logger.log("Done!");
-        }
-      }
+      if (isError || mode === BuildMode.BUILD || options.disableAutoLaunch)
+        return;
+
+      logger.log("\nOpening browser...");
+      extensionRunner = createWebExtRunner({
+        pluginOptions: options,
+        paths,
+        logger,
+      });
+      await extensionRunner.openBrowser();
+      logger.log("Done!");
     },
+
     // Runs during: build, watch
-    generateBundle(_options, bundle, _isWrite) {
+    generateBundle(_, bundle) {
       noInput.cleanupBundle(bundle);
     },
+
+    // Runs during: watch
     async watchChange(id) {
-      const relativePath = path.relative(rootDir, id);
+      const relativePath = path.relative(paths.rootDir, id);
       logger.log(
         `\n${colorizeFilename(relativePath)} changed, restarting browser`
       );
       await extensionRunner?.exit();
     },
-    // Runs during: dev
-    handleHotUpdate(ctx) {},
   };
+}
+
+/**
+ * Manually copy the public directory at the start of the build during dev/watch mode - vite does
+ * this for us in build mode.
+ */
+async function copyPublicDirToOutDir({
+  mode,
+  paths,
+}: {
+  mode: BuildMode;
+  paths: ProjectPaths;
+}) {
+  if (
+    mode === BuildMode.BUILD ||
+    !paths.publicDir ||
+    !(await fs.pathExists(paths.publicDir))
+  ) {
+    return;
+  }
+
+  await fs.copy(paths.publicDir, paths.outDir);
 }

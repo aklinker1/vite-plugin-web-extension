@@ -1,9 +1,9 @@
 import path from "node:path";
-import { InlineConfig, mergeConfig } from "vite";
-import type { Manifest } from "webextension-polyfill";
-import { compact } from "../utils/arrays";
+import * as vite from "vite";
+import type browser from "webextension-polyfill";
+import { ProjectPaths, Manifest } from "../options";
+import { compact, trimExtension } from "../utils";
 import { BuildMode } from "./BuildMode";
-import { trimExtension } from "../utils/filenames";
 
 const HTML_ENTRY_REGEX = /\.(html)$/;
 const SCRIPT_ENTRY_REGEX = /\.(js|ts|mjs|mts)$/;
@@ -12,13 +12,13 @@ class CombinedViteConfigs {
   /**
    * A single config that builds all the HTML pages.
    */
-  html?: InlineConfig;
+  html?: vite.InlineConfig;
   /**
    * A single config that builds all the HTML pages for sandbox. These are separate from `html`
    * because we want to properly tree-shake out any browser API usages, since those APIs aren't
    * available in sandbox pages.
    */
-  sandbox?: InlineConfig;
+  sandbox?: vite.InlineConfig;
   /**
    * All other JS inputs from the manifest and additional inputs are separated into their own
    * configs.
@@ -27,13 +27,13 @@ class CombinedViteConfigs {
    * each entrypoint. Vite can only produce code-split outputs that share other files, which
    * extensions cannot consume. So we build each of these separately.
    */
-  scripts?: InlineConfig[];
+  scripts?: vite.InlineConfig[];
   /**
    * Similar to scripts, but for other file "types". Sometimes CSS, SCSS, JSON, images, etc, can be
    * passed into Vite directly. The most common case of this in extensions are CSS files listed for
    * content scripts.
    */
-  other?: InlineConfig[];
+  other?: vite.InlineConfig[];
 
   /**
    * The total number of configs required to build the extension.
@@ -45,17 +45,19 @@ class CombinedViteConfigs {
   /**
    * Return all the configs as an array.
    */
-  get all(): InlineConfig[] {
+  get all(): vite.InlineConfig[] {
     return compact([this.html, this.sandbox, this.scripts, this.other].flat());
   }
 
-  applyBaseConfig(baseConfig: InlineConfig) {
-    if (this.html) this.html = mergeConfig(baseConfig, this.html);
-    if (this.sandbox) this.sandbox = mergeConfig(baseConfig, this.sandbox);
+  applyBaseConfig(baseConfig: vite.InlineConfig) {
+    if (this.html) this.html = vite.mergeConfig(baseConfig, this.html);
+    if (this.sandbox) this.sandbox = vite.mergeConfig(baseConfig, this.sandbox);
     this.scripts = this.scripts?.map((config) =>
-      mergeConfig(baseConfig, config)
+      vite.mergeConfig(baseConfig, config)
     );
-    this.other = this.other?.map((config) => mergeConfig(baseConfig, config));
+    this.other = this.other?.map((config) =>
+      vite.mergeConfig(baseConfig, config)
+    );
   }
 }
 
@@ -64,16 +66,16 @@ class CombinedViteConfigs {
  * set of Vite configs that can be used to build all the entry-points for the extension.
  */
 export function getViteConfigsForInputs(options: {
-  rootDir: string;
+  paths: ProjectPaths;
   mode: BuildMode;
   additionalInputs: string[];
-  manifest: any;
-  baseHtmlViteConfig: InlineConfig;
-  baseSandboxViteConfig: InlineConfig;
-  baseScriptViteConfig: InlineConfig;
-  baseOtherViteConfig: InlineConfig;
+  manifest: Manifest;
+  baseHtmlViteConfig: vite.InlineConfig;
+  baseSandboxViteConfig: vite.InlineConfig;
+  baseScriptViteConfig: vite.InlineConfig;
+  baseOtherViteConfig: vite.InlineConfig;
 }): CombinedViteConfigs {
-  const { rootDir, additionalInputs, manifest } = options;
+  const { paths, additionalInputs, manifest } = options;
   const configs = new CombinedViteConfigs();
 
   const processedInputs = new Set<string>();
@@ -85,18 +87,18 @@ export function getViteConfigsForInputs(options: {
    */
   function getMultiPageConfig(
     entries: string[],
-    baseConfig: InlineConfig
-  ): InlineConfig | undefined {
+    baseConfig: vite.InlineConfig
+  ): vite.InlineConfig | undefined {
     const newEntries = entries.filter((entry) => !hasBeenProcessed(entry));
     newEntries.forEach((entry) => processedInputs.add(entry));
 
     if (newEntries.length === 0) return;
 
-    const inputConfig: InlineConfig = {
+    const inputConfig: vite.InlineConfig = {
       build: {
         rollupOptions: {
           input: newEntries.reduce<Record<string, string>>((input, entry) => {
-            input[trimExtension(entry)] = path.resolve(rootDir, entry);
+            input[trimExtension(entry)] = path.resolve(paths.rootDir, entry);
             return input;
           }, {}),
           output: {
@@ -119,7 +121,7 @@ export function getViteConfigsForInputs(options: {
         },
       },
     };
-    return mergeConfig(baseConfig, inputConfig);
+    return vite.mergeConfig(baseConfig, inputConfig);
   }
 
   /**
@@ -127,8 +129,8 @@ export function getViteConfigsForInputs(options: {
    */
   function getIndividualConfig(
     entry: string,
-    baseConfig: InlineConfig
-  ): InlineConfig | undefined {
+    baseConfig: vite.InlineConfig
+  ): vite.InlineConfig | undefined {
     if (hasBeenProcessed(entry)) return;
     processedInputs.add(entry);
 
@@ -140,11 +142,11 @@ export function getViteConfigsForInputs(options: {
     const outputDir = moduleId.includes("/")
       ? path.dirname(moduleId) + "/"
       : "";
-    const inputConfig: InlineConfig = {
+    const inputConfig: vite.InlineConfig = {
       build: {
         rollupOptions: {
           input: {
-            [moduleId]: path.resolve(rootDir, entry),
+            [moduleId]: path.resolve(paths.rootDir, entry),
           },
           output: {
             // Configure the output filenames so they appear in the same folder
@@ -157,19 +159,19 @@ export function getViteConfigsForInputs(options: {
         },
       },
     };
-    return mergeConfig(baseConfig, inputConfig);
+    return vite.mergeConfig(baseConfig, inputConfig);
   }
 
-  function getHtmlConfig(entries: string[]): InlineConfig | undefined {
+  function getHtmlConfig(entries: string[]): vite.InlineConfig | undefined {
     return getMultiPageConfig(entries, options.baseHtmlViteConfig);
   }
-  function getSandboxConfig(entries: string[]): InlineConfig | undefined {
+  function getSandboxConfig(entries: string[]): vite.InlineConfig | undefined {
     return getMultiPageConfig(entries, options.baseSandboxViteConfig);
   }
-  function getScriptConfig(entry: string): InlineConfig | undefined {
+  function getScriptConfig(entry: string): vite.InlineConfig | undefined {
     return getIndividualConfig(entry, options.baseScriptViteConfig);
   }
-  function getOtherConfig(entry: string): InlineConfig | undefined {
+  function getOtherConfig(entry: string): vite.InlineConfig | undefined {
     return getIndividualConfig(entry, options.baseOtherViteConfig);
   }
 
@@ -208,7 +210,9 @@ export function getViteConfigsForInputs(options: {
     simplifyEntriesList([
       manifest.background?.service_worker,
       manifest.background?.scripts,
-      ...manifest.content_scripts?.map((cs: Manifest.ContentScript) => cs.js),
+      ...manifest.content_scripts?.map(
+        (cs: browser.Manifest.ContentScript) => cs.js
+      ),
       scriptAdditionalInputs,
     ]).map(getScriptConfig)
   ).forEach((scriptConfig) => {
@@ -219,7 +223,9 @@ export function getViteConfigsForInputs(options: {
   // Other Types
   compact(
     simplifyEntriesList([
-      ...manifest.content_scripts?.map((cs: Manifest.ContentScript) => cs.css),
+      ...manifest.content_scripts?.map(
+        (cs: browser.Manifest.ContentScript) => cs.css
+      ),
       otherAdditionalInputs,
     ]).map(getOtherConfig)
   ).forEach((otherConfig) => {

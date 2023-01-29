@@ -1,22 +1,18 @@
-import { Plugin, ResolvedConfig, UserConfig } from "vite";
-import {
-  LABELED_STEP_PLUGIN_NAME,
-  MANIFEST_LOADER_PLUGIN_NAME,
-} from "../utils/constants";
-import { Logger } from "../utils/logger";
-import { getInputAbsPaths, getRootDir } from "../utils/paths";
+import * as vite from "vite";
+import { LABELED_STEP_PLUGIN_NAME } from "../constants";
+import { Logger } from "../logger";
+import { getInputAbsPaths, getRootDir, colorizeFilename } from "../utils";
 import path from "node:path";
-import { colorizeFilename } from "../utils/filenames";
 
 /**
- * A plugin that prints the inputs that will be built.
+ * This plugin is in charge of logging all the steps (but not the summary).
  */
 export function labeledStepPlugin(
   logger: Logger,
   total: number,
   index: number
-): Plugin {
-  let finalConfig: ResolvedConfig;
+): vite.Plugin {
+  let finalConfig: vite.ResolvedConfig;
   let rootDir: string;
   let buildCount = 0;
 

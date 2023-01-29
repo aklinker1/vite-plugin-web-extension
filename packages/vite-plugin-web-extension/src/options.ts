@@ -1,8 +1,8 @@
-import { InlineConfig } from "vite";
+import * as vite from "vite";
 
 export type Manifest = any;
 
-export interface PluginOptions {
+export interface UserOptions {
   /**
    * The path to your manifest.json or a  function that returns your manifest as a JS object. It's a
    * function that returns a generated or dynamic javascript object representing the manifest
@@ -62,16 +62,19 @@ export interface PluginOptions {
   /**
    * Custom vite config to be merged with when building html inputs (popup, options, sandbox, etc)
    */
-  htmlViteConfig?: InlineConfig;
+  htmlViteConfig?: vite.InlineConfig;
 
   /**
    * Custom vite config to be merged with when building script inputs (background scripts/service
    * worker, content scripts, etc)
    */
-  scriptViteConfig?: InlineConfig;
+  scriptViteConfig?: vite.InlineConfig;
 }
 
-export interface InternalPluginOptions {
+/**
+ * Same as `UserOptions`, but most optional fields are now required.
+ */
+export interface ResolvedOptions {
   manifest: string | (() => Manifest) | (() => Promise<Manifest>);
   additionalInputs: string[];
   disableAutoLaunch: boolean;
@@ -79,8 +82,17 @@ export interface InternalPluginOptions {
   browser?: string;
   skipManifestValidation: boolean;
   printSummary: boolean;
-  htmlViteConfig?: InlineConfig;
-  scriptViteConfig?: InlineConfig;
+  htmlViteConfig?: vite.InlineConfig;
+  scriptViteConfig?: vite.InlineConfig;
   verbose: boolean;
   disableColors: boolean;
+}
+
+/**
+ * An object storing all the paths used by vite and this plugin.
+ */
+export interface ProjectPaths {
+  outDir: string;
+  publicDir?: string;
+  rootDir: string;
 }

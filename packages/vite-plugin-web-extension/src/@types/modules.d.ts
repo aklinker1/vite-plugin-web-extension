@@ -1,12 +1,12 @@
 declare module "web-ext" {
-  export interface ExtensionRunner {
+  export interface WebExtRunInstance {
     reloadAllExtensions(): Promise<void>;
     exit(): Promise<void>;
   }
 
   const webExt: {
     cmd: {
-      run(config: any, executeOptions: any): Promise<ExtensionRunner>;
+      run(config: any, executeOptions: any): Promise<WebExtRunInstance>;
     };
   };
   export default webExt;

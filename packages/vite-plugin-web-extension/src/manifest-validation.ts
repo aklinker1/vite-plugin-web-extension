@@ -6,14 +6,16 @@ import Ajv from "ajv";
 
 const SCHEMA_URL = new URL("https://json.schemastore.org/chrome-manifest");
 
-export interface IManifestValidator {
-  (manifest: any | undefined): Promise<void>;
-}
+export type ValidateManifest = (manifest: any | undefined) => Promise<void>;
 
-// TODO: Unit test
+/**
+ * Create a service that validate's your manifest.json's content.
+ *
+ * TODO: Unit test.
+ */
 export function createManifestValidator(options: {
   logger: Logger;
-}): IManifestValidator {
+}): ValidateManifest {
   const { logger } = options;
   let schema: any | undefined;
   const ajv = new Ajv();

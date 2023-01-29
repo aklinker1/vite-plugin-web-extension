@@ -1,16 +1,19 @@
-import { OutputAsset, OutputChunk } from "rollup";
-import { Plugin } from "vite";
-import { BUNDLE_TRACKER_PLUGIN_NAME } from "../utils/constants";
+import * as rollup from "rollup";
+import * as vite from "vite";
+import { BUNDLE_TRACKER_PLUGIN_NAME } from "../constants";
 
-export interface BundleTrackerPlugin extends Plugin {
-  getChunks(): Array<OutputChunk | OutputAsset> | undefined;
+export interface BundleTrackerPlugin extends vite.Plugin {
+  getChunks(): Array<rollup.OutputChunk | rollup.OutputAsset> | undefined;
 }
 
 /**
- * A plugin that tracks and saves the output bundle for use when rendering the final manifest.
+ * A plugin that tracks and saves the output bundle.
+ *
+ * When rendering the final manifest, we need to add any files the inputs generated, and the chunks
+ * return by this plugin are used to get the generated files.
  */
 export function bundleTrackerPlugin(): BundleTrackerPlugin {
-  let chunks: Array<OutputChunk | OutputAsset> | undefined;
+  let chunks: Array<rollup.OutputChunk | rollup.OutputAsset> | undefined;
   return {
     name: BUNDLE_TRACKER_PLUGIN_NAME,
     buildStart() {

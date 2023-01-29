@@ -1,23 +1,21 @@
-import { OutputAsset, OutputChunk, RollupWatcher } from "rollup";
+import * as rollup from "rollup";
 import { inspect } from "util";
-import * as Vite from "vite";
-import { InternalPluginOptions } from "../options";
+import * as vite from "vite";
+import { ProjectPaths, ResolvedOptions } from "../options";
 import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { BuildMode } from "./BuildMode";
-import { MANIFEST_LOADER_PLUGIN_NAME } from "../utils/constants";
-import { colorizeFilename } from "../utils/filenames";
-import { BOLD, DIM, Logger, RESET, GREEN } from "../utils/logger";
+import { MANIFEST_LOADER_PLUGIN_NAME } from "../constants";
+import { colorizeFilename, getInputAbsPaths, removePlugin } from "../utils";
+import { BOLD, DIM, Logger, RESET, GREEN } from "../logger";
 import path from "node:path";
-import { getInputAbsPaths } from "../utils/paths";
-import { removePlugin } from "../utils/removePlugin";
 import uniqBy from "lodash.uniqby";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
 import { bundleTrackerPlugin } from "../plugins/bundle-tracker-plugin";
 import { getViteConfigsForInputs } from "./getViteConfigsForInputs";
 
 interface RebuildOptions {
-  rootDir: string;
-  userConfig: Vite.UserConfig;
+  paths: ProjectPaths;
+  userConfig: vite.UserConfig;
   manifest: any;
   mode: BuildMode;
   onSuccess?: () => Promise<void> | void;
@@ -29,7 +27,7 @@ export interface BuildContext {
    * map.
    */
   rebuild(rebuildOptions: RebuildOptions): Promise<void>;
-  getBundles(): Array<OutputChunk | OutputAsset>;
+  getBundles(): Array<rollup.OutputChunk | rollup.OutputAsset>;
 }
 
 /**
@@ -40,25 +38,25 @@ export function createBuildContext({
   pluginOptions,
   logger,
 }: {
-  pluginOptions: InternalPluginOptions;
+  pluginOptions: ResolvedOptions;
   logger: Logger;
 }): BuildContext {
   /**
    * Tracks an each input path relative to the Vite root, to their output filename and a list of
    * generated assets.
    */
-  let bundles: Array<OutputChunk | OutputAsset> = [];
-  let activeWatchers: RollupWatcher[] = [];
+  let bundles: Array<rollup.OutputChunk | rollup.OutputAsset> = [];
+  let activeWatchers: rollup.RollupWatcher[] = [];
 
   async function getBuildConfigs({
-    rootDir,
+    paths,
     userConfig,
     manifest,
     onSuccess,
     mode,
   }: RebuildOptions) {
     const entryConfigs = await getViteConfigsForInputs({
-      rootDir,
+      paths,
       manifest,
       mode,
       additionalInputs: pluginOptions.additionalInputs,
@@ -78,28 +76,26 @@ export function createBuildContext({
       clearScreen: false,
       // Don't copy static assets for the lib builds - already done during manifest build
       publicDir: false,
-      // Don't empty the outDir, this is handled in the parent, manifest build process
+      // Don't empty the outDir, this is handled in the parent build process
       build: { emptyOutDir: false },
       // Don't discover any vite.config.ts files in the root, all relevant config is already
       // passed down. Allowing discovery can cause a infinite loop where the plugins are applied
       // over and over again. See <https://github.com/aklinker1/vite-plugin-web-extension/issues/56>
       configFile: false,
       plugins: [
-        // Print a message before starting each step
         labeledStepPlugin(logger, totalEntries, buildOrderIndex),
-        // ...(mode === BuildMode.WATCH ? [multibuildManager.plugin()] : []),
         multibuildManager.plugin(),
       ],
     });
     const finalConfigPromises = entryConfigs.all
-      .map<Vite.InlineConfig>((entryConfig, i) =>
-        Vite.mergeConfig(
-          Vite.mergeConfig(entryConfig, userConfig),
+      .map<vite.InlineConfig>((entryConfig, i) =>
+        vite.mergeConfig(
+          vite.mergeConfig(entryConfig, userConfig),
           getForcedConfig(i)
         )
       )
       // Exclude this plugin from child builds to break recursion
-      .map(async (config): Promise<Vite.InlineConfig> => {
+      .map(async (config): Promise<vite.InlineConfig> => {
         const newPlugins = await removePlugin(
           config.plugins,
           MANIFEST_LOADER_PLUGIN_NAME
@@ -110,8 +106,8 @@ export function createBuildContext({
   }
 
   function printSummary(
-    rootDir: string,
-    buildConfigs: Vite.InlineConfig[]
+    paths: ProjectPaths,
+    buildConfigs: vite.InlineConfig[]
   ): void {
     if (buildConfigs.length === 0) return;
 
@@ -121,7 +117,7 @@ export function createBuildContext({
 
       const relativePaths = getInputAbsPaths(
         config.build.rollupOptions.input
-      ).map((absPath) => path.relative(rootDir, absPath));
+      ).map((absPath) => path.relative(paths.rootDir, absPath));
 
       if (relativePaths.length === 1) {
         lines.push(
@@ -146,7 +142,7 @@ export function createBuildContext({
     logger.log(`\n${GREEN}✓${RESET} All steps completed.\n`);
   }
 
-  function waitForWatchBuildComplete(watcher: RollupWatcher) {
+  function waitForWatchBuildComplete(watcher: rollup.RollupWatcher) {
     return new Promise<void>((res, rej) => {
       watcher.addListener("event", async (e) => {
         switch (e.code) {
@@ -163,22 +159,22 @@ export function createBuildContext({
 
   return {
     async rebuild(rebuildOptions) {
-      const { rootDir, mode } = rebuildOptions;
+      const { paths, mode } = rebuildOptions;
       await Promise.all(activeWatchers.map((watcher) => watcher.close()));
       activeWatchers = [];
 
       const buildConfigs = await getBuildConfigs(rebuildOptions);
-      if (pluginOptions.printSummary) printSummary(rootDir, buildConfigs);
+      if (pluginOptions.printSummary) printSummary(paths, buildConfigs);
 
       // Print configs deep enough to include rollup inputs
       logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));
 
-      const newBundles: Array<OutputChunk | OutputAsset> = [];
+      const newBundles: Array<rollup.OutputChunk | rollup.OutputAsset> = [];
       for (const config of buildConfigs) {
         const bundleTracker = bundleTrackerPlugin();
         (config.plugins ??= []).push(bundleTracker);
 
-        const output = await Vite.build(config);
+        const output = await vite.build(config);
         if ("addListener" in output) {
           activeWatchers.push(output);
           // In watch mode, wait until it's built once

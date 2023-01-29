@@ -1,5 +1,5 @@
-import { Plugin } from "vite";
-import { MULTIBUILD_COMPLETE_PLUGIN_NAME } from "../utils/constants";
+import * as vite from "vite";
+import { MULTIBUILD_COMPLETE_PLUGIN_NAME } from "../constants";
 import Lock from "async-lock";
 
 /**
@@ -49,7 +49,7 @@ export function createMultibuildCompleteManager(
   }
 
   return {
-    plugin(): Plugin {
+    plugin(): vite.Plugin {
       const buildId = nextBuildId++;
       // Increment initially because we know there is a build queued up
       incrementBuildCount(buildId);
