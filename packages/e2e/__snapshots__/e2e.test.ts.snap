@@ -28,8 +28,8 @@ vite v3.1.2 building for production...
 transforming...
 ✓ 2 modules transformed.
 rendering chunks...
-../dist/script2.js    0.03 KiB / gzip: 0.05 KiB
 ../dist/script2.css   0.03 KiB / gzip: 0.05 KiB
+../dist/script2.js    0.03 KiB / gzip: 0.05 KiB
 
 ✓ All steps completed.
 
@@ -362,8 +362,8 @@ transforming...
 ✓ 4 modules transformed.
 rendering chunks...
 ../dist/page2.html   0.38 KiB
-../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
 ../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
 
 ✓ All steps completed.
 
@@ -491,8 +491,8 @@ transforming...
 ✓ 4 modules transformed.
 rendering chunks...
 ../dist/page2.html   0.38 KiB
-../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
 ../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
 
 ✓ All steps completed.
 
@@ -537,8 +537,8 @@ transforming...
 ✓ 4 modules transformed.
 rendering chunks...
 ../dist/page2.html   0.38 KiB
-../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
 ../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
+../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
 
 ✓ All steps completed.
 
@@ -611,8 +611,8 @@ vite v3.1.2 building for production...
 transforming...
 ✓ 2 modules transformed.
 rendering chunks...
-../dist/script2.css   0.03 KiB / gzip: 0.05 KiB
 ../dist/script2.js    0.03 KiB / gzip: 0.05 KiB
+../dist/script2.css   0.03 KiB / gzip: 0.05 KiB
 
 ✓ All steps completed.
 
@@ -634,8 +634,8 @@ transforming...
 ✓ 4 modules transformed.
 rendering chunks...
 ../dist/page2.html   0.38 KiB
-../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 ../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 
 ✓ All steps completed.
 
@@ -657,8 +657,8 @@ transforming...
 ✓ 4 modules transformed.
 rendering chunks...
 ../dist/page2.html   0.38 KiB
-../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 ../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 
 ✓ All steps completed.
 
@@ -680,8 +680,8 @@ transforming...
 ✓ 4 modules transformed.
 rendering chunks...
 ../dist/page2.html   0.38 KiB
-../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 ../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
+../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 
 ✓ All steps completed.
 
@@ -728,8 +728,8 @@ transforming...
 ✓ 5 modules transformed.
 Generated an empty chunk: \\"page1\\"
 rendering chunks...
-../dist/page1.html   0.26 KiB
 ../dist/page2.html   0.38 KiB
+../dist/page1.html   0.26 KiB
 ../dist/page2.css    0.03 KiB / gzip: 0.05 KiB
 ../dist/page2.js     0.76 KiB / gzip: 0.42 KiB
 
