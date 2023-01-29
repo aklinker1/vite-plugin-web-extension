@@ -65,7 +65,6 @@ class CombinedViteConfigs {
  */
 export function getViteConfigsForInputs(options: {
   rootDir: string;
-  outDir: string;
   mode: BuildMode;
   additionalInputs: string[];
   manifest: any;

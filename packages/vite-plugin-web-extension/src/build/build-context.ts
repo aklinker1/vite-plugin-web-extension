@@ -21,7 +21,6 @@ import { hmrRewritePlugin } from "../plugins/hmr-rewrite-plugin";
 
 interface RebuildOptions {
   rootDir: string;
-  outDir: string;
   userConfig: Vite.UserConfig;
   resolvedConfig: Vite.ResolvedConfig;
   manifest: any;
@@ -62,12 +61,10 @@ export function createBuildContext({
     manifest,
     onSuccess,
     mode,
-    outDir,
     resolvedConfig,
   }: RebuildOptions) {
     const entryConfigs = await getViteConfigsForInputs({
       rootDir,
-      outDir,
       manifest,
       mode,
       additionalInputs: pluginOptions.additionalInputs,
