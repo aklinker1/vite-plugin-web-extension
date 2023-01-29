@@ -4,7 +4,6 @@ import type { Manifest } from "webextension-polyfill";
 import { compact } from "../utils/arrays";
 import { BuildMode } from "./BuildMode";
 import { trimExtension } from "../utils/filenames";
-import { hmrPlugin } from "../plugins/hmr-plugin";
 
 const HTML_ENTRY_REGEX = /\.(html)$/;
 const SCRIPT_ENTRY_REGEX = /\.(js|ts|mjs|mts)$/;

@@ -1,4 +1,6 @@
-import path from "path";
+/**
+ * This plugin is responsible for rewriting the entry HTML files to point towards the dev server.
+ */
 import {
   HmrOptions,
   InlineConfig,
@@ -69,28 +71,23 @@ export function hmrRewritePlugin(config: {
           __HMR_ENABLE_OVERLAY__: JSON.stringify(hmr?.overlay !== false),
         },
       };
-      console.log(hmrConfig);
       return mergeConfig(config, hmrConfig);
     },
     transform(code, id) {
       // Only transform HTML inputs
       if (!id.endsWith(".html") || !inputIds.includes(id)) return;
 
-      // Add <script type="module" src="/vite-client.mjs" /> to the HTML.
-      const hasHead = code.includes("</head>");
-      if (hasHead) {
-        return code.replace(
-          "</script>",
-          '</script>\n    <script type="module" src="vite/dist/client/client.mjs"></script>'
-        );
-      } else {
-        logger.warn(
-          `HMR disabled for ${path.relative(
-            process.cwd(),
-            id
-          )}: No scripts found to reload`
-        );
-      }
+      // Load HTML files from localhost
+      code = code.replaceAll(
+        '<script type="module" src="',
+        '<script type="module" src="http://localhost:5173'
+      );
+
+      // Add the vite client script to the code.
+      return code.replace(
+        "</script>",
+        '</script>\n    <script type="module" src="http://localhost:5173/@vite/client"></script>'
+      );
     },
   };
 }

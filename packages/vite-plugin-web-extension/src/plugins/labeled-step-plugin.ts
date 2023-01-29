@@ -1,11 +1,10 @@
-import { PluginOption, ResolvedConfig, UserConfig } from "vite";
+import { PluginOption, UserConfig } from "vite";
 import { LABELED_STEP_PLUGIN_NAME } from "../utils/constants";
 import { Logger } from "../utils/logger";
 import { getInputAbsPaths, getRootDir } from "../utils/paths";
 import path from "node:path";
 import { colorizeFilename } from "../utils/filenames";
 import { BuildMode } from "../build/BuildMode";
-import { isDevServerConfig } from "../utils/isDevServerConfig";
 
 /**
  * A plugin that prints the inputs that will be built.

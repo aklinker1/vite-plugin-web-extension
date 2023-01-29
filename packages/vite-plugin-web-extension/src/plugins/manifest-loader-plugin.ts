@@ -21,6 +21,7 @@ import { Manifest } from "webextension-polyfill";
 import { startWebExt, ExtensionRunner } from "../utils/extension-runner";
 import { createManifestValidator } from "../utils/manifest-validation";
 import { colorizeFilename } from "../utils/filenames";
+import { ContentSecurityPolicy } from "../utils/csp";
 
 /**
  * This plugin composes multiple Vite builds together into a single Vite build by calling the
@@ -193,6 +194,27 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
       if (cs.css?.length === 0) delete cs.css;
       if (cs.js?.length === 0) delete cs.js;
     });
+
+    // Add permissions and CSP for dev mode
+    if (mode === BuildMode.DEV) {
+      manifest.permissions.push("http://localhost/*");
+
+      const csp = new ContentSecurityPolicy(
+        manifest.manifest_version === 3
+          ? manifest.content_security_policy?.extension_pages ??
+            "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';" // default CSP for MV3
+          : manifest.content_security_policy ??
+            "script-src 'self'; object-src 'self';" // default CSP for MV2
+      );
+      csp.add("script-src", "http://localhost:*", "http://127.0.0.1:*");
+
+      if (manifest.manifest_version === 3) {
+        manifest.content_security_policy ??= {};
+        manifest.content_security_policy.extension_pages = csp.toString();
+      } else {
+        manifest.content_security_policy = csp.toString();
+      }
+    }
 
     return manifest;
   }

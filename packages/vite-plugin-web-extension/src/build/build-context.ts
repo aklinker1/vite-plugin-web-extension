@@ -18,7 +18,6 @@ import uniqBy from "lodash.uniqby";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
 import { bundleTrackerPlugin } from "../plugins/bundle-tracker-plugin";
 import { getViteConfigsForInputs } from "./getViteConfigsForInputs";
-import { isDevServerConfig } from "../utils/isDevServerConfig";
 import { hmrRewritePlugin } from "../plugins/hmr-rewrite-plugin";
 
 interface RebuildOptions {
