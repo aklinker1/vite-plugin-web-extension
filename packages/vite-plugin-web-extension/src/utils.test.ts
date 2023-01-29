@@ -14,7 +14,7 @@ describe("Utils", () => {
       ["path/to/file.ts", "path/to/file"],
       ["path/to/.hidden.jpeg", "path/to/.hidden"],
       [".hidden.jpeg", ".hidden"],
-      [".png", ""],
+      [".png", ".png"],
     ])(`should convert "%s" to "%s"`, (input, expected) => {
       expect(trimExtension(input)).toEqual(expected);
     });
