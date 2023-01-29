@@ -1,13 +1,20 @@
 ---
 lang: en-US
-title: Installation
+title: Manual Project Setup
 description: Setup your project to use vite-plugin-web-extension
 ---
 
-# Installation
+# Manual Project Setup
 
 <CodeGroup>
-  <CodeGroupItem title="NPM" active>
+  <CodeGroupItem title="PNPM" active>
+
+```bash:no-line-numbers
+pnpm i -D vite-plugin-web-extension
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title="NPM">
 
 ```bash:no-line-numbers
 npm install -D vite-plugin-web-extension
@@ -21,44 +28,7 @@ yarn add -D vite-plugin-web-extension
 ```
 
   </CodeGroupItem>
-  <CodeGroupItem title="PNPM">
-
-```bash:no-line-numbers
-pnpm i -D vite-plugin-web-extension
-```
-
-  </CodeGroupItem>
 </CodeGroup>
-
-<!--## Scaffold Your Project
-
-<CodeGroup>
-  <CodeGroupItem title="NPM" active>
-
-```bash:no-line-numbers
-npm create vite-plugin-web-extension@latest
-```
-
-  </CodeGroupItem>
-  <CodeGroupItem title="YARN">
-
-```bash:no-line-numbers
-yarn create vite-plugin-web-extension
-```
-
-  </CodeGroupItem>
-  <CodeGroupItem title="PNPM">
-
-```bash:no-line-numbers
-pnpm create vite-plugin-web-extension
-```
-
-  </CodeGroupItem>
-</CodeGroup>
-
-Then follow the prompts! There are several variations of projects you can start with: TS, Vue, React, etc.-->
-
-## Manual Project Setup
 
 Lets say your project looks like this:
 
@@ -85,8 +55,9 @@ import webExtension from "vite-plugin-web-extension";
 import path from "node:path";
 
 export default defineConfig({
+  // Setting the root to src will remove the `src` directory from the output paths (`dist/popup.html` instead of `dist/src/popup.html`).
+  // This effects the final URL pages and files are accessible from.
   root: "src",
-  // Because we set the root, we need to configure the output directory
   build: {
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
@@ -98,7 +69,7 @@ export default defineConfig({
 
 > You don't need to specify a `root` if you don't want to.
 
-By default, `vite-plugin-web-extension` will look for `<root>/manifest.json`. 
+By default, `vite-plugin-web-extension` will look for `<root>/manifest.json`.
 
 In your `manifest.json`, all paths should also be relative to your Vite `root`, and point to the source code files.
 

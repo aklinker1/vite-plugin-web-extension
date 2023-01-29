@@ -44,7 +44,7 @@ jobs:
         working-directory: packages/vite-plugin-web-extension
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
-          yarn publish --non-interactive
+          pnpm publish
 
       - name: Create Release
         uses: actions/create-release@v1

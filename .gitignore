@@ -2,5 +2,3 @@ dist
 node_modules
 *.log
 .DS_Store
-web-ext.config.js
-web-ext.config.cjs

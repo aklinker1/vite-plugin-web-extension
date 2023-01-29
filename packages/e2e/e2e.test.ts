@@ -532,5 +532,79 @@ describe("Vite Plugin Web Extension", () => {
         })
       );
     });
+
+    it("should include assets from the publicDir", () =>
+      expectBuildToMatchSnapshot(
+        {
+          build: {
+            outDir: DIST_DIRECTORY,
+            emptyOutDir: true,
+          },
+          publicDir: "extension/assets",
+          plugins: [
+            WebExtension({
+              assets: "extension/assets",
+              manifest: manifest({
+                browser_action: {
+                  default_popup: "extension/page1.html",
+                },
+              }),
+            }),
+          ],
+        },
+        ["dist/16.png", "dist/48.png", "dist/128.png"]
+      ));
+
+    it("should support supplementing the library mode build config via libModeViteConfig", () =>
+      expectBuildToMatchSnapshot(
+        {
+          build: {
+            outDir: DIST_DIRECTORY,
+            emptyOutDir: true,
+          },
+          publicDir: "extension/assets",
+          plugins: [
+            WebExtension({
+              assets: "extension/assets",
+              manifest: manifest({
+                browser_action: {
+                  default_popup: "extension/page1.html",
+                },
+                background: {
+                  service_worker: "extension/dynamic-import.ts",
+                },
+              }),
+              libModeViteConfig: defineConfig({
+                build: {
+                  rollupOptions: {
+                    output: {
+                      inlineDynamicImports: true,
+                    },
+                  },
+                },
+              }),
+            }),
+          ],
+        },
+        ["dist/16.png", "dist/48.png", "dist/128.png"]
+      ));
+
+    it("should print validation errors when the manifest is invalid", async () => {
+      const build = testBuild({
+        build: {
+          outDir: DIST_DIRECTORY,
+          emptyOutDir: true,
+        },
+        publicDir: "extension/assets",
+        plugins: [
+          WebExtension({
+            assets: "extension/assets",
+            manifest: () => ({}),
+          }),
+        ],
+      });
+
+      await expect(build).rejects.toMatchSnapshot();
+    });
   });
 });

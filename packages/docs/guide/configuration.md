@@ -128,7 +128,7 @@ Either the file contents or object returned by the `manifest` option can include
 Here's a common use case: Firefox doesn't support MV3 yet, but Chrome does!
 
 <CodeGroup>
-  <CodeGroupItem title="manifest.json" active>
+<CodeGroupItem title="manifest.json" active>
 
 ```json:no-line-numbers
 {

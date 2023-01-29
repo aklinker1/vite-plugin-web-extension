@@ -1,0 +1,51 @@
+{
+  "name": "create-vite-plugin-web-extension",
+  "description": "Create Vite powered web extensions.",
+  "version": "1.0.3",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/aklinker1/vite-plugin-web-extension",
+    "directory": "packages/create-vite-plugin-web-extension"
+  },
+  "type": "module",
+  "bin": {
+    "create-vite-plugin-web-extension": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "compile": "tsc",
+    "build": "tsup --clean --format esm index.ts",
+    "prepare": "pnpm build",
+    "start": "tsx index.ts"
+  },
+  "devDependencies": {
+    "@types/command-exists": "^1.2.0",
+    "@types/fs-extra": "^9.0.13",
+    "@types/prompts": "^2.4.2",
+    "@types/tmp": "^0.2.3",
+    "@types/webextension-polyfill": "^0.9.0",
+    "@vitejs/plugin-react-swc": "^3.0.1",
+    "@vitejs/plugin-vue": "^2.1.0",
+    "tsup": "^5.5.0",
+    "tsx": "^3.12.1",
+    "typescript": "^4.4.4",
+    "vite": "^2.7.9",
+    "vite-plugin-web-extension": "workspace:*",
+    "vue": "^3.2.45",
+    "vue-tsc": "^1.0.16"
+  },
+  "dependencies": {
+    "command-exists": "^1.2.9",
+    "commander": "^9.4.1",
+    "execa": "^6.1.0",
+    "fs-extra": "^11.1.0",
+    "is-binary-path": "^2.1.0",
+    "listr2": "^5.0.6",
+    "ofetch": "^1.0.0",
+    "prompts": "^2.4.2",
+    "simple-git": "^3.15.1",
+    "tmp": "^0.2.1"
+  }
+}

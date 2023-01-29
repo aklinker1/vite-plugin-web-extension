@@ -1,9 +1,9 @@
 ---
 lang: en-US
-title: Introduction
+title: Get Started
 ---
 
-# Introduction
+# Get Started
 
 `vite-plugin-web-extension` lets you get started making Chrome extensions with just a manifest.json and a simple Vite build config:
 
@@ -26,13 +26,42 @@ export default defineConfig({
 - :robot: Typescript support out of the box!
 - :white_check_mark: Manifest validation
 
-## How does this work?
+## Scaffolding a New Extension
 
-1. Read in the manifest
-2. Build all entrypoints listed in the `manifest.json` using Vite's JS API
-3. Write the final manifest based on the files output from the previous step
-4. Open the browser using Mozilla's `web-ext` tool
+To get started quickly, use the `create-vite-plugin-web-extension` starter kit to bootstrap a project for you automatically:
 
-When the entry points are built, they are grouped together logically to minimize the number of `vite build`s happening in the background.
+<CodeGroup>
+  <CodeGroupItem title="PNPM" active>
 
-> The plugin will print each group before they're built so you have a better idea of what it's doing behind the scenes.
+```bash:no-line-numbers
+pnpm create vite-plugin-web-extension
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title="NPM">
+
+```bash:no-line-numbers
+npm create vite-plugin-web-extension
+```
+
+  </CodeGroupItem>
+  <CodeGroupItem title="YARN">
+
+```bash:no-line-numbers
+yarn create vite-plugin-web-extension
+```
+
+  </CodeGroupItem>
+</CodeGroup>
+
+Then follow the prompts! There are several starting templates to pick from:
+
+|  Javascript  |  Typescript  |
+| :----------: | :----------: |
+| `vanilla-js` | `vanilla-ts` |
+|   `vue-js`   |   `vue-ts`   |
+|  `react-js`  |  `react-ts`  |
+
+> Want more starter kits? Feel free to open a PR!
+
+See [Manual Project Setup](/guide/manual-installation.md) for more details on how to setup a project without using a starter kit.

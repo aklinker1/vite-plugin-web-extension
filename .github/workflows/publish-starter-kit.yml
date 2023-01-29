@@ -1,0 +1,90 @@
+name: Publish Starter Kit
+on:
+  workflow_dispatch:
+    inputs:
+      nextVersion:
+        type: choice
+        default: patch
+        required: true
+        description: Arguement passing into "pnpm version".
+        options:
+          - major
+          - minor
+          - patch
+
+jobs:
+  validate-templates:
+    name: Validate Templates
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install Node 14
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+
+      - name: Cache .pnpm-store
+        uses: actions/cache@v1
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-node14-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install pnpm
+        run: curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@6
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+  publish:
+    name: Publish
+    runs-on: ubuntu-20.04
+    needs: [validate-templates]
+    steps:
+      - name: Install Node 14
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Cache .pnpm-store
+        uses: actions/cache@v1
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-node14-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install pnpm
+        run: curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@6
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Bump Version & Push
+        working-directory: packages/create-vite-plugin-web-extension
+        run: |
+          pnpm version ${{ inputs.nextVersion }}
+
+      - name: Commit Version
+        working-directory: packages/create-vite-plugin-web-extension
+        run: |
+          git config --global user.email "changelog.action@github.com"
+          git config --global user.name "Changelog Action"
+          git add package.json
+          VERSION=$(node -p -e 'require("./package.json").version')
+          git commit -m "chore(release): starter-kit-v$VERSION"
+          git push
+
+      - name: Create Tag
+        working-directory: packages/create-vite-plugin-web-extension
+        run: |
+          VERSION=$(node -p -e 'require("./package.json").version')
+          git tag "starter-kit-v$VERSION"
+          git push --tags
+
+      - name: Publish to NPM
+        working-directory: packages/create-vite-plugin-web-extension
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
+          pnpm publish

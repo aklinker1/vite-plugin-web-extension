@@ -19,16 +19,16 @@ export default defineUserConfig({
       },
       "/reference/plugin-options.md",
       {
-        text: "v2",
+        text: "v1",
         children: [
           {
             text: "v1 Docs",
-            link: "https://v1.vite-plugin-web-extension.aklinker1.io",
-            target: "_blank",
+            link: "/",
           },
           {
-            text: "v2 Docs",
-            link: "/",
+            text: "v2-alpha Docs",
+            link: "https://v2.vite-plugin-web-extension.aklinker1.io",
+            target: "_blank",
           },
         ],
       },
@@ -41,6 +41,7 @@ export default defineUserConfig({
             "/",
             "/guide/installation.md",
             "/guide/configuration.md",
+            "/guide/manual-installation.md",
             "/guide/migration.md",
           ],
         },
