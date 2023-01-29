@@ -210,7 +210,7 @@ export function getViteConfigsForInputs(options: {
     simplifyEntriesList([
       manifest.background?.service_worker,
       manifest.background?.scripts,
-      ...manifest.content_scripts?.map(
+      manifest.content_scripts?.flatMap(
         (cs: browser.Manifest.ContentScript) => cs.js
       ),
       scriptAdditionalInputs,
@@ -223,7 +223,7 @@ export function getViteConfigsForInputs(options: {
   // Other Types
   compact(
     simplifyEntriesList([
-      ...manifest.content_scripts?.map(
+      manifest.content_scripts?.flatMap(
         (cs: browser.Manifest.ContentScript) => cs.css
       ),
       otherAdditionalInputs,

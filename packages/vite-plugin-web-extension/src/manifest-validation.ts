@@ -79,6 +79,8 @@ export function createManifestValidator(options: {
       return;
     }
 
-    logger.error("Manifest is not valid:", JSON.stringify(ajv.errors, null, 2));
+    throw Error(
+      `Manifest is not valid: ${JSON.stringify(ajv.errors, null, 2)}`
+    );
   };
 }
