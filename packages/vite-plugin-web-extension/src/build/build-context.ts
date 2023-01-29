@@ -6,7 +6,6 @@ import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { BuildMode } from "./BuildMode";
 import {
   DISABLE_DEV_PLUGIN_NAME,
-  HMR_PLUGIN_NAME,
   MANIFEST_LOADER_PLUGIN_NAME,
 } from "../utils/constants";
 import { colorizeFilename } from "../utils/filenames";
@@ -90,13 +89,16 @@ export function createBuildContext({
       publicDir: false,
       // Don't empty the outDir, this is handled in the parent, manifest build process
       build: { emptyOutDir: false },
+      // Don't discover any vite.config.ts files in the root, all relevant config is already
+      // passed down. Allowing discovery can cause a infinite loop where the plugins are applied
+      // over and over again. See <https://github.com/aklinker1/vite-plugin-web-extension/issues/56>
+      configFile: false,
       plugins: [
         // Print a message before starting each step
         labeledStepPlugin({
           logger,
           total: totalEntries,
           index: buildOrderIndex,
-          mode,
         }),
         // ...(mode === BuildMode.WATCH ? [multibuildManager.plugin()] : []),
         multibuildManager.plugin(),

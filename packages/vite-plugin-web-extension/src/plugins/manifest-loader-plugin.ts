@@ -59,7 +59,7 @@ export function manifestLoaderPlugin(options: InternalPluginOptions): Plugin {
    * Set the build mode based on how vite was ran/configured.
    */
   function configureBuildMode(config: UserConfig, env: ConfigEnv) {
-    if (env.command === "serve") {
+    if (process.env.HTML_HMR) {
       logger.verbose("Dev mode");
       mode = BuildMode.DEV;
     } else if (config.build?.watch) {
