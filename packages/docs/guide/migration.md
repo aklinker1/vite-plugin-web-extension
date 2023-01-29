@@ -5,7 +5,7 @@ title: Migrate from v1
 
 # Migrate from v1
 
-There have been several breaking changes in the upgrade to v2. Most of these changes are to simplify the configuration and reply more on standards provided by Vite rather than using custom options.
+There have been several breaking changes in the upgrade to v2. Most of these changes are to simplify the configuration and rely more on standards provided by Vite rather than using custom options.
 
 [[toc]]
 
