@@ -4,7 +4,6 @@ import { Logger } from "../utils/logger";
 import { getInputAbsPaths, getRootDir } from "../utils/paths";
 import path from "node:path";
 import { colorizeFilename } from "../utils/filenames";
-import { BuildMode } from "../build/BuildMode";
 
 /**
  * A plugin that prints the inputs that will be built.
@@ -13,9 +12,8 @@ export function labeledStepPlugin(options: {
   logger: Logger;
   total: number;
   index: number;
-  mode: BuildMode;
 }): PluginOption {
-  const { logger, total, index, mode } = options;
+  const { logger, total, index } = options;
   let finalConfig: UserConfig;
   let rootDir: string;
   let buildCount = 0;

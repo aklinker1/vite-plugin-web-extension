@@ -23,8 +23,7 @@ export default function webExtension(
       process.env.CI === "true" || process.env.DISABLE_COLORS === "true", // TODO: document env var
   };
 
-  // return manifestLoaderPlugin(internalOptions);
-  return [manifestLoaderPlugin(internalOptions)];
+  return manifestLoaderPlugin(internalOptions);
 }
 
 /**
