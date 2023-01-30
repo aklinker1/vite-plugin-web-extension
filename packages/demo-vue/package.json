@@ -3,15 +3,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "HTML_HMR=true pnpm start",
-    "dev:firefox": "HTML_HMR=true pnpm start",
-    "start": "pnpm i && vite build --watch",
-    "start:firefox": "pnpm i && TARGET=firefox vite build --watch",
+    "dev": "pnpm i && pnpm vite",
+    "dev:firefox": "pnpm i && pnpm TARGET=firefox vite",
     "build": "pnpm i && tsc && vite build",
-    "build:firefox": "pnpm i && tsc && TARGET=firefox vite build",
-    "build:watch": "pnpm build --watch",
-    "build:watch:firefox": "pnpm build:firefox --watch",
-    "validate": "web-ext lint -s dist"
+    "build:firefox": "pnpm i && tsc && TARGET=firefox vite build"
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8"

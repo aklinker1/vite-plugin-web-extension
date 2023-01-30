@@ -12,10 +12,12 @@ import uniqBy from "lodash.uniqby";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
 import { bundleTrackerPlugin } from "../plugins/bundle-tracker-plugin";
 import { getViteConfigsForInputs } from "./getViteConfigsForInputs";
+import { hmrRewritePlugin } from "../plugins/hmr-rewrite-plugin";
 
 interface RebuildOptions {
   paths: ProjectPaths;
   userConfig: vite.UserConfig;
+  resolvedConfig: vite.ResolvedConfig;
   manifest: any;
   mode: BuildMode;
   onSuccess?: () => Promise<void> | void;
@@ -51,6 +53,7 @@ export function createBuildContext({
   async function getBuildConfigs({
     paths,
     userConfig,
+    resolvedConfig,
     manifest,
     onSuccess,
     mode,
@@ -83,8 +86,15 @@ export function createBuildContext({
       // over and over again. See <https://github.com/aklinker1/vite-plugin-web-extension/issues/56>
       configFile: false,
       plugins: [
-        labeledStepPlugin(logger, totalEntries, buildOrderIndex),
+        labeledStepPlugin(logger, totalEntries, buildOrderIndex, paths),
         multibuildManager.plugin(),
+        hmrRewritePlugin({
+          server: resolvedConfig.server,
+          hmr:
+            typeof resolvedConfig.server.hmr === "object"
+              ? resolvedConfig.server.hmr
+              : undefined,
+        }),
       ],
     });
     const finalConfigPromises = entryConfigs.all

@@ -19,6 +19,7 @@ import * as rollup from "rollup";
 import type browser from "webextension-polyfill";
 import { createWebExtRunner, ExtensionRunner } from "../extension-runner";
 import { createManifestValidator } from "../manifest-validation";
+import { ContentSecurityPolicy } from "../csp";
 
 /**
  * This plugin composes multiple Vite builds together into a single Vite build by calling the
@@ -44,7 +45,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
    * Set the build mode based on how vite was ran/configured.
    */
   function configureBuildMode(config: vite.UserConfig, env: vite.ConfigEnv) {
-    if (process.env.HTML_HMR) {
+    if (env.command === "serve") {
       logger.verbose("Dev mode");
       mode = BuildMode.DEV;
     } else if (config.build?.watch) {
@@ -170,7 +171,23 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       if (cs.js?.length === 0) delete cs.js;
     });
 
+    // Add permissions and CSP for the dev server
+    if (mode === BuildMode.DEV) {
+      applyDevServerCsp(manifest);
+    }
+
     return manifest;
+  }
+
+  async function openBrowser() {
+    logger.log("\nOpening browser...");
+    extensionRunner = createWebExtRunner({
+      pluginOptions: options,
+      paths,
+      logger,
+    });
+    await extensionRunner.openBrowser();
+    logger.log("Done!");
   }
 
   return {
@@ -229,6 +246,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       await ctx.rebuild({
         paths,
         userConfig,
+        resolvedConfig,
         manifest: manifestWithInputs,
         mode,
         onSuccess: async () => {
@@ -244,14 +262,31 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       if (!options.skipManifestValidation) {
         await validateManifest(finalManifest);
       }
-      this.emitFile({
-        type: "asset",
-        source: JSON.stringify(finalManifest),
-        fileName: "manifest.json",
-        name: "manifest.json",
-      });
+      if (mode !== BuildMode.DEV) {
+        this.emitFile({
+          type: "asset",
+          source: JSON.stringify(finalManifest),
+          fileName: "manifest.json",
+          name: "manifest.json",
+        });
+      } else {
+        logger.log(
+          "\nWriting \x1b[95mmanifest.json\x1b[0m before starting dev server..."
+        );
+        await fs.writeFile(
+          path.resolve(paths.outDir, "manifest.json"),
+          JSON.stringify(finalManifest),
+          "utf8"
+        );
+      }
 
       await copyPublicDirToOutDir({ mode, paths });
+
+      // In dev mode, open up the browser immediately after the build context is finished with the
+      // first build.
+      if (mode === BuildMode.DEV) {
+        await openBrowser();
+      }
     },
 
     // Runs during: build, dev, watch
@@ -271,17 +306,11 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
 
     // Runs during: build, watch
     async closeBundle() {
-      if (isError || mode === BuildMode.BUILD || options.disableAutoLaunch)
+      if (isError || mode === BuildMode.BUILD || options.disableAutoLaunch) {
         return;
+      }
 
-      logger.log("\nOpening browser...");
-      extensionRunner = createWebExtRunner({
-        pluginOptions: options,
-        paths,
-        logger,
-      });
-      await extensionRunner.openBrowser();
-      logger.log("Done!");
+      await openBrowser();
     },
 
     // Runs during: build, watch
@@ -320,4 +349,24 @@ async function copyPublicDirToOutDir({
   }
 
   await fs.copy(paths.publicDir, paths.outDir);
+}
+
+async function applyDevServerCsp(manifest: Manifest) {
+  manifest.permissions.push("http://localhost/*");
+
+  const csp = new ContentSecurityPolicy(
+    manifest.manifest_version === 3
+      ? manifest.content_security_policy?.extension_pages ??
+        "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';" // default CSP for MV3
+      : manifest.content_security_policy ??
+        "script-src 'self'; object-src 'self';" // default CSP for MV2
+  );
+  csp.add("script-src", "http://localhost:*", "http://127.0.0.1:*");
+
+  if (manifest.manifest_version === 3) {
+    manifest.content_security_policy ??= {};
+    manifest.content_security_policy.extension_pages = csp.toString();
+  } else {
+    manifest.content_security_policy = csp.toString();
+  }
 }
