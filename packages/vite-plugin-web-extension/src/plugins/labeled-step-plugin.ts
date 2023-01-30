@@ -3,6 +3,7 @@ import { LABELED_STEP_PLUGIN_NAME } from "../constants";
 import { Logger } from "../logger";
 import { getInputAbsPaths, getRootDir, colorizeFilename } from "../utils";
 import path from "node:path";
+import { ProjectPaths } from "../options";
 
 /**
  * This plugin is in charge of logging all the steps (but not the summary).
@@ -10,10 +11,10 @@ import path from "node:path";
 export function labeledStepPlugin(
   logger: Logger,
   total: number,
-  index: number
+  index: number,
+  paths: ProjectPaths
 ): vite.Plugin {
   let finalConfig: vite.ResolvedConfig;
-  let rootDir: string;
   let buildCount = 0;
 
   function printFirstBuild() {
@@ -29,7 +30,7 @@ export function labeledStepPlugin(
     const absPaths = getInputAbsPaths(input);
     logger.log(
       `Building ${absPaths
-        .map((p) => path.relative(rootDir, p))
+        .map((p) => path.relative(paths.rootDir, p))
         .map(colorizeFilename)
         .join(", ")} ${progressLabel}`
     );
@@ -45,7 +46,7 @@ export function labeledStepPlugin(
     const absPaths = getInputAbsPaths(input);
     logger.log(
       `Rebuilding ${absPaths
-        .map((p) => path.relative(rootDir, p))
+        .map((p) => path.relative(paths.rootDir, p))
         .map(colorizeFilename)
         .join(", ")}`
     );
@@ -55,7 +56,6 @@ export function labeledStepPlugin(
     name: LABELED_STEP_PLUGIN_NAME,
     configResolved(config) {
       finalConfig = config;
-      rootDir = getRootDir(finalConfig);
       if (buildCount == 0) printFirstBuild();
       else printRebuilds();
 
