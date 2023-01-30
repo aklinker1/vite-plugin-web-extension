@@ -182,28 +182,25 @@ export function getViteConfigsForInputs(options: {
   } = separateAdditionalInputs(additionalInputs);
 
   // HTML Pages
-  configs.html = getHtmlConfig(
-    simplifyEntriesList([
-      manifest.action?.default_popup,
-      manifest.devtools_page,
-      manifest.options_page,
-      manifest.options_ui?.page,
-      manifest.browser_action?.default_popup,
-      manifest.page_action?.default_popup,
-      manifest.sidebar_action?.default_panel,
-      manifest.background?.page,
-      manifest.chrome_url_overrides?.bookmarks,
-      manifest.chrome_url_overrides?.history,
-      manifest.chrome_url_overrides?.newtab,
-      manifest.chrome_settings_overrides?.homepage,
-      htmlAdditionalInputs,
-    ])
-  );
+  const htmlEntries = simplifyEntriesList([
+    manifest.action?.default_popup,
+    manifest.devtools_page,
+    manifest.options_page,
+    manifest.options_ui?.page,
+    manifest.browser_action?.default_popup,
+    manifest.page_action?.default_popup,
+    manifest.sidebar_action?.default_panel,
+    manifest.background?.page,
+    manifest.chrome_url_overrides?.bookmarks,
+    manifest.chrome_url_overrides?.history,
+    manifest.chrome_url_overrides?.newtab,
+    manifest.chrome_settings_overrides?.homepage,
+    htmlAdditionalInputs,
+  ]);
+  const sandboxEntries = simplifyEntriesList([manifest.sandbox?.pages]);
 
-  // Sandbox
-  configs.sandbox = getSandboxConfig(
-    simplifyEntriesList([manifest.sandbox?.pages])
-  );
+  configs.html = getHtmlConfig(htmlEntries);
+  configs.sandbox = getSandboxConfig(sandboxEntries);
 
   // Scripts
   compact(
