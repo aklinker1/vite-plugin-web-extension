@@ -5,13 +5,8 @@
   "scripts": {
     "dev": "pnpm i && pnpm vite",
     "dev:firefox": "pnpm i && pnpm TARGET=firefox vite",
-    "start": "pnpm i && vite build --watch",
-    "start:firefox": "pnpm i && TARGET=firefox vite build --watch",
     "build": "pnpm i && tsc && vite build",
-    "build:firefox": "pnpm i && tsc && TARGET=firefox vite build",
-    "build:watch": "pnpm build --watch",
-    "build:watch:firefox": "pnpm build:firefox --watch",
-    "validate": "web-ext lint -s dist"
+    "build:firefox": "pnpm i && tsc && TARGET=firefox vite build"
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8"
