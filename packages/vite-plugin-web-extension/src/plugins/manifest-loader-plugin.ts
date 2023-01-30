@@ -173,23 +173,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
 
     // Add permissions and CSP for the dev server
     if (mode === BuildMode.DEV) {
-      manifest.permissions.push("http://localhost/*");
-
-      const csp = new ContentSecurityPolicy(
-        manifest.manifest_version === 3
-          ? manifest.content_security_policy?.extension_pages ??
-            "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';" // default CSP for MV3
-          : manifest.content_security_policy ??
-            "script-src 'self'; object-src 'self';" // default CSP for MV2
-      );
-      csp.add("script-src", "http://localhost:*", "http://127.0.0.1:*");
-
-      if (manifest.manifest_version === 3) {
-        manifest.content_security_policy ??= {};
-        manifest.content_security_policy.extension_pages = csp.toString();
-      } else {
-        manifest.content_security_policy = csp.toString();
-      }
+      applyDevServerCsp(manifest);
     }
 
     return manifest;
@@ -365,4 +349,24 @@ async function copyPublicDirToOutDir({
   }
 
   await fs.copy(paths.publicDir, paths.outDir);
+}
+
+async function applyDevServerCsp(manifest: Manifest) {
+  manifest.permissions.push("http://localhost/*");
+
+  const csp = new ContentSecurityPolicy(
+    manifest.manifest_version === 3
+      ? manifest.content_security_policy?.extension_pages ??
+        "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';" // default CSP for MV3
+      : manifest.content_security_policy ??
+        "script-src 'self'; object-src 'self';" // default CSP for MV2
+  );
+  csp.add("script-src", "http://localhost:*", "http://127.0.0.1:*");
+
+  if (manifest.manifest_version === 3) {
+    manifest.content_security_policy ??= {};
+    manifest.content_security_policy.extension_pages = csp.toString();
+  } else {
+    manifest.content_security_policy = csp.toString();
+  }
 }
