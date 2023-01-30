@@ -50,7 +50,6 @@ export async function loadConfig({
   for (const [file, parsers] of Object.entries(files)) {
     parsersLoop: for (const parser of parsers) {
       try {
-        console.log(file);
         const layer: ConfigLayer = { file, config: {} };
         const text = await fs.readFile(file, "utf-8");
         layer.config = parser.parse(text);
