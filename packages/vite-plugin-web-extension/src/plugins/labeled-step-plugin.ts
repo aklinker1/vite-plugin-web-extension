@@ -1,7 +1,7 @@
 import * as vite from "vite";
 import { LABELED_STEP_PLUGIN_NAME } from "../constants";
 import { Logger } from "../logger";
-import { getInputAbsPaths, getRootDir, colorizeFilename } from "../utils";
+import { getInputAbsPaths, colorizeFilename } from "../utils";
 import path from "node:path";
 import { ProjectPaths } from "../options";
 
