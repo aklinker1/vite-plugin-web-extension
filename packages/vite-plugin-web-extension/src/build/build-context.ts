@@ -89,7 +89,6 @@ export function createBuildContext({
         labeledStepPlugin(logger, totalEntries, buildOrderIndex, paths),
         multibuildManager.plugin(),
         hmrRewritePlugin({
-          logger,
           server: resolvedConfig.server,
           hmr:
             typeof resolvedConfig.server.hmr === "object"

@@ -45,7 +45,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
    * Set the build mode based on how vite was ran/configured.
    */
   function configureBuildMode(config: vite.UserConfig, env: vite.ConfigEnv) {
-    if (process.env.HTML_HMR) {
+    if (env.command === "serve") {
       logger.verbose("Dev mode");
       mode = BuildMode.DEV;
     } else if (config.build?.watch) {
@@ -262,6 +262,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       await ctx.rebuild({
         paths,
         userConfig,
+        resolvedConfig,
         manifest: manifestWithInputs,
         mode,
         onSuccess: async () => {

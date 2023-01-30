@@ -9,10 +9,8 @@ import {
   ServerOptions,
 } from "vite";
 import { HMR_REWRITE_PLUGIN_NAME } from "../constants";
-import { Logger } from "../logger";
 
 export function hmrRewritePlugin(config: {
-  logger: Logger;
   /**
    * The resolved config.server options for the dev server vite build
    */
@@ -22,7 +20,7 @@ export function hmrRewritePlugin(config: {
    */
   hmr: HmrOptions | undefined;
 }): Plugin {
-  const { logger, hmr, server } = config;
+  const { hmr, server } = config;
   let inputIds: string[] = [];
 
   // Coped from node_modules/vite, do a global search for: vite:client-inject
@@ -39,7 +37,6 @@ export function hmrRewritePlugin(config: {
 
   return {
     name: HMR_REWRITE_PLUGIN_NAME,
-    apply: "serve",
 
     config(config) {
       inputIds = Object.values(config.build?.rollupOptions?.input ?? {});
