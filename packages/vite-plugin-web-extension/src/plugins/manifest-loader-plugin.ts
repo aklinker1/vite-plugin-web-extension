@@ -196,7 +196,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
     // Runs during: Build, dev, watch
     async config(config, env) {
       if (options.browser != null) {
-        logger.log(`Building for browser: ${options.browser}`);
+        logger.verbose(`Building for browser: ${options.browser}`);
       }
       configureBuildMode(config, env);
       userConfig = config;
