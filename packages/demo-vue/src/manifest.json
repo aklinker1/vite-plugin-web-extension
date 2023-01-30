@@ -1,5 +1,6 @@
 {
-  "manifest_version": 2,
+  "{{chrome}}.manifest_version": 3,
+  "{{firefox}}.manifest_version": 2,
   "name": "Test Vue",
   "version": "1.0.0",
   "description": "Test Vite Plugin Extension with Vue",
@@ -8,7 +9,10 @@
     "48": "icon/48.png",
     "128": "icon/128.png"
   },
-  "browser_action": {
+  "{{chrome}}.action": {
+    "default_popup": "popup/index.html"
+  },
+  "{{firefox}}.browser_action": {
     "default_popup": "popup/index.html"
   },
   "content_scripts": [
