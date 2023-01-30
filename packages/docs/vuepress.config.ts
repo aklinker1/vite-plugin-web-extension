@@ -51,7 +51,7 @@ export default defineUserConfig({
         },
         {
           text: "Help",
-          children: ["/guide/manual-setup.md", "/guide/migration.md"],
+          children: ["/guide/manual-setup.md", "/guide/migration-v2.md"],
         },
       ],
       "/config/": ["/config/index.md"],
