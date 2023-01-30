@@ -46,6 +46,7 @@ export default defineUserConfig({
             "/guide/building-for-production.md",
             "/guide/supporting-multiple-browsers.md",
             "/guide/frontend-frameworks.md",
+            "/guide/configure-browser-startup.md",
           ],
         },
         {

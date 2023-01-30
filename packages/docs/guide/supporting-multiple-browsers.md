@@ -7,6 +7,15 @@ title: Support Multiple Browsers
 
 vite-plugin-browser-extension doesn't have any special logic for supporting multiple browsers. Instead, it provides a why to create multiple "flavors" of your application depending on which browser you're building for.
 
+To use standardized web extension APIs (`chrome` vs `browser`), you should consider using `webextension-polyfill`. Whenever you need to call an API, just import the library and use it instead of `chrome`. No global setup or anything, just import it and use it wherever.
+
+```ts:no-line-numbers
+// Works on Chrome, Edge, Firefox, Safari... every browser
+import browser from 'webextension-polyfill';
+
+browser.runtime.getURL("/popup.html");
+```
+
 ## Manifest Template
 
 A common pattern is to support both Chrome and Firefox for an extension. However, Chrome pretty much requires you to use MV3, which firefox doesn't support MV3 in production yet.
