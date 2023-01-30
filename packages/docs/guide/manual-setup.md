@@ -55,8 +55,9 @@ import webExtension from "vite-plugin-web-extension";
 import path from "node:path";
 
 export default defineConfig({
-  // Setting the root to src will remove the `src` directory from the output paths (`dist/popup.html` instead of `dist/src/popup.html`).
-  // This effects the final URL pages and files are accessible from.
+  // Setting the root is options. In this case, setting it to src will remove the `src` directory
+  // from the output paths (`dist/popup.html` instead of `dist/src/popup.html`). This directly
+  // effects the final URL pages and files are accessible from.
   root: "src",
   build: {
     outDir: path.resolve(__dirname, "dist"),
@@ -69,7 +70,7 @@ export default defineConfig({
 
 > You don't need to specify a `root` if you don't want to.
 
-By default, `vite-plugin-web-extension` will look for `<root>/manifest.json`.
+By default, `vite-plugin-web-extension` will look for your manifest at `<root>/manifest.json`.
 
 In your `manifest.json`, all paths should also be relative to your Vite `root`, and point to the source code files.
 
@@ -78,22 +79,25 @@ In your `manifest.json`, all paths should also be relative to your Vite `root`, 
 {
   "name": "Example",
   "version": "1.0.0",
-  "manifest_version": "2",
+  "manifest_version": 3,
   "icons": {
     "16": "icon-16.png",
     "48": "icon-48.png",
     "128": "icon-128.png"
   },
-  "browser_action": {
+  "action": {
     "default_icon": "icon-128.png",
     "default_popup": "popup.html"
   },
   "background": {
-    "scripts": "background.ts"
+    "service_worker": "background.ts"
   }
 }
 ```
 
-> Files in `public/` directory don't need to be relative to Vite's root. See [Vite's docs](https://vitejs.dev/guide/assets.html#the-public-directory) for more details.
+A couple things to point out:
+
+1. Our icons in our `public` folder are not referenced as `public/icon-*.png`, just as `icon-*.png`. This is because the public directory is special - all the files in it are copied directly into the output directory. See [Vite's docs](https://vitejs.dev/guide/assets.html#the-public-directory) for more details.
+2. We're listing a typescript file for the background, which the browser won't like since none support TS. However, this is listing our inputs that Vite will build, so when the final manifest is written to the output directory, the extension will be changed to `.js` for you.
 
 And we're done! Run `vite build` and you should see a fully compiled and working browser extension in your `dist/` directory!

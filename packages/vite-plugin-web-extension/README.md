@@ -1,6 +1,18 @@
-<h1 align="center">Vite Plugin Web Extension</h1>
+![Vite Plugin Web Extension](../../.github/assets/social-banner.png)
 
-<p align="center">A simple but powerful <a href="https://vitejs.dev/">Vite</a> plugin for developing browser extensions</p>
+To get started quickly, bootstrap a new project!
+
+```bash
+pnpm create vite-plugin-web-extension
+npm create vite-plugin-web-extension
+yarn create vite-plugin-web-extension
+```
+
+Or install it as a dependency and add it to your `vite.config.ts`.
+
+```bash
+pnpm i -D vite-plugin-web-extension
+```
 
 ```ts
 // vite.config.ts
@@ -11,23 +23,19 @@ export default defineConfig({
 });
 ```
 
-```bash
-npm i -D vite-plugin-web-extension
-```
-
 ## Features
 
-- :wrench: Automatically build inputs from in your `manifest.json`
-- :tada: Automatically open a browser and install the extension during development
-- :zap: Super fast dev mode that automatically reloads your extension
+- :wrench: Automatically build inputs listed in your `manifest.json`
+- :tada: Open a browser and install the extension during development
+- :zap: Super fast dev mode
 - :globe_with_meridians: Supports all browsers
-- :fire: Frontend frameworks for the popup, options page, _**and content scripts**_!
+- :fire: Full frontend framework support (popup, options, and content scripts)
 - :robot: Typescript support out of the box!
 - :white_check_mark: Manifest validation
 
 ## Documentation
 
-To get started or learn more, checkout the docs:
+To get started, checkout the docs:
 
 <https://vite-plugin-web-extension.aklinker1.io>
 
