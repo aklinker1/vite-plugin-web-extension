@@ -1,10 +1,10 @@
-import { cosmiconfig } from "cosmiconfig";
-import { inspect } from "node:util";
 import { ProjectPaths, ResolvedOptions } from "../options";
 import { Logger } from "../logger";
 import { ExtensionRunner } from "./interface";
 import * as webExtLogger from "web-ext/util/logger";
 import webExt, { WebExtRunInstance } from "web-ext";
+import { inspect } from "node:util";
+import { loadConfig as loadFsConfig } from "../config";
 
 /**
  * Create an implementation of the `ExtensionRunner` interface that uses `web-ext` to run the
@@ -25,7 +25,8 @@ export function createWebExtRunner(
         if (level >= WARN_LOG_LEVEL) logger.warn(msg);
       };
 
-      const config = await loadConfig({ logger, paths });
+      const config = await loadConfig({ pluginOptions, logger, paths });
+      logger.verbose("web-ext config:" + inspect(config));
       const target =
         pluginOptions.browser === null || pluginOptions.browser === "firefox"
           ? null
@@ -71,40 +72,20 @@ export interface WebExtRunnerOptions {
 }
 
 async function loadConfig({
-  logger,
+  pluginOptions,
   paths,
+  logger,
 }: {
-  logger: Logger;
+  pluginOptions: ResolvedOptions;
   paths: ProjectPaths;
+  logger: Logger;
 }): Promise<any> {
-  const userConfig = await cosmiconfig("web-ext", {
-    packageProp: "webExt",
-    searchPlaces: [
-      // Cosmiconfig Defaults
-      "package.json",
-      ".web-extrc",
-      ".web-extrc.json",
-      ".web-extrc.yaml",
-      ".web-extrc.yml",
-      ".web-extrc.js",
-      ".web-extrc.cjs",
-      "web-ext.config.js",
-      "web-ext.config.cjs",
-      // web-ext equivalents:
-      // https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/#automatic-discovery-of-configuration-files
-      "web-ext-config.js",
-      "web-ext-config.cjs",
-      ".web-ext-config.js",
-      ".web-ext-config.cjs",
-    ],
-  }).search(paths.rootDir);
+  const res = await loadFsConfig({
+    overrides: pluginOptions.webExtConfig,
+    paths,
+    logger,
+  });
 
-  if (userConfig != null) {
-    logger.verbose(`web-ext config discovered at ${userConfig.filepath}:`);
-    logger.verbose(inspect(userConfig.config));
-  } else {
-    logger.verbose(`No web-ext config discovered`);
-  }
-
-  return userConfig?.config;
+  logger.verbose("Config result: " + inspect(res, undefined, 3));
+  return res.config;
 }

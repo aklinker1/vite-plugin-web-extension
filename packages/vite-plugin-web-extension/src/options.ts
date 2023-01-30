@@ -69,6 +69,12 @@ export interface UserOptions {
    * worker, content scripts, etc)
    */
   scriptViteConfig?: vite.InlineConfig;
+
+  /**
+   * Optional startup configuration for web-ext. For list of options, see
+   * <https://github.com/mozilla/web-ext/blob/666886f40a967b515d43cf38fc9aec67ad744d89/src/program.js#L559>.
+   */
+  webExtConfig?: any;
 }
 
 /**
@@ -86,6 +92,7 @@ export interface ResolvedOptions {
   scriptViteConfig?: vite.InlineConfig;
   verbose: boolean;
   disableColors: boolean;
+  webExtConfig?: any;
 }
 
 /**
