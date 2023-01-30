@@ -22,7 +22,7 @@ export default defineUserConfig({
         link: "/config/index.md",
       },
       {
-        text: "v2-rc1",
+        text: "v2-rc2",
         children: [
           {
             text: "v1 Docs",
@@ -30,7 +30,7 @@ export default defineUserConfig({
             target: "_blank",
           },
           {
-            text: "v2-rc1 Docs",
+            text: "v2-rc2 Docs",
             link: "https://v2.vite-plugin-web-extension.aklinker1.io",
           },
         ],
