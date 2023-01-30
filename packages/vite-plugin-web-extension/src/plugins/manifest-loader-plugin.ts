@@ -352,6 +352,7 @@ async function copyPublicDirToOutDir({
 }
 
 async function applyDevServerCsp(manifest: Manifest) {
+  manifest.permissions ??= [];
   manifest.permissions.push("http://localhost/*");
 
   const csp = new ContentSecurityPolicy(
