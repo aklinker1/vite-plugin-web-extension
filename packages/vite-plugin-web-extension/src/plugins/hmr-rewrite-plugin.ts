@@ -39,6 +39,8 @@ export function hmrRewritePlugin(config: {
 
   return {
     name: HMR_REWRITE_PLUGIN_NAME,
+    apply: "serve",
+
     config(config) {
       inputIds = Object.values(config.build?.rollupOptions?.input ?? {});
 
