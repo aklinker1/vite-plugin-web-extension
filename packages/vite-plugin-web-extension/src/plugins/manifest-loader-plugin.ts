@@ -236,7 +236,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       }
 
       // Add watch files that trigger a full rebuild
-      options.watchFilePaths.forEach(this.addWatchFile);
+      options.watchFilePaths.forEach((file) => this.addWatchFile(file));
       if (typeof options.manifest === "string") {
         this.addWatchFile(path.resolve(paths.rootDir, options.manifest));
       }
