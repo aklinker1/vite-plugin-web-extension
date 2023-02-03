@@ -87,22 +87,33 @@ export function hmrRewritePlugin(config: {
 
       // Load scripts from dev server
       const { document } = parseHTML(code);
-      document.querySelectorAll("script[type=module]").forEach((script) => {
-        const src = script.getAttribute("src");
-        if (!src) return;
-        const before = script.outerHTML;
 
-        if (path.isAbsolute(src)) {
-          return script.setAttribute("src", baseUrl + src);
-        } else {
-          const abs = path.resolve(path.dirname(id), src);
-          const pathname = path.relative(paths.rootDir, abs);
-          script.setAttribute("src", `${baseUrl}/${pathname}`);
-        }
+      const pointToDevServer = (querySelector: string, attr: string): void => {
+        document.querySelectorAll(querySelector).forEach((element) => {
+          const src = element.getAttribute(attr);
+          if (!src) return;
 
-        const after = script.outerHTML;
-        logger.verbose("Transformed script: " + inspect({ before, after }));
-      });
+          const before = element.outerHTML;
+
+          if (path.isAbsolute(src)) {
+            element.setAttribute(attr, baseUrl + src);
+          } else if (src.startsWith(".")) {
+            const abs = path.resolve(path.dirname(id), src);
+            const pathname = path.relative(paths.rootDir, abs);
+            element.setAttribute(attr, `${baseUrl}/${pathname}`);
+          }
+
+          const after = element.outerHTML;
+          if (before !== after) {
+            logger.verbose(
+              "Transformed for dev mode: " + inspect({ before, after })
+            );
+          }
+        });
+      };
+
+      pointToDevServer("script[type=module]", "src");
+      pointToDevServer("link[rel=stylesheet]", "href");
 
       // Add vite client to page
       const clientScript = document.createElement("script");

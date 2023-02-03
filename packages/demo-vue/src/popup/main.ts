@@ -1,3 +1,5 @@
+/* JS files and framework components are HMR-ed */
+
 import { createApp } from "vue";
 import Popup from "./Popup.vue";
 
