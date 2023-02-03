@@ -108,15 +108,21 @@ export function getViteConfigsForInputs(options: {
             entryFileNames: `[name].js`,
             chunkFileNames: `[name].js`,
             /**
-             * [name] for assetFileNames is just the filename, not the whole path. So if you
+             * [name] for assetFileNames is either the filename or whole path. So if you
              * have two `index.html` files in different directories, they would overwrite each
              * other as `dist/index.css`.
              *
              * See [#47](https://github.com/aklinker1/vite-plugin-web-extension/issues/47) for
              * more details.
              */
-            assetFileNames: ({ name }) =>
-              `${trimExtension(name) ?? "[name]"}.[ext]`,
+            assetFileNames: ({ name }) => {
+              if (!name) return "[name].[ext]";
+
+              if (name && path.isAbsolute(name)) {
+                name = path.relative(paths.rootDir, name);
+              }
+              return `${trimExtension(name)}.[ext]`;
+            },
           },
         },
       },
