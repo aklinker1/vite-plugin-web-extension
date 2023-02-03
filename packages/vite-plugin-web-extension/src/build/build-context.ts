@@ -94,6 +94,8 @@ export function createBuildContext({
             typeof resolvedConfig.server.hmr === "object"
               ? resolvedConfig.server.hmr
               : undefined,
+          paths,
+          logger,
         }),
       ],
     });
