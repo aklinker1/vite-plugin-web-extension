@@ -3,6 +3,7 @@ import dns from "node:dns";
 import https from "node:https";
 import { inspect } from "node:util";
 import Ajv from "ajv";
+import { withTimeout } from "./utils";
 
 const SCHEMA_URL = new URL("https://json.schemastore.org/chrome-manifest");
 
@@ -27,7 +28,7 @@ export function createManifestValidator(options: {
   ajv.addFormat("mime-type", /.*/);
 
   function isOffline(): Promise<boolean> {
-    return new Promise((res) => {
+    const isOffline = new Promise<boolean>((res) => {
       dns.resolve(SCHEMA_URL.hostname, (err) => {
         if (err == null) {
           res(false);
@@ -38,6 +39,7 @@ export function createManifestValidator(options: {
         }
       });
     });
+    return withTimeout(isOffline, 1e3).catch(() => true);
   }
 
   async function loadSchema() {

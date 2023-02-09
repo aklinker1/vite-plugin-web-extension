@@ -117,9 +117,12 @@ export function getPublicDir(config: vite.ResolvedConfig): string | undefined {
 }
 
 // TODO: Test
-export function getInputAbsPaths(input: rollup.InputOption): string[] {
+export function getInputAbsPaths(
+  input: rollup.InputOption | vite.LibraryOptions
+): string[] {
   if (typeof input === "string") return [input];
   else if (Array.isArray(input)) return input;
+  else if ("entry" in input) return [input.entry];
   else return Object.values(input);
 }
 
@@ -177,4 +180,19 @@ export function resolveBrowserTagsInObject(
   } else {
     return object;
   }
+}
+
+export function withTimeout<T>(
+  promise: Promise<T>,
+  duration: number
+): Promise<T> {
+  return new Promise((res, rej) => {
+    const timeout = setTimeout(() => {
+      rej(`Promise timed out after ${duration}ms`);
+    }, duration);
+    promise
+      .then(res)
+      .catch(rej)
+      .finally(() => clearTimeout(timeout));
+  });
 }
