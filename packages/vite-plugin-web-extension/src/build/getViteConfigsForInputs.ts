@@ -161,6 +161,7 @@ export function getViteConfigsForInputs(options: {
             entryFileNames: `[name].js`,
             chunkFileNames: `[name].js`,
             assetFileNames: `${outputDir}[name].[ext]`,
+            format: "iife",
           },
         },
       },
