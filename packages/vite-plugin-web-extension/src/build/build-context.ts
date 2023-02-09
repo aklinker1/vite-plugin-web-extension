@@ -139,7 +139,7 @@ export function createBuildContext({
         );
       } else {
         lines.push(
-          `  ${i + 1}. Bunding ${relativePaths.length} entrpyoints together:`
+          `  ${i + 1}. Bunding ${relativePaths.length} entrypoints together:`
         );
         relativePaths.forEach((relativePath) =>
           lines.push(`    ${DIM}•${RESET} ${colorizeFilename(relativePath)}`)

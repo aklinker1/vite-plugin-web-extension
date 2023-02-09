@@ -718,7 +718,7 @@ exports[`Vite Plugin Web Extension > Manifest inputs > should auto-build and ren
 "vite v3.1.2 building for production...
 
 Build Steps
-  1. Bunding 2 entrpyoints together:
+  1. Bunding 2 entrypoints together:
     • page1.html
     • page2.html
 
