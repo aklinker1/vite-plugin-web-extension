@@ -125,11 +125,12 @@ export function createBuildContext({
 
     const lines = ["", `${BOLD}Build Steps${RESET}`];
     buildConfigs.forEach((config, i) => {
-      if (config.build?.rollupOptions?.input == null) return;
+      const input = config.build?.rollupOptions?.input ?? config.build?.lib;
+      if (!input) return;
 
-      const relativePaths = getInputAbsPaths(
-        config.build.rollupOptions.input
-      ).map((absPath) => path.relative(paths.rootDir, absPath));
+      const relativePaths = getInputAbsPaths(input).map((absPath) =>
+        path.relative(paths.rootDir, absPath)
+      );
 
       if (relativePaths.length === 1) {
         lines.push(

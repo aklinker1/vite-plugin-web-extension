@@ -145,24 +145,13 @@ export function getViteConfigsForInputs(options: {
      * "content-scripts/some-script/index" -> "content-scripts/some-script/"
      * "some-script" -> ""
      */
-    const outputDir = moduleId.includes("/")
-      ? path.dirname(moduleId) + "/"
-      : "";
     const inputConfig: vite.InlineConfig = {
       build: {
-        rollupOptions: {
-          input: {
-            [moduleId]: path.resolve(paths.rootDir, entry),
-          },
-          output: {
-            // Configure the output filenames so they appear in the same folder
-            // - content-scripts/some-script/index.js
-            // - content-scripts/some-script/index.css
-            entryFileNames: `[name].js`,
-            chunkFileNames: `[name].js`,
-            assetFileNames: `${outputDir}[name].[ext]`,
-            format: "umd",
-          },
+        lib: {
+          name: "_",
+          entry,
+          formats: ["iife"],
+          fileName: () => moduleId + ".js",
         },
       },
     };

@@ -21,8 +21,9 @@ export function labeledStepPlugin(
     logger.log("");
 
     const progressLabel = `(${index + 1}/${total})`;
-    const input = finalConfig.build?.rollupOptions?.input;
-    if (input == null) {
+    const input =
+      finalConfig.build?.rollupOptions?.input || finalConfig.build.lib;
+    if (!input) {
       logger.warn(`Building unknown config ${progressLabel}`);
       return;
     }
