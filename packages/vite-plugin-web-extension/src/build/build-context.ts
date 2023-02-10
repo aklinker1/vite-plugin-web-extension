@@ -127,7 +127,7 @@ export function createBuildContext({
         );
       } else {
         lines.push(
-          `  ${i + 1}. Bunding ${inputs.length} entrypoints together:`
+          `  ${i + 1}. Bundling ${inputs.length} entrypoints together:`
         );
         inputs.forEach((relativePath) =>
           lines.push(`    ${DIM}•${RESET} ${colorizeFilename(relativePath)}`)
@@ -171,8 +171,6 @@ export function createBuildContext({
 
       for (const config of buildConfigs) {
         const bundleTracker = bundleTrackerPlugin();
-        // config.plugins?.splice(3, 1);
-        console.log(config.plugins);
         (config.plugins ??= []).push(bundleTracker);
 
         const output = await vite.build(config);

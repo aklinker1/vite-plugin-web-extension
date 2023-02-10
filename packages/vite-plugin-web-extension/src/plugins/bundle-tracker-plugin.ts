@@ -19,11 +19,7 @@ export function bundleTrackerPlugin(): BundleTrackerPlugin {
     buildStart() {
       chunks = undefined;
     },
-    generateBundle(_, bundle) {
-      // console.log("GENERATE", _, Object.keys(bundle));
-    },
     writeBundle(_, bundle) {
-      // console.log("WRITE", _, Object.keys(bundle));
       chunks = Object.values(bundle).map((chunk) => chunk.fileName);
     },
     getChunks: () => chunks,

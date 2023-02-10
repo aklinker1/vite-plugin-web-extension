@@ -52,7 +52,6 @@ export function renderManifest(
  * were output.
  */
 function findReplacement(entry: string, bundles: BundleMap) {
-  console.log(bundles);
   const output = getOutputFile(entry);
   const generatedFiles = bundles[entry];
   if (generatedFiles == null)

@@ -171,9 +171,6 @@ export function getViteConfigsForInputs(options: {
           formats: ["iife"],
           fileName: () => moduleId + ".js",
         },
-        rollupOptions: {
-          input: [],
-        },
       },
     };
     return vite.mergeConfig(baseConfig, inputConfig);
