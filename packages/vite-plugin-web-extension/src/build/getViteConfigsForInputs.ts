@@ -75,7 +75,7 @@ export function getViteConfigsForInputs(options: {
   baseScriptViteConfig: vite.InlineConfig;
   baseOtherViteConfig: vite.InlineConfig;
 }): CombinedViteConfigs {
-  const { paths, additionalInputs, manifest } = options;
+  const { paths, additionalInputs, manifest, mode } = options;
   const configs = new CombinedViteConfigs();
 
   const processedInputs = new Set<string>();
@@ -147,6 +147,7 @@ export function getViteConfigsForInputs(options: {
      */
     const inputConfig: vite.InlineConfig = {
       build: {
+        watch: mode !== BuildMode.BUILD ? {} : undefined,
         lib: {
           name: "_",
           entry,
