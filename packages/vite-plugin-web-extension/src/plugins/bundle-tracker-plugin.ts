@@ -3,7 +3,7 @@ import * as vite from "vite";
 import { BUNDLE_TRACKER_PLUGIN_NAME } from "../constants";
 
 export interface BundleTrackerPlugin extends vite.Plugin {
-  getChunks(): Array<rollup.OutputChunk | rollup.OutputAsset> | undefined;
+  getChunks(): string[] | undefined;
 }
 
 /**
@@ -13,14 +13,18 @@ export interface BundleTrackerPlugin extends vite.Plugin {
  * return by this plugin are used to get the generated files.
  */
 export function bundleTrackerPlugin(): BundleTrackerPlugin {
-  let chunks: Array<rollup.OutputChunk | rollup.OutputAsset> | undefined;
+  let chunks: string[] | undefined;
   return {
     name: BUNDLE_TRACKER_PLUGIN_NAME,
     buildStart() {
       chunks = undefined;
     },
+    generateBundle(_, bundle) {
+      // console.log("GENERATE", _, Object.keys(bundle));
+    },
     writeBundle(_, bundle) {
-      chunks = Object.values(bundle);
+      // console.log("WRITE", _, Object.keys(bundle));
+      chunks = Object.values(bundle).map((chunk) => chunk.fileName);
     },
     getChunks: () => chunks,
   };

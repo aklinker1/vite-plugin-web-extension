@@ -5,14 +5,13 @@ import { ProjectPaths, ResolvedOptions } from "../options";
 import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { BuildMode } from "./BuildMode";
 import { MANIFEST_LOADER_PLUGIN_NAME } from "../constants";
-import { colorizeFilename, getInputAbsPaths, removePlugin } from "../utils";
+import { colorizeFilename, getInputPaths, removePlugin } from "../utils";
 import { BOLD, DIM, Logger, RESET, GREEN } from "../logger";
-import path from "node:path";
-import uniqBy from "lodash.uniqby";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
 import { bundleTrackerPlugin } from "../plugins/bundle-tracker-plugin";
 import { getViteConfigsForInputs } from "./getViteConfigsForInputs";
 import { hmrRewritePlugin } from "../plugins/hmr-rewrite-plugin";
+import { BundleMap } from "./renderManifest";
 
 interface RebuildOptions {
   paths: ProjectPaths;
@@ -29,7 +28,7 @@ export interface BuildContext {
    * map.
    */
   rebuild(rebuildOptions: RebuildOptions): Promise<void>;
-  getBundles(): Array<rollup.OutputChunk | rollup.OutputAsset>;
+  getBundles(): BundleMap;
 }
 
 /**
@@ -47,7 +46,7 @@ export function createBuildContext({
    * Tracks an each input path relative to the Vite root, to their output filename and a list of
    * generated assets.
    */
-  let bundles: Array<rollup.OutputChunk | rollup.OutputAsset> = [];
+  let bundles: BundleMap = {};
   let activeWatchers: rollup.RollupWatcher[] = [];
 
   async function getBuildConfigs({
@@ -58,10 +57,12 @@ export function createBuildContext({
     onSuccess,
     mode,
   }: RebuildOptions) {
-    const entryConfigs = await getViteConfigsForInputs({
+    const entryConfigs = getViteConfigsForInputs({
       paths,
       manifest,
       mode,
+      logger,
+      resolvedConfig,
       additionalInputs: pluginOptions.additionalInputs,
       baseHtmlViteConfig: pluginOptions.htmlViteConfig ?? {},
       baseSandboxViteConfig: {},
@@ -88,15 +89,6 @@ export function createBuildContext({
       plugins: [
         labeledStepPlugin(logger, totalEntries, buildOrderIndex, paths),
         multibuildManager.plugin(),
-        hmrRewritePlugin({
-          server: resolvedConfig.server,
-          hmr:
-            typeof resolvedConfig.server.hmr === "object"
-              ? resolvedConfig.server.hmr
-              : undefined,
-          paths,
-          logger,
-        }),
       ],
     });
     const finalConfigPromises = entryConfigs.all
@@ -128,21 +120,16 @@ export function createBuildContext({
       const input = config.build?.rollupOptions?.input ?? config.build?.lib;
       if (!input) return;
 
-      const relativePaths = getInputAbsPaths(input).map((absPath) =>
-        path.relative(paths.rootDir, absPath)
-      );
-
-      if (relativePaths.length === 1) {
+      const inputs = getInputPaths(paths, input);
+      if (inputs.length === 1) {
         lines.push(
-          `  ${i + 1}. Building ${colorizeFilename(
-            relativePaths[0]
-          )} indvidually`
+          `  ${i + 1}. Building ${colorizeFilename(inputs[0])} indvidually`
         );
       } else {
         lines.push(
-          `  ${i + 1}. Bunding ${relativePaths.length} entrypoints together:`
+          `  ${i + 1}. Bunding ${inputs.length} entrypoints together:`
         );
-        relativePaths.forEach((relativePath) =>
+        inputs.forEach((relativePath) =>
           lines.push(`    ${DIM}•${RESET} ${colorizeFilename(relativePath)}`)
         );
       }
@@ -182,9 +169,10 @@ export function createBuildContext({
       // Print configs deep enough to include rollup inputs
       logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));
 
-      const newBundles: Array<rollup.OutputChunk | rollup.OutputAsset> = [];
       for (const config of buildConfigs) {
         const bundleTracker = bundleTrackerPlugin();
+        // config.plugins?.splice(3, 1);
+        console.log(config.plugins);
         (config.plugins ??= []).push(bundleTracker);
 
         const output = await vite.build(config);
@@ -194,10 +182,15 @@ export function createBuildContext({
           await waitForWatchBuildComplete(output);
         }
 
-        const chunks = bundleTracker.getChunks() ?? [];
-        newBundles.push(...chunks);
+        // Save the bundle chunks
+        const input = config.build?.lib ?? config.build?.rollupOptions?.input;
+        if (input) {
+          const chunks = bundleTracker.getChunks() ?? [];
+          for (const file of getInputPaths(paths, input)) {
+            bundles[file] = chunks;
+          }
+        }
       }
-      bundles = uniqBy(newBundles, "fileName");
       // This prints before the manifest plugin continues in build mode
       if (mode === BuildMode.BUILD) {
         printCompleted();

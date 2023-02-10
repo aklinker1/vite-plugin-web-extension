@@ -2,6 +2,7 @@ import { GREEN, RESET, CYAN, VIOLET } from "./logger";
 import path from "node:path";
 import * as rollup from "rollup";
 import * as vite from "vite";
+import { ProjectPaths } from "./options";
 
 /**
  * Returns the same array, but with null or undefined values removed.
@@ -32,8 +33,10 @@ export function trimExtension(
  */
 export function colorizeFilename(filename: string) {
   let color = CYAN;
-  if (filename.match(/.(html|pug)$/)) color = GREEN;
-  if (filename.match(/.(css|scss|stylus|sass|png|jpg|jpeg|webp|webm|svg|ico)$/))
+  if (filename.match(/\.(html|pug)$/)) color = GREEN;
+  if (
+    filename.match(/\.(css|scss|stylus|sass|png|jpg|jpeg|webp|webm|svg|ico)$/)
+  )
     color = VIOLET;
   return `${color}${filename}${RESET}`;
 }
@@ -116,14 +119,23 @@ export function getPublicDir(config: vite.ResolvedConfig): string | undefined {
   return path.resolve(getRootDir(config), config.publicDir ?? "public");
 }
 
-// TODO: Test
-export function getInputAbsPaths(
+/**
+ * Return all the input file paths relative to vite's root.
+ */
+export function getInputPaths(
+  paths: ProjectPaths,
   input: rollup.InputOption | vite.LibraryOptions
 ): string[] {
-  if (typeof input === "string") return [input];
-  else if (Array.isArray(input)) return input;
-  else if ("entry" in input) return [input.entry];
-  else return Object.values(input);
+  let inputs: string[];
+  if (typeof input === "string") inputs = [input];
+  else if (Array.isArray(input)) inputs = input;
+  else if ("entry" in input) inputs = [input.entry];
+  else inputs = Object.values(input);
+
+  return inputs.map((file) => {
+    if (path.isAbsolute(file)) return path.relative(paths.rootDir, file);
+    return file;
+  });
 }
 
 /**
@@ -195,4 +207,14 @@ export function withTimeout<T>(
       .catch(rej)
       .finally(() => clearTimeout(timeout));
   });
+}
+
+/**
+ * Given any kind of entry file (name or path), return the file (name or path) vite will output
+ */
+export function getOutputFile(file: string): string {
+  return file
+    .replace(/\.(pug)$/, ".html")
+    .replace(/\.(scss|stylus|sass)$/, ".css")
+    .replace(/\.(jsx|ts|tsx)$/, ".js");
 }

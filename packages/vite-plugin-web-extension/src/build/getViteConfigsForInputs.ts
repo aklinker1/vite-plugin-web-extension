@@ -1,7 +1,10 @@
 import path from "node:path";
 import * as vite from "vite";
+import { V } from "vitest/dist/global-fe52f84b";
 import type browser from "webextension-polyfill";
+import { Logger } from "../logger";
 import { ProjectPaths, Manifest } from "../options";
+import { hmrRewritePlugin } from "../plugins/hmr-rewrite-plugin";
 import { compact, trimExtension } from "../utils";
 import { BuildMode } from "./BuildMode";
 
@@ -70,12 +73,15 @@ export function getViteConfigsForInputs(options: {
   mode: BuildMode;
   additionalInputs: string[];
   manifest: Manifest;
+  logger: Logger;
+  resolvedConfig: vite.ResolvedConfig;
   baseHtmlViteConfig: vite.InlineConfig;
   baseSandboxViteConfig: vite.InlineConfig;
   baseScriptViteConfig: vite.InlineConfig;
   baseOtherViteConfig: vite.InlineConfig;
 }): CombinedViteConfigs {
-  const { paths, additionalInputs, manifest, mode } = options;
+  const { paths, additionalInputs, manifest, mode, logger, resolvedConfig } =
+    options;
   const configs = new CombinedViteConfigs();
 
   const processedInputs = new Set<string>();
@@ -95,6 +101,17 @@ export function getViteConfigsForInputs(options: {
     if (newEntries.length === 0) return;
 
     const inputConfig: vite.InlineConfig = {
+      plugins: [
+        hmrRewritePlugin({
+          server: resolvedConfig.server,
+          hmr:
+            typeof resolvedConfig.server.hmr === "object"
+              ? resolvedConfig.server.hmr
+              : undefined,
+          paths,
+          logger,
+        }),
+      ],
       build: {
         rollupOptions: {
           input: newEntries.reduce<Record<string, string>>((input, entry) => {
@@ -140,11 +157,11 @@ export function getViteConfigsForInputs(options: {
     if (hasBeenProcessed(entry)) return;
     processedInputs.add(entry);
 
-    const moduleId = trimExtension(entry);
     /**
      * "content-scripts/some-script/index" -> "content-scripts/some-script/"
      * "some-script" -> ""
      */
+    const moduleId = trimExtension(entry);
     const inputConfig: vite.InlineConfig = {
       build: {
         watch: mode !== BuildMode.BUILD ? {} : undefined,
@@ -153,6 +170,9 @@ export function getViteConfigsForInputs(options: {
           entry,
           formats: ["iife"],
           fileName: () => moduleId + ".js",
+        },
+        rollupOptions: {
+          input: [],
         },
       },
     };

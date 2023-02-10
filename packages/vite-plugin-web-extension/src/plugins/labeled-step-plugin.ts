@@ -1,8 +1,7 @@
 import * as vite from "vite";
 import { LABELED_STEP_PLUGIN_NAME } from "../constants";
 import { Logger } from "../logger";
-import { getInputAbsPaths, colorizeFilename } from "../utils";
-import path from "node:path";
+import { getInputPaths, colorizeFilename } from "../utils";
 import { ProjectPaths } from "../options";
 
 /**
@@ -28,12 +27,9 @@ export function labeledStepPlugin(
       return;
     }
 
-    const absPaths = getInputAbsPaths(input);
+    const inputs = getInputPaths(paths, input);
     logger.log(
-      `Building ${absPaths
-        .map((p) => path.relative(paths.rootDir, p))
-        .map(colorizeFilename)
-        .join(", ")} ${progressLabel}`
+      `Building ${inputs.map(colorizeFilename).join(", ")} ${progressLabel}`
     );
   }
 
@@ -44,13 +40,8 @@ export function labeledStepPlugin(
       return;
     }
 
-    const absPaths = getInputAbsPaths(input);
-    logger.log(
-      `Rebuilding ${absPaths
-        .map((p) => path.relative(paths.rootDir, p))
-        .map(colorizeFilename)
-        .join(", ")}`
-    );
+    const files = getInputPaths(paths, input);
+    logger.log(`Rebuilding ${files.map(colorizeFilename).join(", ")}`);
   }
 
   return {

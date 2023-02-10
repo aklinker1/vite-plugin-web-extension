@@ -20,6 +20,7 @@ import type browser from "webextension-polyfill";
 import { createWebExtRunner, ExtensionRunner } from "../extension-runner";
 import { createManifestValidator } from "../manifest-validation";
 import { ContentSecurityPolicy } from "../csp";
+import { renderManifest } from "../build/renderManifest";
 
 /**
  * This plugin composes multiple Vite builds together into a single Vite build by calling the
@@ -84,99 +85,6 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
     );
     logger.verbose("Manifest with entrypoints: " + inspect(resolvedManifest));
     return resolvedManifest;
-  }
-
-  /**
-   * Given some details about the bundled file outputs, convert input paths in the manifest to their
-   * output paths. Also make sure if any generated files need to be added to the manifest (like
-   * content script CSS files), add them.
-   */
-  function renderManifest(
-    manifest: Manifest,
-    bundles: Array<rollup.OutputChunk | rollup.OutputAsset>
-  ): any {
-    const findReplacement = (entry: string) =>
-      bundles.find((output) => {
-        if (
-          output.type === "chunk" &&
-          output.isEntry &&
-          // JS files show up instead of the HTML file, so this prevents an HTML replacement from
-          // being a JS file
-          !output.facadeModuleId?.endsWith(".html")
-        ) {
-          return output.facadeModuleId?.endsWith(entry);
-        }
-        return output.name === entry || output.fileName === entry;
-      });
-    const replaceFieldWithOutput = (
-      parentObject: any | undefined,
-      key: any,
-      onGeneratedFile: (outputPath: string) => void = () => {}
-    ) => {
-      const sourcePath = parentObject?.[key];
-      if (!sourcePath) return;
-      const replacement = findReplacement(sourcePath);
-      if (!replacement?.fileName) return;
-      parentObject[key] = replacement.fileName;
-      if (replacement.type === "chunk") {
-        // @ts-ignore
-        const metadata = replacement.viteMetadata as {
-          importedAssets: Set<string>;
-          importedCss: Set<string>;
-        };
-        if (
-          metadata == null ||
-          metadata.importedAssets == null ||
-          metadata.importedCss == null
-        ) {
-          throw Error(
-            "Vite internal API has changed and broke this plugin. Please submit an issue to github with your Vite version."
-          );
-        }
-        metadata.importedAssets.forEach(onGeneratedFile);
-        metadata.importedCss.forEach(onGeneratedFile);
-      }
-    };
-    const replaceArrayWithOutput = (
-      parentArray: string[] | undefined,
-      onGeneratedFile: (outputPath: string) => void = () => {}
-    ): void => {
-      if (!parentArray) return;
-      for (let i = 0; i < parentArray.length; i++) {
-        replaceFieldWithOutput(parentArray, i, onGeneratedFile);
-      }
-    };
-
-    replaceFieldWithOutput(manifest.action, "default_popup");
-    replaceFieldWithOutput(manifest, "devtools_page");
-    replaceFieldWithOutput(manifest, "options_page");
-    replaceFieldWithOutput(manifest.options_ui, "page");
-    replaceFieldWithOutput(manifest.browser_action, "default_popup");
-    replaceFieldWithOutput(manifest.page_action, "default_popup");
-    replaceFieldWithOutput(manifest.sidebar_action, "default_panel");
-    replaceArrayWithOutput(manifest.sandbox?.pages);
-    replaceFieldWithOutput(manifest.background, "service_worker");
-    replaceFieldWithOutput(manifest.background, "page");
-    replaceArrayWithOutput(manifest.background?.scripts);
-
-    manifest?.content_scripts?.forEach((cs: browser.Manifest.ContentScript) => {
-      replaceArrayWithOutput(cs?.js, (generatedFile) => {
-        if (!generatedFile.endsWith(".css")) return;
-        cs.css ??= [];
-        cs.css.push(generatedFile);
-      });
-      replaceArrayWithOutput(cs?.css);
-      // Can't have an empty content_script arrays
-      if (cs.css?.length === 0) delete cs.css;
-      if (cs.js?.length === 0) delete cs.js;
-    });
-
-    // Add permissions and CSP for the dev server
-    if (mode === BuildMode.DEV) {
-      applyDevServerCsp(manifest);
-    }
-
-    return manifest;
   }
 
   async function openBrowser() {
@@ -259,6 +167,12 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
         manifestWithInputs,
         ctx.getBundles()
       );
+
+      // Add permissions and CSP for the dev server
+      if (mode === BuildMode.DEV) {
+        applyDevServerCsp(finalManifest);
+      }
+
       if (!options.skipManifestValidation) {
         await validateManifest(finalManifest);
       }
