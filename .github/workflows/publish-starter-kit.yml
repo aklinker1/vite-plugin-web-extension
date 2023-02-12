@@ -17,6 +17,10 @@ jobs:
     name: Validate Templates
     runs-on: ubuntu-20.04
     steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
+
       - name: Install Node
         uses: actions/setup-node@v3
         with:
@@ -31,10 +35,14 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [validate-templates]
     steps:
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
+
       - name: Install Node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'pnpm'
 
       - name: Checkout Repo
