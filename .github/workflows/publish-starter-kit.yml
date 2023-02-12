@@ -17,19 +17,11 @@ jobs:
     name: Validate Templates
     runs-on: ubuntu-20.04
     steps:
-      - name: Install Node 14
-        uses: actions/setup-node@v1
+      - name: Install Node
+        uses: actions/setup-node@v3
         with:
-          node-version: "14.x"
-
-      - name: Cache .pnpm-store
-        uses: actions/cache@v1
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-node14-${{ hashFiles('**/pnpm-lock.yaml') }}
-
-      - name: Install pnpm
-        run: curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@6
+          node-version: 18
+          cache: 'pnpm'
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
@@ -39,24 +31,16 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [validate-templates]
     steps:
-      - name: Install Node 14
-        uses: actions/setup-node@v1
+      - name: Install Node
+        uses: actions/setup-node@v3
         with:
-          node-version: "14.x"
+          node-version: 16
+          cache: 'pnpm'
 
       - name: Checkout Repo
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: Cache .pnpm-store
-        uses: actions/cache@v1
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-node14-${{ hashFiles('**/pnpm-lock.yaml') }}
-
-      - name: Install pnpm
-        run: curl -f https://get.pnpm.io/v6.16.js | node - add --global pnpm@6
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
