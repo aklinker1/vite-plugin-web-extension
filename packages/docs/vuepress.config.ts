@@ -22,7 +22,7 @@ export default defineUserConfig({
         link: "/config/index.md",
       },
       {
-        text: "v2-rc2",
+        text: "v2",
         children: [
           {
             text: "v2 Docs",
