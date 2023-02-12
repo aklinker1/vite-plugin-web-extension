@@ -16,7 +16,7 @@ If you were using `vite build --watch` while developing your extension to reload
 ```diff:no-line-numbers
   "scripts": {
 -   "dev": "vite build --watch --mode development",
-+   "dev": "vite",
++   "dev": "vite dev",
     "build": "vite build",
 ```
 
@@ -111,7 +111,7 @@ If you're using a function to generate your manifest, to take advantage of this 
 
 ## Browser startup config changes
 
-To change browser startup behavior, you can still pass the [`webExtConfig` option](/config/webextconfig). But you can now also use automatically discovered config files importing them in your `vite.config.ts`. See [Configure Browser Startup](/guide/configure-browser-startup.md) for more details.
+To change browser startup behavior, you can still pass the [`webExtConfig` option](/config/webextconfig). But you can now also use automatically discovered config files without importing them in your `vite.config.ts`. See [Configure Browser Startup](/guide/configure-browser-startup.md) for more details.
 
 ```diff:no-line-numbers
 import { defineConfig } from "vite";
