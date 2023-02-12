@@ -14,14 +14,12 @@ export default defineConfig({
   },
   plugins: [
     browserExtension({
-      manifest: root("src/manifest.json"),
-      assets: "assets",
+      manifest: "manifest.json",
       additionalInputs: [
         "content-scripts/script1/index.ts",
         "another-page/index.html",
       ],
       watchFilePaths: [root("src/manifest.json")],
-      verbose: false,
       browser: process.env.TARGET || "chrome",
     }),
   ],

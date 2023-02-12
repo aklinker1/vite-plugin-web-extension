@@ -1,11 +1,12 @@
 {
   "name": "vanilla-demo",
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "dev": "pnpm install && tsc && vite dev",
-    "dev:firefox": "pnpm install && tsc && TARGET=firefox vite dev",
-    "build": "pnpm install && tsc && vite build",
-    "build:firefox": "pnpm install && tsc && TARGET=firefox vite build",
+    "dev": "pnpm i && vite dev",
+    "dev:firefox": "pnpm i && TARGET=firefox vite dev",
+    "build": "pnpm i && tsc && vite build",
+    "build:firefox": "pnpm i && tsc && TARGET=firefox vite build",
     "validate": "web-ext lint -s dist"
   },
   "dependencies": {
@@ -15,7 +16,7 @@
     "@types/lodash.debounce": "^4.0.6",
     "sass": "^1.49.9",
     "typescript": "^4.4.4",
-    "vite": "^2.7.9",
+    "vite": "*",
     "vite-plugin-web-extension": "workspace:*"
   }
 }

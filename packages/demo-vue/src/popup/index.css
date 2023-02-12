@@ -1,0 +1,6 @@
+/* CSS files are HMR-ed as well */
+
+body {
+    background-color: rgb(28, 28, 28);
+    color: white;
+}

@@ -10,17 +10,17 @@ yarn create vite-plugin-web-extension
 
 ### Features
 
-- :wrench: Automatically build inputs from in your `manifest.json`
-- :tada: Automatically open a browser and install the extension during development
-- :zap: Super fast dev mode that automatically reloads your extension
+- :wrench: Automatically build inputs listed in your `manifest.json`
+- :tada: Open a browser and install the extension during development
+- :zap: Super fast dev mode
 - :globe_with_meridians: Supports all browsers
-- :fire: Frontend frameworks for the popup, options page, _**and content scripts**_!
+- :fire: Full frontend framework support (popup, options, and content scripts)
 - :robot: Typescript support out of the box!
 - :white_check_mark: Manifest validation
 
 ## Documentation
 
-To get started or learn more, checkout the docs:
+To get started, checkout the docs:
 
 <https://vite-plugin-web-extension.aklinker1.io>
 

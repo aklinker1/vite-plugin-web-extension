@@ -17,18 +17,21 @@ export default defineUserConfig({
         text: "Guide",
         link: "/",
       },
-      "/reference/plugin-options.md",
       {
-        text: "v1",
+        text: "Config",
+        link: "/config/index.md",
+      },
+      {
+        text: "v2-rc2",
         children: [
           {
             text: "v1 Docs",
-            link: "/",
+            link: "https://v1.vite-plugin-web-extension.aklinker1.io",
+            target: "_blank",
           },
           {
-            text: "v2-alpha Docs",
+            text: "v2-rc2 Docs",
             link: "https://v2.vite-plugin-web-extension.aklinker1.io",
-            target: "_blank",
           },
         ],
       },
@@ -39,12 +42,19 @@ export default defineUserConfig({
           text: "Guide",
           children: [
             "/",
-            "/guide/configuration.md",
-            "/guide/manual-installation.md",
+            "/guide/development.md",
+            "/guide/building-for-production.md",
+            "/guide/supporting-multiple-browsers.md",
+            "/guide/frontend-frameworks.md",
+            "/guide/configure-browser-startup.md",
           ],
         },
+        {
+          text: "Help",
+          children: ["/guide/manual-setup.md", "/guide/migration-v2.md"],
+        },
       ],
-      "/reference/": ["/reference/plugin-options.md"],
+      "/config/": ["/config/index.md"],
     },
   }),
 });
