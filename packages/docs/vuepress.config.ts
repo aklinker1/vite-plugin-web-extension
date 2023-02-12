@@ -22,13 +22,13 @@ export default defineUserConfig({
         text: "v1",
         children: [
           {
-            text: "v1 Docs",
-            link: "/",
-          },
-          {
-            text: "v2-alpha Docs",
+            text: "v2 Docs",
             link: "https://v2.vite-plugin-web-extension.aklinker1.io",
             target: "_blank",
+          },
+          {
+            text: "v1 Docs",
+            link: "/",
           },
         ],
       },
