@@ -17,6 +17,9 @@ jobs:
     name: Validate Templates
     runs-on: ubuntu-20.04
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
       - uses: pnpm/action-setup@v2
         with:
           version: 7
@@ -35,6 +38,11 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [validate-templates]
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - uses: pnpm/action-setup@v2
         with:
           version: 7
@@ -44,11 +52,6 @@ jobs:
         with:
           node-version: 18
           cache: 'pnpm'
-
-      - name: Checkout Repo
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile

@@ -7,6 +7,9 @@ jobs:
     name: Verify PR
     runs-on: ubuntu-20.04
     steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
       - uses: pnpm/action-setup@v2
         with:
           version: 7
@@ -16,9 +19,6 @@ jobs:
         with:
           node-version: 18
           cache: 'pnpm'
-
-      - name: Checkout Repo
-        uses: actions/checkout@v2
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile

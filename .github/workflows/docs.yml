@@ -9,7 +9,8 @@ jobs:
   docs:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout Repo
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -26,11 +27,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-
       - name: Build VuePress site
         run: pnpm build
         working-directory: packages/docs
-
 
       - name: Deploy to GitHub Pages
         uses: crazy-max/ghaction-github-pages@v2
