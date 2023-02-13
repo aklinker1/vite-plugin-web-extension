@@ -13,7 +13,7 @@ There have been several breaking changes in the upgrade to v2. Most of these cha
 
 If you were using `vite build --watch` while developing your extension to reload on change, you can now use `vite dev` instead!
 
-```diff:no-line-numbers
+```diff
   "scripts": {
 -   "dev": "vite build --watch --mode development",
 +   "dev": "vite dev",
@@ -30,7 +30,7 @@ For Chrome, you'll need to be on version 110, which is the current version of Ch
 
 In your `package.json`, it's now required to add `"type": "module"`.
 
-```diff:no-line-numbers
+```diff
   "version": "1.2.5",
 + "type": "module",
   "scripts": {
@@ -44,26 +44,26 @@ In v1, everything in the `assets` directory was copied to the output directory. 
 
 If your config used to look like this:
 
-```ts:no-line-numbers
+```ts
 export default defineConfig({
-    root: path.resolve(__dirname, "src"),
-    plugins: [
-        webExtension({
-            manifest: "manifest.json",
-            assets: "assets"
-        })
-    ]
-})
+  root: path.resolve(__dirname, "src"),
+  plugins: [
+    webExtension({
+      manifest: "manifest.json",
+      assets: "assets",
+    }),
+  ],
+});
 ```
 
 To migrate, move all your assets into the `<viteRoot>/public` directory and delete the `assets` option from your config.
 
-```bash:no-line-numbers
+```bash
 mkdir public
 git mv assets/* public
 ```
 
-```diff:no-line-numbers
+```diff
     plugins: [
         webExtension({
             manifest: "manifest.json",
@@ -78,7 +78,7 @@ In v1, you prefixed a file in the input manifest with `generated:` to list it as
 
 In v2, the final `manifest.json` is filled out automatically based on your build output! So just remove any files prefixed with `generated:`, and it will magically work!
 
-```diff:no-line-numbers
+```diff
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
@@ -92,7 +92,7 @@ In v2, the final `manifest.json` is filled out automatically based on your build
 
 By default, the `manifest` option in the plugin's configuration will be `"manifest.json"`, meaning you can remove that option entirly if you were using that as the filename.
 
-```diff:no-line-numbers
+```diff
 webExtension({
 -   manifest: "manifest.json",
     ...
@@ -111,9 +111,9 @@ If you're using a function to generate your manifest, to take advantage of this 
 
 ## Browser startup config changes
 
-To change browser startup behavior, you can still pass the [`webExtConfig` option](/config/webextconfig). But you can now also use automatically discovered config files without importing them in your `vite.config.ts`. See [Configure Browser Startup](/guide/configure-browser-startup.md) for more details.
+To change browser startup behavior, you can still pass the [`webExtConfig` option](/config/plugin-options#webextconfig). But you can now also use automatically discovered config files without importing them in your `vite.config.ts`. See [Configure Browser Startup](/guide/configure-browser-startup.md) for more details.
 
-```diff:no-line-numbers
+```diff
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import webExtension, { readJsonFile } from "vite-plugin-web-extension";

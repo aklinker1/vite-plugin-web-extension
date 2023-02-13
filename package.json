@@ -2,14 +2,16 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "clean": "rm -rf node_modules **/node_modules"
+    "clean": "rm -rf node_modules **/node_modules",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
-  "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "vitepress": "1.0.0-alpha.45",
+    "vue": "^3.2.47"
+  },
   "pnpm": {
-    "overrides": {
-      "vite": "3.1.2"
-    },
     "peerDependencyRules": {
       "ignoreMissing": [
         "@types/download",
