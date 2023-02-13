@@ -13,10 +13,10 @@ There have been several breaking changes in the upgrade to v2. Most of these cha
 
 If you were using `vite build --watch` while developing your extension to reload on change, you can now use `vite dev` instead!
 
-```diff
+```json
   "scripts": {
--   "dev": "vite build --watch --mode development",
-+   "dev": "vite dev",
+    "dev": "vite build --watch --mode development", // [!code --]
+    "dev": "vite dev", // [!code ++]
     "build": "vite build",
 ```
 
@@ -30,9 +30,9 @@ For Chrome, you'll need to be on version 110, which is the current version of Ch
 
 In your `package.json`, it's now required to add `"type": "module"`.
 
-```diff
+```json
   "version": "1.2.5",
-+ "type": "module",
+  "type": "module", // [!code ++]
   "scripts": {
 ```
 
@@ -63,13 +63,13 @@ mkdir public
 git mv assets/* public
 ```
 
-```diff
-    plugins: [
-        webExtension({
-            manifest: "manifest.json",
--           assets: "assets"
-        })
-    ]
+```ts
+plugins: [
+  webExtension({
+    manifest: "manifest.json",
+    assets: "assets", // [!code --]
+  }),
+];
 ```
 
 ## No more `generated:` prefix
@@ -78,12 +78,12 @@ In v1, you prefixed a file in the input manifest with `generated:` to list it as
 
 In v2, the final `manifest.json` is filled out automatically based on your build output! So just remove any files prefixed with `generated:`, and it will magically work!
 
-```diff
+```json
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
             "js": ["some-scripts.ts"],
--           "css": ["generated:some-scripts.ts"],
+            "css": ["generated:some-scripts.ts"],  // [!code --]
         }
     ]
 ```
@@ -92,11 +92,10 @@ In v2, the final `manifest.json` is filled out automatically based on your build
 
 By default, the `manifest` option in the plugin's configuration will be `"manifest.json"`, meaning you can remove that option entirly if you were using that as the filename.
 
-```diff
+```ts
 webExtension({
--   manifest: "manifest.json",
-    ...
-})
+  manifest: "manifest.json", // [!code --]
+});
 ```
 
 If you're using a different file to generate your manifest, no changes are required.
@@ -113,28 +112,27 @@ If you're using a function to generate your manifest, to take advantage of this 
 
 To change browser startup behavior, you can still pass the [`webExtConfig` option](/config/plugin-options#webextconfig). But you can now also use automatically discovered config files without importing them in your `vite.config.ts`. See [Configure Browser Startup](/guide/configure-browser-startup.md) for more details.
 
-```diff
+<!-- prettier-ignore -->
+```ts
 import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
 import webExtension, { readJsonFile } from "vite-plugin-web-extension";
 
--function loadWebExtConfig() {
--  try {
--    return require("./.web-ext.config.json");
--  } catch {
--    return undefined;
--  }
--}
+function loadWebExtConfig() { // [!code --]
+  try { // [!code --]
+    return require("./.web-ext.config.json"); // [!code --]
+  } catch { // [!code --]
+    return undefined; // [!code --]
+  } // [!code --]
+} // [!code --]
 
 export default defineConfig({
   plugins: [
     webExtension({
       manifest: "src/mainfest.json",
--     webExtConfig: loadWebExtConfig(),
+      webExtConfig: loadWebExtConfig(), // [!code --]
     }),
   ],
 });
-
 ```
 
 ## Build process changes
