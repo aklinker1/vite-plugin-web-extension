@@ -13,10 +13,10 @@ const helpSidebar = {
       text: "Migrate to V2",
       link: "/guide/migration-v2",
     },
-    {
-      text: "Blog",
-      link: "/blog/",
-    },
+    // {
+    //   text: "Blog",
+    //   link: "/blog/",
+    // },
   ],
 };
 
