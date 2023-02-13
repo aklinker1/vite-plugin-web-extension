@@ -14,7 +14,7 @@ There are two places an extension will need localized:
 
 ## Localizing the `manfiest.json`
 
-See [Chrome's documentation](/to-chrome-docs) about how to localize your `manifest.json`:
+See [Chrome's documentation](https://developer.chrome.com/docs/extensions/reference/i18n/) about how to localize your `manifest.json`:
 
 To accomplish this with `vite-plugin-web-extension`, just put the `_locales` directory in your `<viteRoot>/public` directory. When built, that folder will be copied to the base of your output directory, right where Chrome expects them to be!
 
@@ -39,7 +39,7 @@ To accomplish this with `vite-plugin-web-extension`, just put the `_locales` dir
 
 ## Localizing Text At Runtime
 
-To localizing text at runtime, there are a few different options. For vanilla projects, you can use the [`browser.i18n` APIs](/to-chrome-docs) directly.
+To localizing text at runtime, there are a few different options. For vanilla projects, you can use the [`browser.i18n` APIs](https://developer.chrome.com/docs/extensions/reference/i18n/) directly.
 
 However, for Vue or React projects, you will likely want to use the framework's standard i18n library. For example, `vue-i18n`. These libraries will provide a much better developer experience when working with your framework of choice, and can _usually_ be used outside of the UI for localizing system notifications or logs.
 
