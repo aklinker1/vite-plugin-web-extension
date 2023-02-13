@@ -1,13 +1,28 @@
 ---
 lang: en-US
-title: Configuration
+title: Plugin Options
 ---
 
-# Configuration
+# Plugin Options
+
+These options are available when adding the plugin in your `vite.config.ts`
+
+```ts
+import { defineConfig } from "vite";
+import webExtension from "vite-plugin-web-extension";
+
+export default defineConfig({
+  plugins: [
+    webExtension({
+      // place options here
+    }),
+  ],
+});
+```
 
 ## `additionalInputs`
 
-```ts:no-line-numbers
+```ts
 additionalInputs?: string[]
 ```
 
@@ -23,17 +38,21 @@ Depending on the type of file listed, it will be built at different times:
 
 ## `browser`
 
-```ts:no-line-numbers
+```ts
 browser?: string
 ```
 
-When using `{{browser}}.` prefixes in your manifest template, setting this field will cause only the matching tags to be in the `<outDir>/manifest.json`.
+<script setup>
+const browser = "{{browser}}"
+</script>
+
+When using <code>{{browser}}.</code> prefixes in your manifest template, setting this field will cause only the matching tags to be in the `<outDir>/manifest.json`.
 
 See [Supporting Multiple Browsers](/guide/supporting-multiple-browsers) to learn more about how to use the `browser` option in combination with manifest templates.
 
 ## `disableAutoLaunch`
 
-```ts:no-line-numbers
+```ts
 disableAutoLaunch?: boolean;
 ```
 
@@ -43,13 +62,11 @@ This can be useful in setups where opening the browser is impossible, like in th
 
 ## `htmlViteConfig`
 
-```ts:no-line-numbers
+```ts
 htmlViteConfig?: import('vite').InlineConfig
 ```
 
 You can provide additional Vite config to the HTML multipage build step by setting it here.
-
-Some config cannot be overwritten because if it were, it would cause the build to fail.
 
 ::: warning
 Use with caution, I have not tested the compatibility of every single Vite build option with the HTML build process. Submit an issue if you have any problems.
@@ -57,7 +74,7 @@ Use with caution, I have not tested the compatibility of every single Vite build
 
 ## `manifest`
 
-```ts:no-line-numbers
+```ts
 manifest?: string | (() => any) | (() => Promise<any>)
 ```
 
@@ -72,21 +89,19 @@ See [Supporting Multiple Browsers](/guide/supporting-multiple-browsers) to learn
 
 ## `printSummary`
 
-```ts:no-line-numbers
-skipManifestValidation?: boolean
+```ts
+printSummary?: boolean
 ```
 
 Defaults to `true`. When `true`, the plugin will print a summary of what files are being built in what order.
 
 ## `scriptViteConfig`
 
-```ts:no-line-numbers
+```ts
 scriptViteConfig?: import('vite').InlineConfig
 ```
 
 You can provide additional Vite config to the individually bundled JS files by setting it here.
-
-Some config cannot be overwritten because if it were, it would cause the build to fail.
 
 ::: warning
 Use with caution, I have not tested the compatibility of every single Vite build option with the HTML build process. Submit an issue if you have any problems.
@@ -94,7 +109,7 @@ Use with caution, I have not tested the compatibility of every single Vite build
 
 ## `skipManifestValidation`
 
-```ts:no-line-numbers
+```ts
 skipManifestValidation?: boolean
 ```
 
@@ -106,8 +121,8 @@ Setting this to `true` will skip validation.
 
 ## `watchFilePaths`
 
-```ts:no-line-numbers
-additionalInputs?: string[]
+```ts
+watchFilePaths?: string[]
 ```
 
 A list of paths relative to Vite's root directory that cause a full rebuild of the extension during development. When one of these files is saved, the browser will be shut down, manifest regenerated, and the browser will open again.
@@ -116,7 +131,7 @@ If the `manifest` field was a string, it will be added to this list automaticall
 
 ## `webExtConfig`
 
-```ts:no-line-numbers
+```ts
 webExtConfig?: any
 ```
 
