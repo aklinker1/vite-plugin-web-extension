@@ -27,15 +27,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build VuePress site
-        run: pnpm build
-        working-directory: packages/docs
+      - name: Build VitePress site
+        run: pnpm docs:build
 
       - name: Deploy to GitHub Pages
         uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
-          build_dir: packages/docs/.vuepress/dist
+          build_dir: docs/.vitepress/dist
           fqdn: vite-plugin-web-extension.aklinker1.io
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
