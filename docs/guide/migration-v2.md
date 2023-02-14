@@ -46,7 +46,6 @@ If your config used to look like this:
 
 ```ts
 export default defineConfig({
-  root: path.resolve(__dirname, "src"),
   plugins: [
     webExtension({
       manifest: "manifest.json",
@@ -83,7 +82,7 @@ In v2, the final `manifest.json` is filled out automatically based on your build
         {
             "matches": ["<all_urls>"],
             "js": ["some-scripts.ts"],
-            "css": ["generated:some-scripts.ts"],  // [!code --]
+            "css": ["generated:some-scripts.css"],  // [!code --]
         }
     ]
 ```
