@@ -1,5 +1,7 @@
 <img src="./.github/assets/social-banner.png">
 
+![Build Status](https://img.shields.io/github/actions/workflow/status/aklinker1/vite-plugin-web-extension/pr-checks.yml) ![NPM Version](https://img.shields.io/npm/v/vite-plugin-web-extension) ![NPM Downloads](https://img.shields.io/npm/dm/vite-plugin-web-extension) ![Vite Version](https://img.shields.io/npm/dependency-version/vite-plugin-web-extension/peer/vite)
+
 To get started quickly, bootstrap a new project!
 
 ```bash
