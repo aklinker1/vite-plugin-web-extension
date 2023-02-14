@@ -28,7 +28,7 @@ Unfortunately, content scripts do not work with HMR. Instead, they are built usi
 
 ::: warning HMR requires Chrome v110 or above
 
-Make sure your browser is up to date, or it won't work.
+Make sure your browser is up to date, or it won't work. Chrome v110 was released Feb 13, 2023.
 :::
 
 ## Watch Mode

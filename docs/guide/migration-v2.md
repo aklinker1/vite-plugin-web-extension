@@ -21,7 +21,7 @@ If you were using `vite build --watch` while developing your extension to reload
 ```
 
 ::: warning
-For Chrome, you'll need to be on version 110, which is the current version of Chrome Beta, not regular Chrome. So either wait for v110, or develop against Chrome Beta.
+For Chrome, you'll need to be on version 110, which was released Feb 13, 2023. Make sure you're browser is up to date, or HMR will not work.
 :::
 
 ## Drop CJS support
