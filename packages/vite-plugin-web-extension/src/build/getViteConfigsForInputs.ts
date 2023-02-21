@@ -100,18 +100,23 @@ export function getViteConfigsForInputs(options: {
 
     if (newEntries.length === 0) return;
 
+    const plugins =
+      mode === BuildMode.DEV
+        ? [
+            hmrRewritePlugin({
+              server: resolvedConfig.server,
+              hmr:
+                typeof resolvedConfig.server.hmr === "object"
+                  ? resolvedConfig.server.hmr
+                  : undefined,
+              paths,
+              logger,
+            }),
+          ]
+        : [];
+
     const inputConfig: vite.InlineConfig = {
-      plugins: [
-        hmrRewritePlugin({
-          server: resolvedConfig.server,
-          hmr:
-            typeof resolvedConfig.server.hmr === "object"
-              ? resolvedConfig.server.hmr
-              : undefined,
-          paths,
-          logger,
-        }),
-      ],
+      plugins,
       build: {
         rollupOptions: {
           input: newEntries.reduce<Record<string, string>>((input, entry) => {
