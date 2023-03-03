@@ -9,10 +9,10 @@
     "build": "vite build"
   },
   "devDependencies": {
-    "@types/webextension-polyfill": "^0.9.0",
-    "typescript": "^4.9.3",
-    "vite": "^4.0.0",
-    "vite-plugin-web-extension": "^1.4.9",
+    "@types/webextension-polyfill": "^0.10.0",
+    "typescript": "^4.9.5",
+    "vite": "^3.2.5",
+    "vite-plugin-web-extension": "^2.0.2",
     "webextension-polyfill": "^0.10.0"
   }
 }
