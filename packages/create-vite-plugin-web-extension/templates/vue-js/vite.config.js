@@ -19,6 +19,7 @@ export default defineConfig({
     vue(),
     webExtension({
       manifest: generateManifest,
+      watchFilePaths: ["package.json", "manifest.json"],
     }),
   ],
 });
