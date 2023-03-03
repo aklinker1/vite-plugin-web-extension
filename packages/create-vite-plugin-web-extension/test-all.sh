@@ -1,5 +1,6 @@
 #!/bin/bash
-set -e
+set -m
+stty -echoctl
 
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 TEMPLATES=(
@@ -16,7 +17,10 @@ for TEMPLATE in "${TEMPLATES[@]}"; do
   echo "Setting up $TEMPLATE..."
   pnpm start -t "$TEMPLATE" -p npm --branch "$CURRENT_BRANCH" "test"
   pushd test &> /dev/null
-    pnpm build
-    pnpm dev ; echo "Done"
+    npm run build
+    trap - SIGINT
+    npm run dev &
+    trap "" SIGINT
+    fg %-
   popd &> /dev/null
 done
