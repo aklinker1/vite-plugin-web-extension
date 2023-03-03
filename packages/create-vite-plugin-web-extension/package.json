@@ -18,7 +18,8 @@
     "compile": "tsc",
     "build": "tsup --clean --format esm index.ts",
     "prepare": "pnpm build",
-    "start": "tsx index.ts"
+    "start": "tsx index.ts",
+    "test-all": "./test-all.sh"
   },
   "devDependencies": {
     "@types/command-exists": "^1.2.0",
