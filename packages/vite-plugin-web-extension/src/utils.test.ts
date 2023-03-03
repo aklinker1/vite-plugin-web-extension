@@ -1,6 +1,8 @@
 import * as vite from "vite";
 import { describe, expect, it } from "vitest";
+import { ProjectPaths } from "./options";
 import {
+  getInputPaths,
   getOutputFile,
   removePlugin,
   resolveBrowserTagsInObject,
@@ -182,6 +184,85 @@ describe("Utils", () => {
       ["some/file.ico", "some/file.ico"],
     ])("should convert %s to %s", (input, expected) => {
       expect(getOutputFile(input)).toEqual(expected);
+    });
+  });
+
+  describe("getInputPaths", () => {
+    const paths: ProjectPaths = {
+      outDir: "/path/to/project/dist",
+      rootDir: "/path/to/project",
+      publicDir: "/path/to/project/public",
+    };
+
+    it("should keep relative paths relative", () => {
+      const inputs = ["popup/index.html", "background.ts"];
+      const expected = inputs;
+
+      const actual = getInputPaths(paths, inputs);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should make absolute paths relative", () => {
+      const inputs = [
+        "/path/to/content-script.ts",
+        "/path/to/project/src/options.html",
+      ];
+      const expected = ["../content-script.ts", "src/options.html"];
+
+      const actual = getInputPaths(paths, inputs);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should convert window paths to unix", () => {
+      const winPaths: ProjectPaths = {
+        outDir: "C:\\path\\to\\project\\dist",
+        rootDir: "C:\\path\\to\\project",
+        publicDir: "C:\\path\\to\\project\\public",
+      };
+      const inputs = ["src\\popup.html"];
+      const expected = ["src/popup.html"];
+
+      const actual = getInputPaths(winPaths, inputs);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should work with a single, rollup input string", () => {
+      const input = "index.ts";
+      const expected = [input];
+
+      const actual = getInputPaths(paths, input);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should work with a list of rollup input strings", () => {
+      const inputList = ["index.ts", "index.js"];
+      const expected = inputList;
+
+      const actual = getInputPaths(paths, inputList);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should return the values when a record of rollup inputs is passed in", () => {
+      const inputRecord = { one: "index.ts", two: "index.js" };
+      const expected = ["index.ts", "index.js"];
+
+      const actual = getInputPaths(paths, inputRecord);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("should work with Vite library options", () => {
+      const inputRecord: vite.LibraryOptions = { entry: "src/test.ts" };
+      const expected = [inputRecord.entry];
+
+      const actual = getInputPaths(paths, inputRecord);
+
+      expect(actual).toEqual(expected);
     });
   });
 });
