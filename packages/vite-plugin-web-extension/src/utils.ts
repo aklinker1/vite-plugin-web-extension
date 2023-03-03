@@ -120,7 +120,9 @@ export function getPublicDir(config: vite.ResolvedConfig): string | undefined {
 }
 
 /**
- * Return all the input file paths relative to vite's root.
+ * Return all the input file paths relative to vite's root. They must be relative paths with unix
+ * separators because they must match vite's bundle output paths. Otherwise the manifest will fail
+ * to render because a path is different than expected (see #74).
  */
 export function getInputPaths(
   paths: ProjectPaths,
@@ -133,8 +135,9 @@ export function getInputPaths(
   else inputs = Object.values(input);
 
   return inputs.map((file) => {
-    if (path.isAbsolute(file)) return path.relative(paths.rootDir, file).replace(/\\/g, "/");
-    return file.replace(/\\/g, "/");
+    if (path.isAbsolute(file))
+      return path.relative(paths.rootDir, file).replaceAll("\\", "/");
+    return file.replaceAll("\\", "/");
   });
 }
 
