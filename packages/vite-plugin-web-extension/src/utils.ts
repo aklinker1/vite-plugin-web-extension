@@ -133,8 +133,8 @@ export function getInputPaths(
   else inputs = Object.values(input);
 
   return inputs.map((file) => {
-    if (path.isAbsolute(file)) return path.relative(paths.rootDir, file);
-    return file;
+    if (path.isAbsolute(file)) return path.relative(paths.rootDir, file).replace(/\\/g, "/");
+    return file.replace(/\\/g, "/");
   });
 }
 
