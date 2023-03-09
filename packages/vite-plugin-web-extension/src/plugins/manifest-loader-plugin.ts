@@ -112,8 +112,8 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       return vite.mergeConfig(
         {
           server: {
-            // Set the server origin so assets contain the entire url, not just the absolute path
-            // See #79
+            // Set the server origin so assets contain the entire url in dev mode, not just the
+            // absolute path. See #79
             origin: "http://127.0.0.1:5173",
           },
           build: {
