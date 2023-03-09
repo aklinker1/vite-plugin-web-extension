@@ -50,6 +50,7 @@ export function hmrRewritePlugin(config: {
 
       const hmrConfig: InlineConfig = {
         server: {
+          origin: "http://127.0.0.1:5173",
           hmr: {
             protocol: "http:",
             host: "127.0.0.1",
