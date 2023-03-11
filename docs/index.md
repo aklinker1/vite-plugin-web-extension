@@ -33,7 +33,7 @@ features:
     details: Easily customize your manifest.json to build for multiple different browsers.
   - icon: ✅
     title: Manifest Validation
-    details: Easily customize your manifest.json to build for multiple different browsers.
+    details: Make sure you've entered all required fields during development.
   - icon: 🤖
     title: TypeScript Support
     details: First class, out-of-the-box TypeScript support with no additional configuration.
