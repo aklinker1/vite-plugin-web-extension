@@ -1,4 +1,4 @@
-import type { Manifest } from "webextension-polyfill";
+import { Manifest } from "webextension-polyfill";
 import { getOutputFile } from "../utils";
 
 /**
