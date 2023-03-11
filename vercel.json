@@ -1,5 +1,8 @@
 {
   "github": {
     "silent": true
-  }
+  },
+  "framework": "vuepress",
+  "buildCommand": "cd packages/docs && pnpm build",
+  "outputDirectory": "packages/docs/.vuepress/dist"
 }
