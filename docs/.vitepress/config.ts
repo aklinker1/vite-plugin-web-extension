@@ -72,6 +72,10 @@ export default defineConfig({
       {
         text: "v2",
         items: [
+          {
+            text: "v3 (Latest)",
+            link: "https://vite-plugin-web-extension.aklinker1.io/",
+          },
           { text: "v2", link: "/" },
           {
             text: "v1",
