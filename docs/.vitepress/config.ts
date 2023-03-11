@@ -70,9 +70,13 @@ export default defineConfig({
       { text: "Guide", link: "/guide/" },
       { text: "Config", link: "/config/plugin-options" },
       {
-        text: "v2",
+        text: "v3",
         items: [
-          { text: "v2", link: "/" },
+          { text: "v3 (Latest)", link: "/" },
+          {
+            text: "v2",
+            link: "https://v2.vite-plugin-web-extension.aklinker1.io/",
+          },
           {
             text: "v1",
             link: "https://v1.vite-plugin-web-extension.aklinker1.io/",
