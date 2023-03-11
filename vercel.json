@@ -1,5 +1,8 @@
 {
   "github": {
     "silent": true
-  }
+  },
+  "framework": "vitepress",
+  "buildCommand": "pnpm docs:build",
+  "outputDirectory": "docs/.vitepress/dist"
 }
