@@ -22,8 +22,6 @@ export function renderManifest(
   // Clone the input to the output.
   const output: any = JSON.parse(JSON.stringify(input));
 
-  console.log({ input, bundles });
-
   replaceEntrypoint(bundles, output.action, "default_popup");
   replaceEntrypoint(bundles, output, "devtools_page");
   replaceEntrypoint(bundles, output, "options_page");

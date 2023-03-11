@@ -148,7 +148,6 @@ export function createBuildContext({
   ) {
     return new Promise<void>((res, rej) => {
       watcher.on("event", async (e) => {
-        console.log({ e });
         switch (e.code) {
           case "END":
             res();
@@ -179,7 +178,6 @@ export function createBuildContext({
 
         const output = await vite.build(config);
         if ("on" in output) {
-          console.log("WATCHINg");
           activeWatchers.push(output);
           // In watch mode, wait until it's built once
           await waitForWatchBuildComplete(output);
