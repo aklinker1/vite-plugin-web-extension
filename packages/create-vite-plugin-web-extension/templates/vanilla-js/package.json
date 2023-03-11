@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "vite": "^4.1.4",
-    "vite-plugin-web-extension": "^2.0.2",
+    "vite-plugin-web-extension": "^3.0.0",
     "webextension-polyfill": "^0.10.0"
   }
 }
