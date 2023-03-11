@@ -257,8 +257,10 @@ describe("Utils", () => {
     });
 
     it("should work with Vite library options", () => {
-      const inputRecord: vite.LibraryOptions = { entry: "src/test.ts" };
-      const expected = [inputRecord.entry];
+      const inputRecord: vite.LibraryOptions = {
+        entry: ["src/test.ts", "test2.ts"],
+      };
+      const expected = inputRecord.entry;
 
       const actual = getInputPaths(paths, inputRecord);
 

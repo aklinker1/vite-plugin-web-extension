@@ -131,7 +131,8 @@ export function getInputPaths(
   let inputs: string[];
   if (typeof input === "string") inputs = [input];
   else if (Array.isArray(input)) inputs = input;
-  else if ("entry" in input) inputs = [input.entry];
+  else if ("entry" in input)
+    inputs = getInputPaths(paths, (input as vite.LibraryOptions).entry);
   else inputs = Object.values(input);
 
   return inputs.map((file) => {

@@ -1,4 +1,3 @@
-import * as rollup from "rollup";
 import * as vite from "vite";
 import { BUNDLE_TRACKER_PLUGIN_NAME } from "../constants";
 

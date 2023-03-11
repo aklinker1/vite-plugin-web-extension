@@ -144,7 +144,7 @@ export function createBuildContext({
 
   function waitForWatchBuildComplete(watcher: rollup.RollupWatcher) {
     return new Promise<void>((res, rej) => {
-      watcher.addListener("event", async (e) => {
+      watcher.on("event", async (e) => {
         switch (e.code) {
           case "END":
             res();
@@ -174,7 +174,7 @@ export function createBuildContext({
         (config.plugins ??= []).push(bundleTracker);
 
         const output = await vite.build(config);
-        if ("addListener" in output) {
+        if ("on" in output) {
           activeWatchers.push(output);
           // In watch mode, wait until it's built once
           await waitForWatchBuildComplete(output);
