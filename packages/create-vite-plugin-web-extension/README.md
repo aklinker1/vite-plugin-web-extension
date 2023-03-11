@@ -22,6 +22,10 @@ If you're not working off a fork (basically just for maintainers with direct acc
 pnpm start --branch <your-branch-name>
 ```
 
+You can run `pnpm test-all` to run all templates based on your current branch.
+
+> TODO: Add support for forks with this command.
+
 ### Adding/Fixing Templates
 
 You do not need to publish an update the the NPM package to add or fix templates. Templates are consumed by the create command by cloning the `main` branch of the repo - so changes just need to be merged into `main`!
