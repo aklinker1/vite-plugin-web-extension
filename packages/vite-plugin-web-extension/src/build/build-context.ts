@@ -1,4 +1,5 @@
-import * as rollup from "rollup";
+import * as rollup2 from "rollup2";
+import * as rollup3 from "rollup3";
 import { inspect } from "util";
 import * as vite from "vite";
 import { ProjectPaths, ResolvedOptions } from "../options";
@@ -47,7 +48,7 @@ export function createBuildContext({
    * generated assets.
    */
   let bundles: BundleMap = {};
-  let activeWatchers: rollup.RollupWatcher[] = [];
+  let activeWatchers: Array<rollup2.RollupWatcher | rollup3.RollupWatcher> = [];
 
   async function getBuildConfigs({
     paths,
@@ -142,9 +143,12 @@ export function createBuildContext({
     logger.log(`\n${GREEN}✓${RESET} All steps completed.\n`);
   }
 
-  function waitForWatchBuildComplete(watcher: rollup.RollupWatcher) {
+  function waitForWatchBuildComplete(
+    watcher: rollup2.RollupWatcher | rollup3.RollupWatcher
+  ) {
     return new Promise<void>((res, rej) => {
-      watcher.addListener("event", async (e) => {
+      watcher.on("event", async (e) => {
+        console.log({ e });
         switch (e.code) {
           case "END":
             res();
@@ -174,7 +178,8 @@ export function createBuildContext({
         (config.plugins ??= []).push(bundleTracker);
 
         const output = await vite.build(config);
-        if ("addListener" in output) {
+        if ("on" in output) {
+          console.log("WATCHINg");
           activeWatchers.push(output);
           // In watch mode, wait until it's built once
           await waitForWatchBuildComplete(output);

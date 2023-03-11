@@ -148,7 +148,8 @@ importers:
       lodash.uniq: ^4.5.0
       lodash.uniqby: ^4.7.0
       md5: ^2.3.0
-      rollup: 2.78.1
+      rollup2: npm:rollup@2.78.1
+      rollup3: npm:rollup@3.15.0
       tsup: ^6.5.0
       typescript: ^4.4.4
       vite: ^4.1.4
@@ -176,7 +177,8 @@ importers:
       '@types/md5': 2.3.1
       '@types/node': 16.11.6
       '@types/webextension-polyfill': 0.9.0
-      rollup: 2.78.1
+      rollup2: /rollup/2.78.1
+      rollup3: /rollup/3.15.0
       tsup: 6.5.0_typescript@4.4.4
       typescript: 4.4.4
       vite: 4.1.4_@types+node@16.11.6
@@ -195,6 +197,9 @@ packages:
     peerDependencies:
       '@algolia/client-search': '>= 4.9.1 < 6'
       algoliasearch: '>= 4.9.1 < 6'
+    peerDependenciesMeta:
+      '@algolia/client-search':
+        optional: true
     dependencies:
       '@algolia/autocomplete-shared': 1.7.4
       algoliasearch: 4.14.3
@@ -5066,8 +5071,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /rollup/3.3.0:
-    resolution: {integrity: sha512-wqOV/vUJCYEbWsXvwCkgGWvgaEnsbn4jxBQWKpN816CqsmCimDmCNJI83c6if7QVD4v/zlyRzxN7U2yDT5rfoA==}
+  /rollup/3.19.1:
+    resolution: {integrity: sha512-lAbrdN7neYCg/8WaoWn/ckzCtz+jr70GFfYdlf50OF7387HTg+wiuiqJRFYawwSPpqfqDNYqK7smY/ks2iAudg==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
@@ -5636,7 +5641,7 @@ packages:
       joycon: 3.0.1
       postcss-load-config: 3.1.0
       resolve-from: 5.0.0
-      rollup: 3.3.0
+      rollup: 3.19.1
       source-map: 0.8.0-beta.0
       sucrase: 3.20.3
       tree-kill: 1.2.2
@@ -5876,7 +5881,7 @@ packages:
       esbuild: 0.16.17
       postcss: 8.4.21
       resolve: 1.22.1
-      rollup: 3.15.0
+      rollup: 3.19.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true

@@ -15,8 +15,6 @@ import {
 import path from "node:path";
 import fs from "fs-extra";
 import { inspect } from "node:util";
-import * as rollup from "rollup";
-import type browser from "webextension-polyfill";
 import { createWebExtRunner, ExtensionRunner } from "../extension-runner";
 import { createManifestValidator } from "../manifest-validation";
 import { ContentSecurityPolicy } from "../csp";
