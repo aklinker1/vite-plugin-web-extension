@@ -1,19 +1,19 @@
 # https://vercel.com/guides/how-can-i-use-github-actions-with-vercel
-name: Publish V1 Docs
+name: Publish V2 Docs
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_V1 }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_V2 }}
 on:
   push:
     branches:
-      - v1
+      - v2
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: v1
+          ref: v2
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
