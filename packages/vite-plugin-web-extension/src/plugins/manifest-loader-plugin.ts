@@ -221,12 +221,17 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       isError = err != null;
     },
 
-    // Runs during: build, watch
+    // Runs during: build, watch, dev (only when pressing ctrl+C to stop server)
     async closeBundle() {
       if (isError || mode === BuildMode.BUILD || options.disableAutoLaunch) {
         return;
       }
 
+      // Vite4 handles SIGINT (ctrl+C) in dev mode and calls closeBundle after stopping the server.
+      // So we need to manually close the open browser.
+      if (mode === BuildMode.DEV) return await extensionRunner.exit();
+
+      // This is where we open the browser in watch mode.
       await openBrowser();
     },
 
