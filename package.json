@@ -18,7 +18,8 @@
         "body-parser",
         "download",
         "express",
-        "safe-compare"
+        "safe-compare",
+        "@algolia/client-search"
       ]
     }
   }
