@@ -10,8 +10,8 @@ const helpSidebar = {
   text: "Help",
   items: [
     {
-      text: "Migrate to V2",
-      link: "/guide/migration-v2",
+      text: "Migrate to V3",
+      link: "/guide/migration-v3",
     },
     // {
     //   text: "Blog",
