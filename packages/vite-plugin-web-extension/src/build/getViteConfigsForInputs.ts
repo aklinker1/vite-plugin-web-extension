@@ -1,6 +1,5 @@
 import path from "node:path";
 import * as vite from "vite";
-import { V } from "vitest/dist/global-fe52f84b";
 import type browser from "webextension-polyfill";
 import { Logger } from "../logger";
 import { ProjectPaths, Manifest } from "../options";
