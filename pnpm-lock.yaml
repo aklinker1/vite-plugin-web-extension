@@ -97,17 +97,17 @@ importers:
       '@vue/compiler-sfc': ^3.2.25
       lodash.debounce: ^4.0.8
       typescript: ^4.4.4
-      vite: ^4.1.4
+      vite: 3.2.5
       vite-plugin-web-extension: workspace:*
       vue: ^3.2.25
     dependencies:
       lodash.debounce: 4.0.8
     devDependencies:
       '@types/lodash.debounce': 4.0.6
-      '@vitejs/plugin-vue': 4.0.0_vite@4.1.4+vue@3.2.29
+      '@vitejs/plugin-vue': 4.0.0_vite@3.2.5+vue@3.2.29
       '@vue/compiler-sfc': 3.2.29
       typescript: 4.4.4
-      vite: 4.1.4
+      vite: 3.2.5
       vite-plugin-web-extension: link:../vite-plugin-web-extension
       vue: 3.2.29
 
@@ -153,6 +153,7 @@ importers:
       tsup: ^6.5.0
       typescript: ^4.4.4
       vite: ^4.1.4
+      vite3: npm:vite@3.2.5
       vitest: ^0.28.4
       web-ext: ^7.2.0
       webextension-polyfill: ^0.10.0
@@ -182,6 +183,7 @@ importers:
       tsup: 6.5.0_typescript@4.4.4
       typescript: 4.4.4
       vite: 4.1.4_@types+node@16.11.6
+      vite3: /vite/3.2.5_@types+node@16.11.6
       vitest: 0.28.4
 
 packages:
@@ -1018,6 +1020,17 @@ packages:
       vite: 4.1.4
     dev: true
 
+  /@vitejs/plugin-vue/4.0.0_vite@3.2.5+vue@3.2.29:
+    resolution: {integrity: sha512-e0X4jErIxAB5oLtDqbHvHpJe/uWNkdpYV83AOG2xo2tEVSzCzewgJMtREZM30wXnM5ls90hxiOtAuVU6H5JgbA==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      vite: ^4.0.0
+      vue: ^3.2.25
+    dependencies:
+      vite: 3.2.5
+      vue: 3.2.29
+    dev: true
+
   /@vitejs/plugin-vue/4.0.0_vite@4.1.1+vue@3.2.47:
     resolution: {integrity: sha512-e0X4jErIxAB5oLtDqbHvHpJe/uWNkdpYV83AOG2xo2tEVSzCzewgJMtREZM30wXnM5ls90hxiOtAuVU6H5JgbA==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -1027,17 +1040,6 @@ packages:
     dependencies:
       vite: 4.1.1
       vue: 3.2.47
-    dev: true
-
-  /@vitejs/plugin-vue/4.0.0_vite@4.1.4+vue@3.2.29:
-    resolution: {integrity: sha512-e0X4jErIxAB5oLtDqbHvHpJe/uWNkdpYV83AOG2xo2tEVSzCzewgJMtREZM30wXnM5ls90hxiOtAuVU6H5JgbA==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    peerDependencies:
-      vite: ^4.0.0
-      vue: ^3.2.25
-    dependencies:
-      vite: 4.1.4
-      vue: 3.2.29
     dev: true
 
   /@vitejs/plugin-vue/4.0.0_vite@4.1.4+vue@3.2.45:
@@ -5063,6 +5065,14 @@ packages:
       fsevents: 2.3.2
     dev: true
 
+  /rollup/2.79.1:
+    resolution: {integrity: sha512-uKxbd0IhMZOhjAiD5oAFp7BqvkA4Dv47qpOCtaNvng4HBwdbWtdOh8f5nZNuk2rp51PMGk3bzfWu5oayNEuYnw==}
+    engines: {node: '>=10.0.0'}
+    hasBin: true
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
   /rollup/3.15.0:
     resolution: {integrity: sha512-F9hrCAhnp5/zx/7HYmftvsNBkMfLfk/dXUh73hPSM2E3CRgap65orDNJbLetoiUFwSAk6iHPLvBrZ5iHYvzqsg==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
@@ -5849,6 +5859,73 @@ packages:
       resolve: 1.22.1
       rollup: 2.78.1
       sass: 1.54.8
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /vite/3.2.5:
+    resolution: {integrity: sha512-4mVEpXpSOgrssFZAOmGIr85wPHKvaDAcXqxVxVRZhljkJOMZi1ibLibzjLHzJvcok8BMguLc7g1W6W/GqZbLdQ==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.15.18
+      postcss: 8.4.21
+      resolve: 1.22.1
+      rollup: 2.79.1
+    optionalDependencies:
+      fsevents: 2.3.2
+    dev: true
+
+  /vite/3.2.5_@types+node@16.11.6:
+    resolution: {integrity: sha512-4mVEpXpSOgrssFZAOmGIr85wPHKvaDAcXqxVxVRZhljkJOMZi1ibLibzjLHzJvcok8BMguLc7g1W6W/GqZbLdQ==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      '@types/node': 16.11.6
+      esbuild: 0.15.18
+      postcss: 8.4.21
+      resolve: 1.22.1
+      rollup: 2.79.1
     optionalDependencies:
       fsevents: 2.3.2
     dev: true

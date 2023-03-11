@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { Manifest } from "webextension-polyfill";
 import { renderManifest, BundleMap } from "./renderManifest";
 
 describe("renderManifest", () => {

@@ -1,3 +1,4 @@
+import * as vite3 from "vite3";
 import * as vite from "vite";
 import { ResolvedOptions, UserOptions } from "./options";
 import { manifestLoaderPlugin } from "./plugins/manifest-loader-plugin";
@@ -7,7 +8,7 @@ export { UserOptions as PluginOptions };
 
 export default function webExtension(
   options: UserOptions = {}
-): vite.PluginOption {
+): vite.PluginOption & vite3.PluginOption {
   const internalOptions: ResolvedOptions = {
     additionalInputs: options.additionalInputs ?? [],
     disableAutoLaunch: options.disableAutoLaunch ?? false,
