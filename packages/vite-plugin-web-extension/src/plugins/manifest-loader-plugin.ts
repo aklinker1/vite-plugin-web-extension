@@ -1,5 +1,4 @@
 import * as vite from "vite";
-import * as vite3 from "vite3";
 import { ResolvedOptions, Manifest, ProjectPaths } from "../options";
 import { createLogger } from "../logger";
 import { MANIFEST_LOADER_PLUGIN_NAME } from "../constants";
@@ -28,9 +27,7 @@ import { renderManifest } from "../build/renderManifest";
  * The plugin itself configures just the manifest to be transformed and it starts the "build
  * context", where the rest of the build is performed.
  */
-export function manifestLoaderPlugin(
-  options: ResolvedOptions
-): vite.Plugin & vite3.Plugin {
+export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
   const noInput = defineNoRollupInput();
   const logger = createLogger(options.verbose, options.disableColors);
   const ctx = createBuildContext({ logger, pluginOptions: options });
