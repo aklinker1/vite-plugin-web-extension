@@ -1,6 +1,6 @@
 import { GREEN, RESET, CYAN, VIOLET } from "./logger";
 import path from "node:path";
-import * as rollup from "rollup3";
+import * as rollup from "rollup";
 import * as vite from "vite";
 import { ProjectPaths } from "./options";
 

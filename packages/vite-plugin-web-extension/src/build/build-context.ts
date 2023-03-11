@@ -1,5 +1,4 @@
-import * as rollup2 from "rollup2";
-import * as rollup3 from "rollup3";
+import * as rollup from "rollup";
 import { inspect } from "util";
 import * as vite from "vite";
 import { ProjectPaths, ResolvedOptions } from "../options";
@@ -48,7 +47,7 @@ export function createBuildContext({
    * generated assets.
    */
   let bundles: BundleMap = {};
-  let activeWatchers: Array<rollup2.RollupWatcher | rollup3.RollupWatcher> = [];
+  let activeWatchers: rollup.RollupWatcher[] = [];
 
   async function getBuildConfigs({
     paths,
@@ -143,9 +142,7 @@ export function createBuildContext({
     logger.log(`\n${GREEN}✓${RESET} All steps completed.\n`);
   }
 
-  function waitForWatchBuildComplete(
-    watcher: rollup2.RollupWatcher | rollup3.RollupWatcher
-  ) {
+  function waitForWatchBuildComplete(watcher: rollup.RollupWatcher) {
     return new Promise<void>((res, rej) => {
       watcher.on("event", async (e) => {
         switch (e.code) {
