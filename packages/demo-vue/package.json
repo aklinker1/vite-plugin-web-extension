@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "pnpm i && pnpm vite",
-    "dev:firefox": "pnpm i && pnpm TARGET=firefox vite",
+    "dev": "pnpm i && vite",
+    "dev:firefox": "pnpm i && TARGET=firefox vite",
     "build": "pnpm i && tsc && vite build",
     "build:firefox": "pnpm i && tsc && TARGET=firefox vite build"
   },
