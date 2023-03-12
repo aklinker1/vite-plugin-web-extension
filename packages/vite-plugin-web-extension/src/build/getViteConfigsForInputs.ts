@@ -73,14 +73,13 @@ export function getViteConfigsForInputs(options: {
   additionalInputs: string[];
   manifest: Manifest;
   logger: Logger;
-  resolvedConfig: vite.ResolvedConfig;
+  server?: vite.ViteDevServer;
   baseHtmlViteConfig: vite.InlineConfig;
   baseSandboxViteConfig: vite.InlineConfig;
   baseScriptViteConfig: vite.InlineConfig;
   baseOtherViteConfig: vite.InlineConfig;
 }): CombinedViteConfigs {
-  const { paths, additionalInputs, manifest, mode, logger, resolvedConfig } =
-    options;
+  const { paths, additionalInputs, manifest, mode, logger, server } = options;
   const configs = new CombinedViteConfigs();
 
   const processedInputs = new Set<string>();
@@ -103,11 +102,7 @@ export function getViteConfigsForInputs(options: {
       mode === BuildMode.DEV
         ? [
             hmrRewritePlugin({
-              server: resolvedConfig.server,
-              hmr:
-                typeof resolvedConfig.server.hmr === "object"
-                  ? resolvedConfig.server.hmr
-                  : undefined,
+              server: server!,
               paths,
               logger,
             }),

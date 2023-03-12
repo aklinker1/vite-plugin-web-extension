@@ -1,13 +1,7 @@
 /**
  * This plugin is responsible for rewriting the entry HTML files to point towards the dev server.
  */
-import {
-  HmrOptions,
-  InlineConfig,
-  mergeConfig,
-  Plugin,
-  ServerOptions,
-} from "vite";
+import * as vite from "vite";
 import { HMR_REWRITE_PLUGIN_NAME } from "../constants";
 import { parseHTML } from "linkedom";
 import path from "path";
@@ -16,19 +10,18 @@ import { Logger } from "../logger";
 import { inspect } from "util";
 
 export function hmrRewritePlugin(config: {
-  /**
-   * The resolved config.server options for the dev server vite build
-   */
-  server: ServerOptions;
-  /**
-   * The resolved config.server.hmr options for the dev server vite build
-   */
-  hmr: HmrOptions | undefined;
+  server: vite.ViteDevServer;
   paths: ProjectPaths;
   logger: Logger;
-}): Plugin {
-  const { hmr, server, paths, logger } = config;
+}): vite.Plugin {
+  const { paths, logger, server } = config;
   let inputIds: string[] = [];
+
+  const serverOptions = server.config.server;
+  let hmrOptions =
+    typeof server.config.server.hmr === "object"
+      ? server.config.server.hmr
+      : undefined;
 
   // Coped from node_modules/vite, do a global search for: vite:client-inject
   function serializeDefine(define: any): string {
@@ -48,7 +41,7 @@ export function hmrRewritePlugin(config: {
     config(config) {
       inputIds = Object.values(config.build?.rollupOptions?.input ?? {});
 
-      const hmrConfig: InlineConfig = {
+      const hmrConfig: vite.InlineConfig = {
         server: {
           hmr: {
             protocol: "http:",
@@ -61,32 +54,34 @@ export function hmrRewritePlugin(config: {
           // These are used in node_modules/vite/dist/client/client.mjs, check there to see if a var
           // can be null or not.
           __MODE__: JSON.stringify(config.mode || null),
-          __BASE__: JSON.stringify(server.base || "/"),
+          __BASE__: JSON.stringify(serverOptions.base || "/"),
           __DEFINES__: serializeDefine(config.define || {}),
-          __SERVER_HOST__: JSON.stringify(server.host || "localhost"),
-          __HMR_PROTOCOL__: JSON.stringify(hmr?.protocol || null),
-          __HMR_HOSTNAME__: JSON.stringify(hmr?.host || "localhost"),
-          __HMR_PORT__: JSON.stringify(hmr?.clientPort || hmr?.port || 5173),
-          __HMR_DIRECT_TARGET__: JSON.stringify(
-            `${server.host ?? "localhost"}:${server.port ?? 5173}${
-              config.base || "/"
-            }`
+          __SERVER_HOST__: JSON.stringify(serverOptions.host || "localhost"),
+          __HMR_PROTOCOL__: JSON.stringify(hmrOptions?.protocol || null),
+          __HMR_HOSTNAME__: JSON.stringify(hmrOptions?.host || "localhost"),
+          __HMR_PORT__: JSON.stringify(
+            hmrOptions?.clientPort || hmrOptions?.port || 5173
           ),
-          __HMR_BASE__: JSON.stringify(server.base ?? "/"),
-          __HMR_TIMEOUT__: JSON.stringify(hmr?.timeout || 30000),
-          __HMR_ENABLE_OVERLAY__: JSON.stringify(hmr?.overlay !== false),
+          __HMR_DIRECT_TARGET__: JSON.stringify(
+            `${serverOptions.host ?? "localhost"}:${
+              serverOptions.port ?? 5173
+            }${config.base || "/"}`
+          ),
+          __HMR_BASE__: JSON.stringify(serverOptions.base ?? "/"),
+          __HMR_TIMEOUT__: JSON.stringify(hmrOptions?.timeout || 30000),
+          __HMR_ENABLE_OVERLAY__: JSON.stringify(hmrOptions?.overlay !== false),
         },
       };
-      return mergeConfig(config, hmrConfig);
+      return vite.mergeConfig(config, hmrConfig);
     },
-    transform(code, id) {
+    async transform(code, id) {
       // Only transform HTML inputs
       if (!id.endsWith(".html") || !inputIds.includes(id)) return;
 
       const baseUrl = "http://localhost:5173";
 
       // Load scripts from dev server
-      const { document } = parseHTML(code);
+      const { document } = parseHTML(await server.transformIndexHtml(id, code));
 
       const pointToDevServer = (querySelector: string, attr: string): void => {
         document.querySelectorAll(querySelector).forEach((element) => {
@@ -114,12 +109,6 @@ export function hmrRewritePlugin(config: {
 
       pointToDevServer("script[type=module]", "src");
       pointToDevServer("link[rel=stylesheet]", "href");
-
-      // Add vite client to page
-      const clientScript = document.createElement("script");
-      clientScript.type = "module";
-      clientScript.src = `${baseUrl}/@vite/client`;
-      document.head.append(clientScript);
 
       // Return new HTML
       return document.toString();

@@ -97,17 +97,21 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
     logger.log("Done!");
   }
 
-  async function buildExtension(
-    emitFile: (asset: rollup.EmittedAsset) => void | Promise<void>
-  ) {
+  async function buildExtension({
+    emitFile,
+    server,
+  }: {
+    emitFile: (asset: rollup.EmittedAsset) => void | Promise<void>;
+    server?: vite.ViteDevServer;
+  }) {
     // Build
     const manifestWithInputs = await loadManifest();
     await ctx.rebuild({
       paths,
       userConfig,
-      resolvedConfig,
       manifest: manifestWithInputs,
       mode,
+      server,
       onSuccess: async () => {
         if (extensionRunner) await extensionRunner.reload();
       },
@@ -184,15 +188,18 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
         // In dev mode, the files have to be built AFTER the server is started so the HTML files can
         // be SSR-ed so they have the correct contents.
         if (mode === BuildMode.DEV) {
-          buildExtension(async (asset) => {
-            logger.log(
-              "\nWriting \x1b[95mmanifest.json\x1b[0m before opening extension in browser..."
-            );
-            await fs.writeFile(
-              path.resolve(paths.outDir, asset.fileName ?? "unknown"),
-              asset.source ?? "{}",
-              "utf8"
-            );
+          buildExtension({
+            server,
+            async emitFile(asset) {
+              logger.log(
+                "\nWriting \x1b[95mmanifest.json\x1b[0m before opening extension in browser..."
+              );
+              await fs.writeFile(
+                path.resolve(paths.outDir, asset.fileName ?? "unknown"),
+                asset.source ?? "{}",
+                "utf8"
+              );
+            },
           });
         }
       });
@@ -217,7 +224,9 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
 
       // This is where we build the extension in build and watch mode.
       if (mode !== BuildMode.DEV) {
-        await buildExtension((asset) => void this.emitFile(asset));
+        await buildExtension({
+          emitFile: (asset) => void this.emitFile(asset),
+        });
       }
     },
 
