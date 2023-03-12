@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import webExtension, { readJsonFile } from "vite-plugin-web-extension";
+import path from "node:path";
 
 function generateManifest() {
   const manifest = readJsonFile("src/manifest.json");
@@ -21,4 +22,11 @@ export default defineConfig({
       manifest: generateManifest,
     }),
   ],
+  resolve: {
+    alias: {
+      "/@react-refresh": path.resolve(
+        "node_modules/@vitejs/plugin-react-swc/refresh-runtime.js"
+      ),
+    },
+  },
 });
