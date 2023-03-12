@@ -299,12 +299,7 @@ async function applyDevServerCsp(manifest: Manifest) {
       : manifest.content_security_policy ??
         "script-src 'self'; object-src 'self';" // default CSP for MV2
   );
-  csp.add(
-    "script-src",
-    "http://localhost:*",
-    "http://127.0.0.1:*",
-    "unsafe-inline"
-  );
+  csp.add("script-src", "http://localhost:*", "http://127.0.0.1:*");
 
   if (manifest.manifest_version === 3) {
     manifest.content_security_policy ??= {};
