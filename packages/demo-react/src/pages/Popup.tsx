@@ -10,13 +10,13 @@ function Popup() {
       <img src="/icon-with-shadow.svg" />
       <h1>vite-plugin-web-extension</h1>
       <p>
-        Template: <code>react-ts 2</code>
+        Template 2: <code>react-ts</code>
       </p>
     </div>
   )
 }
 
-ReactDOM.createRoot(document.body).render(
+ReactDOM.createRoot(document.getElementById("app")!).render(
   <React.StrictMode>
     <Popup />
   </React.StrictMode>
