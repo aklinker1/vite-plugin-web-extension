@@ -11,7 +11,7 @@ export default function() {
       <img src="/icon-with-shadow.svg" />
       <h1>vite-plugin-web-extension</h1>
       <p>
-        Template 2: <code>react-ts</code>
+        Template: <code>react-ts</code>
       </p>
     </div>
   )
