@@ -7,4 +7,3 @@ ReactDOM.createRoot(document.body).render(
     <Popup />
   </React.StrictMode>
 );
-  
