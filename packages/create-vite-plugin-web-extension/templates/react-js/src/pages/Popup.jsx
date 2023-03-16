@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import "./Popup.css";
 
-export default function Popup() {
+export default function() {
   useEffect(() => {
     console.log("Hello from the popup!");
   }, []);
