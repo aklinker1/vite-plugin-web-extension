@@ -10,15 +10,14 @@ import { BOLD, DIM, Logger, RESET, GREEN } from "../logger";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
 import { bundleTrackerPlugin } from "../plugins/bundle-tracker-plugin";
 import { getViteConfigsForInputs } from "./getViteConfigsForInputs";
-import { hmrRewritePlugin } from "../plugins/hmr-rewrite-plugin";
 import { BundleMap } from "./renderManifest";
 
 interface RebuildOptions {
   paths: ProjectPaths;
   userConfig: vite.UserConfig;
-  resolvedConfig: vite.ResolvedConfig;
   manifest: any;
   mode: BuildMode;
+  server?: vite.ViteDevServer;
   onSuccess?: () => Promise<void> | void;
 }
 
@@ -52,8 +51,8 @@ export function createBuildContext({
   async function getBuildConfigs({
     paths,
     userConfig,
-    resolvedConfig,
     manifest,
+    server,
     onSuccess,
     mode,
   }: RebuildOptions) {
@@ -62,7 +61,7 @@ export function createBuildContext({
       manifest,
       mode,
       logger,
-      resolvedConfig,
+      server,
       additionalInputs: pluginOptions.additionalInputs,
       baseHtmlViteConfig: pluginOptions.htmlViteConfig ?? {},
       baseSandboxViteConfig: {},

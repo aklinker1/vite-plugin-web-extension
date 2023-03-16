@@ -1,4 +1,5 @@
 import * as vite from "vite";
+import type * as rollup from "rollup";
 import { ResolvedOptions, Manifest, ProjectPaths } from "../options";
 import { createLogger } from "../logger";
 import { MANIFEST_LOADER_PLUGIN_NAME } from "../constants";
@@ -96,6 +97,53 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
     logger.log("Done!");
   }
 
+  async function buildExtension({
+    emitFile,
+    server,
+  }: {
+    emitFile: (asset: rollup.EmittedAsset) => void | Promise<void>;
+    server?: vite.ViteDevServer;
+  }) {
+    // Build
+    const manifestWithInputs = await loadManifest();
+    await ctx.rebuild({
+      paths,
+      userConfig,
+      manifest: manifestWithInputs,
+      mode,
+      server,
+      onSuccess: async () => {
+        if (extensionRunner) await extensionRunner.reload();
+      },
+    });
+
+    // Generate the manifest based on the output files
+    const finalManifest = renderManifest(manifestWithInputs, ctx.getBundles());
+
+    // Add permissions and CSP for the dev server
+    if (mode === BuildMode.DEV) {
+      applyDevServerCsp(finalManifest);
+    }
+
+    if (!options.skipManifestValidation) {
+      await validateManifest(finalManifest);
+    }
+    emitFile({
+      type: "asset",
+      source: JSON.stringify(finalManifest),
+      fileName: "manifest.json",
+      name: "manifest.json",
+    });
+
+    await copyPublicDirToOutDir({ mode, paths });
+
+    // In dev mode, open up the browser immediately after the build context is finished with the
+    // first build.
+    if (mode === BuildMode.DEV) {
+      await openBrowser();
+    }
+  }
+
   return {
     name: MANIFEST_LOADER_PLUGIN_NAME,
 
@@ -135,6 +183,28 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       };
     },
 
+    configureServer(server) {
+      server.httpServer?.on("listening", () => {
+        // In dev mode, the files have to be built AFTER the server is started so the HTML files can
+        // be SSR-ed so they have the correct contents.
+        if (mode === BuildMode.DEV) {
+          buildExtension({
+            server,
+            async emitFile(asset) {
+              logger.log(
+                "\nWriting \x1b[95mmanifest.json\x1b[0m before opening extension in browser..."
+              );
+              await fs.writeFile(
+                path.resolve(paths.outDir, asset.fileName ?? "unknown"),
+                asset.source ?? "{}",
+                "utf8"
+              );
+            },
+          });
+        }
+      });
+    },
+
     // Runs during: Build, dev, watch
     async buildStart() {
       // Empty out directory
@@ -152,57 +222,11 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
         this.addWatchFile(path.resolve(paths.rootDir, options.manifest));
       }
 
-      // Build
-      const manifestWithInputs = await loadManifest();
-      await ctx.rebuild({
-        paths,
-        userConfig,
-        resolvedConfig,
-        manifest: manifestWithInputs,
-        mode,
-        onSuccess: async () => {
-          if (extensionRunner) await extensionRunner.reload();
-        },
-      });
-
-      // Generate the manifest based on the output files
-      const finalManifest = renderManifest(
-        manifestWithInputs,
-        ctx.getBundles()
-      );
-
-      // Add permissions and CSP for the dev server
-      if (mode === BuildMode.DEV) {
-        applyDevServerCsp(finalManifest);
-      }
-
-      if (!options.skipManifestValidation) {
-        await validateManifest(finalManifest);
-      }
+      // This is where we build the extension in build and watch mode.
       if (mode !== BuildMode.DEV) {
-        this.emitFile({
-          type: "asset",
-          source: JSON.stringify(finalManifest),
-          fileName: "manifest.json",
-          name: "manifest.json",
+        await buildExtension({
+          emitFile: (asset) => void this.emitFile(asset),
         });
-      } else {
-        logger.log(
-          "\nWriting \x1b[95mmanifest.json\x1b[0m before starting dev server..."
-        );
-        await fs.writeFile(
-          path.resolve(paths.outDir, "manifest.json"),
-          JSON.stringify(finalManifest),
-          "utf8"
-        );
-      }
-
-      await copyPublicDirToOutDir({ mode, paths });
-
-      // In dev mode, open up the browser immediately after the build context is finished with the
-      // first build.
-      if (mode === BuildMode.DEV) {
-        await openBrowser();
       }
     },
 
@@ -275,6 +299,7 @@ async function copyPublicDirToOutDir({
 
 async function applyDevServerCsp(manifest: Manifest) {
   manifest.permissions ??= [];
+  // TODO: Only add if permission isn't already present
   manifest.permissions.push("http://localhost/*");
 
   const csp = new ContentSecurityPolicy(
