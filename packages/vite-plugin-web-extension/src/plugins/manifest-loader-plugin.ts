@@ -139,7 +139,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
 
     // In dev mode, open up the browser immediately after the build context is finished with the
     // first build.
-    if (mode === BuildMode.DEV) {
+    if (mode === BuildMode.DEV && !options.disableAutoLaunch) {
       await openBrowser();
     }
   }
@@ -191,13 +191,13 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
           buildExtension({
             server,
             async emitFile(asset) {
-              logger.log(
-                "\nWriting \x1b[95mmanifest.json\x1b[0m before opening extension in browser..."
-              );
               await fs.writeFile(
                 path.resolve(paths.outDir, asset.fileName ?? "unknown"),
                 asset.source ?? "{}",
                 "utf8"
+              );
+              logger.log(
+                "\n\x1b[32m✓\x1b[0m Wrote \x1b[95mmanifest.json\x1b[0m"
               );
             },
           });
