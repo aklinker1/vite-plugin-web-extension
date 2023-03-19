@@ -1,0 +1,17 @@
+{
+  "name": "${{ template.projectName }}",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^2.0.3",
+    "svelte": "^3.55.1",
+    "vite": "^4.1.4",
+    "vite-plugin-web-extension": "^3.0.1",
+    "webextension-polyfill": "^0.10.0"
+  }
+}

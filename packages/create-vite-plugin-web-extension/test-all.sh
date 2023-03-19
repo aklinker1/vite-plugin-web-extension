@@ -10,6 +10,8 @@ TEMPLATES=(
   vue-ts
   react-js
   react-ts
+  svelte-js
+  svelte-ts
 )
 
 for TEMPLATE in "${TEMPLATES[@]}"; do

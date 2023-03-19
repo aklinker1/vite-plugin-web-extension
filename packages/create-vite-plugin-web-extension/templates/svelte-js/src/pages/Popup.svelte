@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
   console.log("Hello from the popup!");
 </script>
 
