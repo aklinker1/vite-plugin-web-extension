@@ -50,6 +50,7 @@ There are several starter templates to choose from:
 | `vanilla-js` | `vanilla-ts` |
 |   `vue-js`   |   `vue-ts`   |
 |  `react-js`  |  `react-ts`  |
+|  `svelte-js` |  `svelte-ts` |
 
 :::
 
