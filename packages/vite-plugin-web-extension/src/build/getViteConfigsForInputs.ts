@@ -173,7 +173,7 @@ export function getViteConfigsForInputs(options: {
         },
       },
       define: {
-        // https://vitejs.dev/guide/build.html#library-mode
+        // See https://github.com/aklinker1/vite-plugin-web-extension/issues/96
         "process.env.NODE_ENV": JSON.stringify(options.viteMode),
       },
     };
