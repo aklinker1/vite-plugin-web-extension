@@ -298,9 +298,14 @@ async function copyPublicDirToOutDir({
 }
 
 async function applyDevServerCsp(manifest: Manifest) {
-  manifest.permissions ??= [];
   // TODO: Only add if permission isn't already present
-  manifest.permissions.push("http://localhost/*");
+  if (manifest.manifest_version === 3) {
+    manifest.host_permissions ??= [];
+    manifest.host_permissions.push("http://localhost/*");
+  } else {
+    manifest.permissions ??= [];
+    manifest.permissions.push("http://localhost/*");
+  }
 
   const csp = new ContentSecurityPolicy(
     manifest.manifest_version === 3
