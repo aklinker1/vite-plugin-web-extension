@@ -80,8 +80,6 @@ export function createBuildContext({
     const getForcedConfig = (buildOrderIndex: number) => ({
       // We shouldn't clear the screen for these internal builds
       clearScreen: false,
-      // Don't copy static assets for the lib builds - already done during manifest build
-      publicDir: false,
       // Don't empty the outDir, this is handled in the parent build process
       build: { emptyOutDir: false },
       // Don't discover any vite.config.ts files in the root, all relevant config is already
