@@ -158,3 +158,4 @@ All these changes have several effects on builds:
 - `writeManifestTo`: To change where the extension builds to, use [Vite's `build.outDir`](https://vitejs.dev/config/build-options.html#build-outdir) option instead
 - `verbose`: Use the `--debug` flag when performing a build (`vite build --debug`) to see more output
 - `serviceWorkerType`: Deprecated field has been removed. As of [v1.0.3](https://github.com/aklinker1/vite-plugin-web-extension/releases/tag/v1.0.3), this option has had no effect, so you can just remove it
+- `libModeViteConfig` renamed to `scriptViteConfig`
