@@ -174,7 +174,7 @@ export function getViteConfigsForInputs(options: {
       },
       define: {
         // See https://github.com/aklinker1/vite-plugin-web-extension/issues/96
-        "process.env.NODE_ENV": JSON.stringify(options.viteMode),
+        "process.env.NODE_ENV": `"${options.viteMode}"`,
       },
     };
     return vite.mergeConfig(baseConfig, inputConfig);
