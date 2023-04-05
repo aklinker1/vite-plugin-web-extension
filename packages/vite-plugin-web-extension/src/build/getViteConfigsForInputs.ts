@@ -78,6 +78,7 @@ export function getViteConfigsForInputs(options: {
   baseSandboxViteConfig: vite.InlineConfig;
   baseScriptViteConfig: vite.InlineConfig;
   baseOtherViteConfig: vite.InlineConfig;
+  viteMode: string;
 }): CombinedViteConfigs {
   const { paths, additionalInputs, manifest, mode, logger, server } = options;
   const configs = new CombinedViteConfigs();
@@ -170,6 +171,10 @@ export function getViteConfigsForInputs(options: {
           formats: ["iife"],
           fileName: () => moduleId + ".js",
         },
+      },
+      define: {
+        // https://vitejs.dev/guide/build.html#library-mode
+        "process.env.NODE_ENV": JSON.stringify(options.viteMode),
       },
     };
     return vite.mergeConfig(baseConfig, inputConfig);
