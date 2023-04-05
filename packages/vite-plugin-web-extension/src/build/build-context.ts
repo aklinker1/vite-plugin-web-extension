@@ -19,6 +19,7 @@ interface RebuildOptions {
   mode: BuildMode;
   server?: vite.ViteDevServer;
   onSuccess?: () => Promise<void> | void;
+  viteMode: string;
 }
 
 export interface BuildContext {
@@ -55,6 +56,7 @@ export function createBuildContext({
     server,
     onSuccess,
     mode,
+    viteMode,
   }: RebuildOptions) {
     const entryConfigs = getViteConfigsForInputs({
       paths,
@@ -67,6 +69,7 @@ export function createBuildContext({
       baseSandboxViteConfig: {},
       baseScriptViteConfig: pluginOptions.scriptViteConfig ?? {},
       baseOtherViteConfig: {},
+      viteMode,
     });
     const multibuildManager = createMultibuildCompleteManager(async () => {
       // This prints before the manifest plugin continues in watch mode

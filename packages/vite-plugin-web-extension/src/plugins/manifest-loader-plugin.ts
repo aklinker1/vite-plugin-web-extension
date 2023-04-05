@@ -112,6 +112,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       manifest: manifestWithInputs,
       mode,
       server,
+      viteMode: resolvedConfig.mode,
       onSuccess: async () => {
         if (extensionRunner) await extensionRunner.reload();
       },
