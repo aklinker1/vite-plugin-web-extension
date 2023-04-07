@@ -17,6 +17,9 @@ export default defineConfig({
     vue(),
     browserExtension({
       browser: process.env.TARGET ?? "chrome",
+      scriptViteConfig: {
+        plugins: [vue()],
+      },
     }),
   ],
 });

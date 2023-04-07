@@ -5,9 +5,17 @@ title: Frontend Frameworks
 
 # Frontend Frameworks
 
-To use a framework like Vue, React, or Svelte in your extension, simply include the framework's Vite plugin along with `vite-plugin-web-extension` in your config!
+To use a framework like Vue, React, or Svelte throughout your extension, simply include the framework's plugin in your `vite.config.ts` just like normal.
 
-Once the framework's plugin is installed, you can now use it wherever you'd like; in the popup, options page, or even content scripts.
+:::warning Content Scripts
+Depending on the framework, like [Vue](#vue), additional configuration may be needed to use your framework in content scripts, otherwise the content script may not run in dev mode.
+
+Please open an issue if your framework does not work in dev mode.
+:::
+
+All frameworks with a Vite plugin are supported. Here are a few examples:
+
+[[toc]]
 
 ## Vue
 
@@ -21,7 +29,10 @@ export default defineConfig({
   plugins: [
     vue(),
     webExtension({
-      // ...
+      // Optionally, to use Vue in content scripts, add the following:
+      scriptViteConfig: {
+        plugins: [vue()],
+      },
     }),
   ],
 });

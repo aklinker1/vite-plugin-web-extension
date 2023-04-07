@@ -4,7 +4,10 @@ import * as vite from "vite";
 import { ProjectPaths, ResolvedOptions } from "../options";
 import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { BuildMode } from "./BuildMode";
-import { MANIFEST_LOADER_PLUGIN_NAME } from "../constants";
+import {
+  MANIFEST_LOADER_PLUGIN_NAME,
+  SCRIPT_PLUGIN_BLOCKLIST,
+} from "../constants";
 import { colorizeFilename, getInputPaths, removePlugin } from "../utils";
 import { BOLD, DIM, Logger, RESET, GREEN } from "../logger";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
@@ -91,20 +94,26 @@ export function createBuildContext({
         multibuildManager.plugin(),
       ],
     });
-    const finalConfigPromises = entryConfigs.all
-      .map<vite.InlineConfig>((entryConfig, i) =>
-        vite.mergeConfig(
-          vite.mergeConfig(entryConfig, userConfig),
+
+    const finalConfigPromises: Promise<vite.InlineConfig>[] =
+      entryConfigs.all.map(async (config, i) => {
+        let plugins: (vite.PluginOption | vite.PluginOption[])[] | undefined =
+          userConfig.plugins;
+
+        // Remove incompatible user config plugins from script builds
+        if (config.build?.lib) {
+          for (const name of SCRIPT_PLUGIN_BLOCKLIST) {
+            plugins = await removePlugin(plugins, name);
+          }
+        }
+
+        // Exclude the webExtension plugin from child builds to break recursion
+        plugins = await removePlugin(plugins, MANIFEST_LOADER_PLUGIN_NAME);
+
+        return vite.mergeConfig(
+          vite.mergeConfig(config, { ...userConfig, plugins }),
           getForcedConfig(i)
-        )
-      )
-      // Exclude this plugin from child builds to break recursion
-      .map(async (config): Promise<vite.InlineConfig> => {
-        const newPlugins = await removePlugin(
-          config.plugins,
-          MANIFEST_LOADER_PLUGIN_NAME
         );
-        return { ...config, plugins: newPlugins };
       });
     return await Promise.all(finalConfigPromises);
   }
