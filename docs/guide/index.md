@@ -50,7 +50,7 @@ There are several starter templates to choose from:
 | `vanilla-js` | `vanilla-ts` |
 |   `vue-js`   |   `vue-ts`   |
 |  `react-js`  |  `react-ts`  |
-|  `svelte-js` |  `svelte-ts` |
+| `svelte-js`  | `svelte-ts`  |
 
 :::
 
@@ -65,6 +65,7 @@ Alternatively, here's how to create a project from scratch.
    ```json
    {
      "name": "Example Extension",
+     "type": "module",
      "scripts": {
        "dev": "vite dev",
        "build": "vite build"
