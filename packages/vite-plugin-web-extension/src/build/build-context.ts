@@ -49,7 +49,7 @@ export function createBuildContext({
   let bundles: BundleMap = {};
   let activeWatchers: rollup.RollupWatcher[] = [];
 
-  async function getBuildConfigs({
+  function getBuildConfigs({
     paths,
     userConfig,
     manifest,
@@ -57,7 +57,7 @@ export function createBuildContext({
     onSuccess,
     mode,
     viteMode,
-  }: RebuildOptions) {
+  }: RebuildOptions): vite.InlineConfig[] {
     const entryConfigs = getViteConfigsForInputs({
       paths,
       manifest,
@@ -77,22 +77,20 @@ export function createBuildContext({
       await onSuccess?.();
     });
     const totalEntries = entryConfigs.count;
-    const getForcedConfig = (buildOrderIndex: number) => ({
-      // We shouldn't clear the screen for these internal builds
-      clearScreen: false,
-      // Don't empty the outDir, this is handled in the parent build process
-      build: { emptyOutDir: false },
-      plugins: [
-        labeledStepPlugin(logger, totalEntries, buildOrderIndex, paths),
-        multibuildManager.plugin(),
-      ],
-    });
 
-    const finalConfigPromises: Promise<vite.InlineConfig>[] =
-      entryConfigs.all.map(async (config, i) => {
-        return vite.mergeConfig(config, getForcedConfig(i));
-      });
-    return await Promise.all(finalConfigPromises);
+    // Merge the entrypoint config required to build something with some required config for child builds
+    return entryConfigs.all.map((config, i) =>
+      vite.mergeConfig(config, {
+        // We shouldn't clear the screen for these internal builds
+        clearScreen: false,
+        // Don't empty the outDir, this is handled in the parent build process
+        build: { emptyOutDir: false },
+        plugins: [
+          labeledStepPlugin(logger, totalEntries, i, paths),
+          multibuildManager.plugin(),
+        ],
+      })
+    );
   }
 
   function printSummary(
@@ -149,7 +147,7 @@ export function createBuildContext({
       await Promise.all(activeWatchers.map((watcher) => watcher.close()));
       activeWatchers = [];
 
-      const buildConfigs = await getBuildConfigs(rebuildOptions);
+      const buildConfigs = getBuildConfigs(rebuildOptions);
       if (pluginOptions.printSummary) printSummary(paths, buildConfigs);
 
       // Print configs deep enough to include rollup inputs
