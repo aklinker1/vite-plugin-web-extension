@@ -29,13 +29,6 @@ import { renderManifest } from "../build/renderManifest";
  * context", where the rest of the build is performed.
  */
 export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
-  if (process.env.VITE_PLUGIN_WEB_EXTESION_CHILD_BUILD === "true") {
-    return {
-      name: "web-extension:skipped",
-    };
-  }
-  process.env.VITE_PLUGIN_WEB_EXTESION_CHILD_BUILD = "true";
-
   const noInput = defineNoRollupInput();
   const logger = createLogger(options.verbose, options.disableColors);
   const ctx = createBuildContext({ logger, pluginOptions: options });
