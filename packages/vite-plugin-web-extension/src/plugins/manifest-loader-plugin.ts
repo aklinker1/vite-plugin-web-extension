@@ -29,6 +29,13 @@ import { renderManifest } from "../build/renderManifest";
  * context", where the rest of the build is performed.
  */
 export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
+  if (process.env.VITE_PLUGIN_WEB_EXTESION_CHILD_BUILD === "true") {
+    return {
+      name: "web-extension:skipped",
+    };
+  }
+  process.env.VITE_PLUGIN_WEB_EXTESION_CHILD_BUILD = "true";
+
   const noInput = defineNoRollupInput();
   const logger = createLogger(options.verbose, options.disableColors);
   const ctx = createBuildContext({ logger, pluginOptions: options });
@@ -160,7 +167,8 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
         {
           server: {
             // Set the server origin so assets contain the entire url in dev mode, not just the
-            // absolute path. See #79
+            // absolute path. See #79. This does not effect scripts or links. They are updated
+            // manually in the hmr-rewrite-plugin
             origin: "http://127.0.0.1:5173",
           },
           build: {
@@ -168,7 +176,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
             // outDir. Instead, the plugin cleans up the outDir manually in `onBuildStart`
             emptyOutDir: false,
           },
-        },
+        } as vite.UserConfig,
         // We only want to output the manifest.json, so we don't need an input.
         noInput.config
       );

@@ -4,10 +4,7 @@ import * as vite from "vite";
 import { ProjectPaths, ResolvedOptions } from "../options";
 import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { BuildMode } from "./BuildMode";
-import {
-  MANIFEST_LOADER_PLUGIN_NAME,
-  SCRIPT_PLUGIN_BLOCKLIST,
-} from "../constants";
+import { MANIFEST_LOADER_PLUGIN_NAME } from "../constants";
 import { colorizeFilename, getInputPaths, removePlugin } from "../utils";
 import { BOLD, DIM, Logger, RESET, GREEN } from "../logger";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
@@ -85,10 +82,6 @@ export function createBuildContext({
       clearScreen: false,
       // Don't empty the outDir, this is handled in the parent build process
       build: { emptyOutDir: false },
-      // Don't discover any vite.config.ts files in the root, all relevant config is already
-      // passed down. Allowing discovery can cause a infinite loop where the plugins are applied
-      // over and over again. See <https://github.com/aklinker1/vite-plugin-web-extension/issues/56>
-      configFile: false,
       plugins: [
         labeledStepPlugin(logger, totalEntries, buildOrderIndex, paths),
         multibuildManager.plugin(),
@@ -97,23 +90,7 @@ export function createBuildContext({
 
     const finalConfigPromises: Promise<vite.InlineConfig>[] =
       entryConfigs.all.map(async (config, i) => {
-        let plugins: (vite.PluginOption | vite.PluginOption[])[] | undefined =
-          userConfig.plugins;
-
-        // Remove incompatible user config plugins from script builds
-        if (config.build?.lib) {
-          for (const name of SCRIPT_PLUGIN_BLOCKLIST) {
-            plugins = await removePlugin(plugins, name);
-          }
-        }
-
-        // Exclude the webExtension plugin from child builds to break recursion
-        plugins = await removePlugin(plugins, MANIFEST_LOADER_PLUGIN_NAME);
-
-        return vite.mergeConfig(
-          vite.mergeConfig(config, { ...userConfig, plugins }),
-          getForcedConfig(i)
-        );
+        return vite.mergeConfig(config, getForcedConfig(i));
       });
     return await Promise.all(finalConfigPromises);
   }
