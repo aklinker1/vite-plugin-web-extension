@@ -10,15 +10,15 @@
     "128": "icon/128.png"
   },
   "{{chrome}}.action": {
-    "default_popup": "popup/index.html"
+    "default_popup": "src/popup/index.html"
   },
   "{{firefox}}.browser_action": {
-    "default_popup": "popup/index.html"
+    "default_popup": "src/popup/index.html"
   },
   "content_scripts": [
     {
       "matches": ["*://*/*"],
-      "js": ["content-script/index.ts"]
+      "js": ["src/content-script/index.ts"]
     }
   ],
   "permissions": ["tabs", "{{firefox}}.<all_urls>", "{{chrome}}.activeTab"]
