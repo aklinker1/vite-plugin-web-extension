@@ -169,7 +169,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
             // outDir. Instead, the plugin cleans up the outDir manually in `onBuildStart`
             emptyOutDir: false,
           },
-        } as vite.UserConfig,
+        } as vite.InlineConfig,
         // We only want to output the manifest.json, so we don't need an input.
         noInput.config
       );
