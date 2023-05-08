@@ -8,7 +8,6 @@ function root(...paths: string[]): string {
 }
 
 export default defineConfig({
-  root: "src",
   build: {
     outDir: root("dist"),
     emptyOutDir: true,
@@ -16,10 +15,8 @@ export default defineConfig({
   plugins: [
     vue(),
     browserExtension({
+      manifest: "src/manifest.json",
       browser: process.env.TARGET ?? "chrome",
-      scriptViteConfig: {
-        plugins: [vue()],
-      },
     }),
   ],
 });

@@ -160,7 +160,8 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
         {
           server: {
             // Set the server origin so assets contain the entire url in dev mode, not just the
-            // absolute path. See #79
+            // absolute path. See #79. This does not effect scripts or links. They are updated
+            // manually in the hmr-rewrite-plugin
             origin: "http://127.0.0.1:5173",
           },
           build: {
@@ -168,7 +169,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
             // outDir. Instead, the plugin cleans up the outDir manually in `onBuildStart`
             emptyOutDir: false,
           },
-        },
+        } as vite.InlineConfig,
         // We only want to output the manifest.json, so we don't need an input.
         noInput.config
       );

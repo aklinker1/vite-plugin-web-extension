@@ -4,10 +4,7 @@ import * as vite from "vite";
 import { ProjectPaths, ResolvedOptions } from "../options";
 import { labeledStepPlugin } from "../plugins/labeled-step-plugin";
 import { BuildMode } from "./BuildMode";
-import {
-  MANIFEST_LOADER_PLUGIN_NAME,
-  SCRIPT_PLUGIN_BLOCKLIST,
-} from "../constants";
+import { MANIFEST_LOADER_PLUGIN_NAME } from "../constants";
 import { colorizeFilename, getInputPaths, removePlugin } from "../utils";
 import { BOLD, DIM, Logger, RESET, GREEN } from "../logger";
 import { createMultibuildCompleteManager } from "../plugins/multibuild-complete-plugin";
@@ -52,7 +49,7 @@ export function createBuildContext({
   let bundles: BundleMap = {};
   let activeWatchers: rollup.RollupWatcher[] = [];
 
-  async function getBuildConfigs({
+  function getBuildConfigs({
     paths,
     userConfig,
     manifest,
@@ -60,7 +57,7 @@ export function createBuildContext({
     onSuccess,
     mode,
     viteMode,
-  }: RebuildOptions) {
+  }: RebuildOptions): vite.InlineConfig[] {
     const entryConfigs = getViteConfigsForInputs({
       paths,
       manifest,
@@ -80,42 +77,20 @@ export function createBuildContext({
       await onSuccess?.();
     });
     const totalEntries = entryConfigs.count;
-    const getForcedConfig = (buildOrderIndex: number) => ({
-      // We shouldn't clear the screen for these internal builds
-      clearScreen: false,
-      // Don't empty the outDir, this is handled in the parent build process
-      build: { emptyOutDir: false },
-      // Don't discover any vite.config.ts files in the root, all relevant config is already
-      // passed down. Allowing discovery can cause a infinite loop where the plugins are applied
-      // over and over again. See <https://github.com/aklinker1/vite-plugin-web-extension/issues/56>
-      configFile: false,
-      plugins: [
-        labeledStepPlugin(logger, totalEntries, buildOrderIndex, paths),
-        multibuildManager.plugin(),
-      ],
-    });
 
-    const finalConfigPromises: Promise<vite.InlineConfig>[] =
-      entryConfigs.all.map(async (config, i) => {
-        let plugins: (vite.PluginOption | vite.PluginOption[])[] | undefined =
-          userConfig.plugins;
-
-        // Remove incompatible user config plugins from script builds
-        if (config.build?.lib) {
-          for (const name of SCRIPT_PLUGIN_BLOCKLIST) {
-            plugins = await removePlugin(plugins, name);
-          }
-        }
-
-        // Exclude the webExtension plugin from child builds to break recursion
-        plugins = await removePlugin(plugins, MANIFEST_LOADER_PLUGIN_NAME);
-
-        return vite.mergeConfig(
-          vite.mergeConfig(config, { ...userConfig, plugins }),
-          getForcedConfig(i)
-        );
-      });
-    return await Promise.all(finalConfigPromises);
+    // Merge the entrypoint config required to build something with some required config for child builds
+    return entryConfigs.all.map((config, i) =>
+      vite.mergeConfig(config, {
+        // We shouldn't clear the screen for these internal builds
+        clearScreen: false,
+        // Don't empty the outDir, this is handled in the parent build process
+        build: { emptyOutDir: false },
+        plugins: [
+          labeledStepPlugin(logger, totalEntries, i, paths),
+          multibuildManager.plugin(),
+        ],
+      })
+    );
   }
 
   function printSummary(
@@ -172,7 +147,7 @@ export function createBuildContext({
       await Promise.all(activeWatchers.map((watcher) => watcher.close()));
       activeWatchers = [];
 
-      const buildConfigs = await getBuildConfigs(rebuildOptions);
+      const buildConfigs = getBuildConfigs(rebuildOptions);
       if (pluginOptions.printSummary) printSummary(paths, buildConfigs);
 
       // Print configs deep enough to include rollup inputs

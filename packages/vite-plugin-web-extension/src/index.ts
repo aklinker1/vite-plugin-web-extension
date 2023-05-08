@@ -8,6 +8,12 @@ export { UserOptions as PluginOptions };
 export default function webExtension(
   options: UserOptions = {}
 ): vite.PluginOption {
+  // Prevent recursively applying the `webExtension` plugin, see #59 and #105
+  if (process.env.VITE_PLUGIN_WEB_EXTESION_CHILD_BUILD === "true") {
+    return [];
+  }
+  process.env.VITE_PLUGIN_WEB_EXTESION_CHILD_BUILD = "true";
+
   const internalOptions: ResolvedOptions = {
     additionalInputs: options.additionalInputs ?? [],
     disableAutoLaunch: options.disableAutoLaunch ?? false,

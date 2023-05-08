@@ -80,9 +80,10 @@ export function hmrRewritePlugin(config: {
 
       const baseUrl = "http://localhost:5173";
 
-      // Load scripts from dev server
-      const { document } = parseHTML(await server.transformIndexHtml(id, code));
+      // Load scripts from dev server, this adds the /@vite/client script to the page
+      const serverCode = await server.transformIndexHtml(id, code);
 
+      const { document } = parseHTML(serverCode);
       const pointToDevServer = (querySelector: string, attr: string): void => {
         document.querySelectorAll(querySelector).forEach((element) => {
           const src = element.getAttribute(attr);
