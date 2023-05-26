@@ -1,17 +1,19 @@
 ---
 lang: en-US
-title: Frontend Frameworks
+title: Integrating Frontend Frameworks
 ---
 
-# Frontend Frameworks
+# Integrating Frontend Frameworks
 
-To use a framework like Vue, React, or Svelte throughout your extension, simply include the framework's plugin in your `vite.config.ts` just like normal.
+Using frontend frameworks such as Vue, React, or Svelte in your extension is straightforward. You only need to include the framework's plugin in your `vite.config.ts` file.
 
-All frameworks with a Vite plugin are supported. Here are a few examples:
+The plugin supports all frontend frameworks that have a Vite plugin. The following are examples of how to incorporate a few popular frameworks:
 
 [[toc]]
 
-## Vue
+## Vue Integration
+
+To integrate Vue into your extension, add the Vue plugin to your `vite.config.ts` file:
 
 ```ts
 // vite.config.ts
@@ -29,7 +31,9 @@ export default defineConfig({
 });
 ```
 
-## React
+## React Integration
+
+To integrate React into your extension, include the React plugin in your `vite.config.ts` file:
 
 ```ts
 // vite.config.ts
@@ -47,7 +51,9 @@ export default defineConfig({
 });
 ```
 
-## React (SWC)
+## React (SWC) Integration
+
+If you prefer to use the SWC version of the React plugin, you can include it in your `vite.config.ts` file like so:
 
 ```ts
 // vite.config.ts
@@ -65,7 +71,9 @@ export default defineConfig({
 });
 ```
 
-## Svelte
+## Svelte Integration
+
+To integrate Svelte into your extension, include the Svelte plugin in your `vite.config.ts` file:
 
 ```ts
 // vite.config.ts

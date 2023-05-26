@@ -1,22 +1,22 @@
 ---
 lang: en-US
-title: Configure Browser Startup
+title: Browser Startup Configuration
 ---
 
-# Configure Browser Startup
+# Browser Startup Configuration
 
 ## Overview
 
-Internally, `vite-plugin-web-extension` uses the JS API provided by [`web-ext`](https://www.npmjs.com/package/web-ext) to open the browser and install the extension during development. It can open any Chromium-based browser (Chrome, Edge, etc) and Firefox.
+Internally, `vite-plugin-web-extension` uses the JS API provided by [`web-ext`](https://www.npmjs.com/package/web-ext) to launch the browser and install the extension during development. It's capable of opening any Chromium-based browser (such as Chrome or Edge) and Firefox.
 
-Browser startup can be configured in multiple places:
+There are two approaches to configure browser startup:
 
-1. The [`webExtConfig`](/config/plugin-options#webextconfig) option into the plugin
-2. Config files
+1. Using the [`webExtConfig`](/config/plugin-options#webextconfig) option within the plugin
+2. Creating config files
 
 ## The `webExtConfig` Option
 
-This is a good way of providing config that will be checked into version control (since you will have to list the config in `vite.config.ts`), or if you need to set something based on a runtime value, like an environment variable.
+This method is ideal for config that needs to be committed to version control (as it will be defined in `vite.config.ts`), or if a configuration based on a runtime value, like an environment variable, is required.
 
 ```ts
 import { defineConfig } from "vite";
@@ -36,9 +36,9 @@ export default defineConfig({
 
 ## Config Files
 
-The plugin will automatically discover config files on your filesystem. Below are the paths that the plugin will look for config files at. When multiple files are found, they are merged into a single config.
+The plugin will automatically discover config files on your filesystem. The plugin searches for config files at the paths listed below. When multiple files are found, they are merged into a single configuration.
 
-The higher priority files (top of this list) are will override fields set by the lower priority files (bottom of the list).
+Higher priority files (top of the list) will override fields set by lower priority files (bottom of the list).
 
 1. `webExtConfig` option
 1. `<viteRoot>/.webextrc`
@@ -48,9 +48,9 @@ The higher priority files (top of this list) are will override fields set by the
 1. `~/.webextrc`
 1. `~/.webextrc.(json|json5|yml|yaml)`
 
-> Array fields are overwritten, not combined in any way.
+> Array fields are overwritten, they are not combined.
 
-Here's an example: You prefer to use Chrome Beta and Firefox Developer Edition, so you want one of those to open during development. You can create a `.webextrc` file in your home directory, and any project that uses `vite-plugin-web-extension` will know to use those versions instead of the default versions!
+Here's an example: Suppose you prefer to use Chrome Beta and Firefox Developer Edition, and you want one of these to open during development. You can create a `.webextrc` file in your home directory, and any project using `vite-plugin-web-extension` will use those versions instead of the default ones!
 
 ```json
 // ~/.webextrc
@@ -62,11 +62,11 @@ Here's an example: You prefer to use Chrome Beta and Firefox Developer Edition, 
 
 ## Available Options
 
-See [Mozilla's `web-ext run` CLI reference](https://extensionworkshop.com/documentation/develop/web-ext-command-reference/#web-ext-run) for a list of available options.
+Refer to Mozilla's [`web-ext run` CLI reference](https://extensionworkshop.com/documentation/develop/web-ext-command-reference/#web-ext-run) for a complete list of available options.
 
-Simply convert each `--kebab-case` flag to `camelCase`, and list them in your config.
+Just convert each `--kebab-case` flag to `camelCase` and include them in your configuration.
 
-For example, to use Microsoft Edge, use the default user profile, customize the starting URLs, and change the initial window size, here's what your config file would look like:
+For instance, if you want to use Microsoft Edge, use the default user profile, customize the starting URLs, and alter the initial window size, your config file would look like:
 
 <!-- prettier-ignore -->
 ```yml

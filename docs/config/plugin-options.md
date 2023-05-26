@@ -1,11 +1,9 @@
 ---
 lang: en-US
-title: Plugin Options
+title: Plugin Configuration Options
 ---
 
-# Plugin Options
-
-These options are available when adding the plugin in your `vite.config.ts`
+# Plugin Configuration Options
 
 ```ts
 import { defineConfig } from "vite";
@@ -26,15 +24,15 @@ export default defineConfig({
 additionalInputs?: string[]
 ```
 
-A list of paths relative to Vite's root directory that should be built along with the inputs listed in your manifest.
+An array of paths relative to Vite's root directory that should be built along with the inputs listed in your manifest.
 
-Usually, this is additional HTML files that aren't listed in your manifest, but still want to show, like an onboarding page. It also accepts stylesheets (CSS, SCSS, Stylus, etc) and scripts (JS or TS), essentially everything that Vite knows how to build.
+This generally involves additional HTML files not listed in your manifest but which you still want to display, such as an onboarding page. It also accepts stylesheets (CSS, SCSS, Stylus, etc.) and scripts (JS or TS) - basically, anything that Vite can build.
 
-Depending on the type of file listed, it will be built at different times:
+Depending on the type of file provided, it will be built at different stages:
 
-- HTML files are built in the same step along side the other HTML files listed in the manifest.
-- JS files are bundled individually in the order listed.
-- CSS files are also bundled individually in the order listed.
+- HTML files are built in the same step alongside the other HTML files listed in the manifest.
+- JS files are bundled individually in the order specified.
+- CSS files are also bundled individually in the order given.
 
 ## `browser`
 
@@ -46,9 +44,9 @@ browser?: string
 const browser = "{{browser}}"
 </script>
 
-When using <code>{{browser}}.</code> prefixes in your manifest template, setting this field will cause only the matching tags to be in the `<outDir>/manifest.json`.
+When using <code>{{browser}}.</code> prefixes in your manifest template, defining this field ensures that only matching tags are included in the `<outDir>/manifest.json`.
 
-See [Supporting Multiple Browsers](/guide/supporting-multiple-browsers) to learn more about how to use the `browser` option in combination with manifest templates.
+Refer to [Multibrowser Support](/guide/supporting-multiple-browsers) for more details on how to use this option with manifest templates.
 
 ## `disableAutoLaunch`
 
@@ -56,9 +54,9 @@ See [Supporting Multiple Browsers](/guide/supporting-multiple-browsers) to learn
 disableAutoLaunch?: boolean;
 ```
 
-Setting to `true` will prevent the browser from opening when starting the dev server or running the extension in watch mode.
+Setting this to `true` prevents the browser from launching when starting the development server or running the extension in watch mode.
 
-This can be useful in setups where opening the browser is impossible, like in the WSL/WSL2. In this case, the linux shell can't communicate with the Window's browser, and it crashes. Setting `disableAutoLaunch: true` will trigger rebuild's when you save a file, and you can open an install the extension manually.
+This is useful in setups where opening the browser isn't possible, such as in WSL/WSL2. In these scenarios, the Linux shell can't communicate with the Windows browser, leading to crashes. Setting `disableAutoLaunch: true` will trigger rebuilds when you save a file, and you can manually open and install the extension.
 
 ## `htmlViteConfig`
 
@@ -66,10 +64,10 @@ This can be useful in setups where opening the browser is impossible, like in th
 htmlViteConfig?: import('vite').InlineConfig
 ```
 
-You can provide additional Vite config to the HTML multipage build step by setting it here.
+You can supply additional Vite configuration to the HTML multipage build step here.
 
 ::: warning
-Use with caution, I have not tested the compatibility of every single Vite build option with the HTML build process. Submit an issue if you have any problems.
+Exercise caution with this option. Not every one of Vite's build options have been tested for compatibility. If something doesn't work for you, please open an issue.
 :::
 
 ## `manifest`
@@ -78,14 +76,15 @@ Use with caution, I have not tested the compatibility of every single Vite build
 manifest?: string | (() => any) | (() => Promise<any>)
 ```
 
-The manifest can either be:
+The manifest can be:
 
-- The path relative to Vite's root directory to a file containing a manifest template
-- A function that returns the manifest template as a JSON object.
+- A path relative to Vite's root directory pointing to a file containing a manifest template.
+- An absolute path pointing to a file containing a manifest template.
+- A function returning the manifest template as a JSON object.
 
-When not provided, it defaults to `"manifest.json"`, and the plugin looks for a template at `<viteRoot>/manifest.json`.
+When not provided, it defaults to `"manifest.json"`, and the plugin searches for a template at `<viteRoot>/manifest.json`.
 
-See [Supporting Multiple Browsers](/guide/supporting-multiple-browsers) to learn more about how to use manifest templates.
+Refer to [Multibrowser Support](/guide/supporting-multiple-browsers) for more information on how to use manifest templates.
 
 ## `printSummary`
 
@@ -93,7 +92,7 @@ See [Supporting Multiple Browsers](/guide/supporting-multiple-browsers) to learn
 printSummary?: boolean
 ```
 
-Defaults to `true`. When `true`, the plugin will print a summary of what files are being built in what order.
+Defaults to `true`. When set to `true`, the plugin will provide a summary of what files are being built and in what order.
 
 ## `scriptViteConfig`
 
@@ -101,10 +100,10 @@ Defaults to `true`. When `true`, the plugin will print a summary of what files a
 scriptViteConfig?: import('vite').InlineConfig
 ```
 
-You can provide additional Vite config to the individually bundled JS files by setting it here.
+You can provide additional Vite config to individually bundled JS files here.
 
 ::: warning
-Use with caution, I have not tested the compatibility of every single Vite build option with the HTML build process. Submit an issue if you have any problems.
+Exercise caution with this option. Not every one of Vite's build options have been tested for compatibility. If something doesn't work for you, please open an issue.
 :::
 
 ## `skipManifestValidation`
@@ -113,11 +112,11 @@ Use with caution, I have not tested the compatibility of every single Vite build
 skipManifestValidation?: boolean
 ```
 
-By default, the `<outDir>/manifest.json` will be validated against Google's JSON schema: <https://json.schemastore.org/chrome-manifest>.
+By default, the `<outDir>/manifest.json` undergoes validation against Google's JSON schema at <https://json.schemastore.org/chrome-manifest>.
 
-Setting this to `true` will skip validation.
+Setting this to `true` skips the validation step.
 
-> The validation process downloads the schema from the above URL. If you are working offline, this step will be skipped automatically.
+> The validation process downloads the schema from the given URL. If you are working offline, this step will automatically be skipped.
 
 ## `watchFilePaths`
 
@@ -125,9 +124,9 @@ Setting this to `true` will skip validation.
 watchFilePaths?: string[]
 ```
 
-A list of paths relative to Vite's root directory that cause a full rebuild of the extension during development. When one of these files is saved, the browser will be shut down, manifest regenerated, and the browser will open again.
+An array of paths relative to Vite's root directory that triggers a complete rebuild of the extension during development. When one of these files is saved, the browser will be closed, the manifest regenerated, and the browser will relaunch.
 
-If the `manifest` field was a string, it will be added to this list automatically. If the `manifest` field is a function, you should add any files that are used to generate the manifest (like `package.json`).
+If the [`manifest` field](#manifest) was a string, it will be automatically added to this list. If the [`manifest` field](#manifest) is a function, you should add any files used to generate the manifest (like package.json).
 
 ## `webExtConfig`
 
@@ -135,4 +134,4 @@ If the `manifest` field was a string, it will be added to this list automaticall
 webExtConfig?: any
 ```
 
-Pass config into `web-ext` when starting the browser. See [Configure Browser Startup](/guide/configure-browser-startup.md) for more details.
+This option allows you to pass configuration into `web-ext` when launching the browser. For more details, refer to [Browser Startup Configuration](/guide/configure-browser-startup.md).

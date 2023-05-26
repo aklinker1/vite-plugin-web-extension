@@ -1,13 +1,13 @@
 ---
 lang: en-US
-title: Installation
+title: Getting Started
 ---
 
-# Installation
+# Getting Started
 
-## Overview
+## Introduction
 
-`vite-plugin-web-extension` will build an entire chrome extension by adding a single plugin to your build config.
+`vite-plugin-web-extension` allows you to construct a complete Chrome extension by providing a single plugin to your build configuration.
 
 ```ts
 import webExtension from "vite-plugin-web-extension";
@@ -18,7 +18,7 @@ export default defineConfig({
 ```
 
 ::: info
-This plugin is compatible with all other Vite plugins. Just add them to the list of plugins in any order.
+This plugin is fully compatible with all other Vite plugins. You can include them in the list of plugins in any order you prefer.
 :::
 
 ## Create a New Project
@@ -54,11 +54,11 @@ There are several starter templates to choose from:
 
 :::
 
-Then run `pnpm dev` to open a browser and install the extension in dev mode, or `pnpm build` to build your extension for production.
+After the initialization, you can run `pnpm dev` to open a browser and install the extension in development mode, or `pnpm build` to bundle your extension for production.
 
-## Manual Project Setup
+## Setting Up a Project Manually
 
-Alternatively, here's how to create a project from scratch.
+If you prefer, you can also set up your project manually. Follow these steps:
 
 1. Create a `package.json`:
 
@@ -80,7 +80,7 @@ Alternatively, here's how to create a project from scratch.
    pnpm i webextension-polyfill
    ```
 
-3. Create a `manifest.json` and your entrypoints:
+3. Create a `manifest.json` and your entry points:
 
    ```json
    // manifest.json
@@ -120,7 +120,7 @@ Alternatively, here's how to create a project from scratch.
    </html>
    ```
 
-4. Create your Vite config, adding the plugin:
+4. Create a `vite.config.ts`, adding the plugin:
 
    ```ts
    // vite.config.ts
@@ -132,4 +132,4 @@ Alternatively, here's how to create a project from scratch.
    });
    ```
 
-And you're all set! Run `pnpm dev` to open a browser and install the extension in dev mode, or `pnpm build` to build your extension for production.
+That's it! You're ready to go. Run `pnpm dev` to open a browser and install the extension in development mode, or `pnpm build` to bundle your extension for production.
