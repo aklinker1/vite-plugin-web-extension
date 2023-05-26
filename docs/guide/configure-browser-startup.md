@@ -5,16 +5,18 @@ title: Configure Browser Startup
 
 # Configure Browser Startup
 
-Internally, `vite-plugin-web-extension` uses [`web-ext`](https://www.npmjs.com/package/web-ext) by Mozilla to open the browser and install the extension during development. It can open any Chromium-based browser (Chrome, Edge, etc) and Firefox.
+## Overview
 
-You can configure it's startup behavior in two ways:
+Internally, `vite-plugin-web-extension` uses the JS API provided by [`web-ext`](https://www.npmjs.com/package/web-ext) to open the browser and install the extension during development. It can open any Chromium-based browser (Chrome, Edge, etc) and Firefox.
 
-1. Pass [`webExtConfig`](/config/plugin-options#webextconfig) option into the plugin
-2. Use config files
+Browser startup can be configured in multiple places:
 
-## Pass `webExtConfig`
+1. The [`webExtConfig`](/config/plugin-options#webextconfig) option into the plugin
+2. Config files
 
-This is a good option if you're OK with checking the config into version control (since you will have to list the config in `vite.config.ts`), or if you need to set something based on a runtime value, like an environment variable.
+## The `webExtConfig` Option
+
+This is a good way of providing config that will be checked into version control (since you will have to list the config in `vite.config.ts`), or if you need to set something based on a runtime value, like an environment variable.
 
 ```ts
 import { defineConfig } from "vite";
@@ -25,14 +27,14 @@ export default defineConfig({
     webExtension({
       // ...
       webExtConfig: {
-        startUrl: ["https://google.com"],
+        startUrl: process.env.START_URL.split(","),
       },
     }),
   ],
 });
 ```
 
-## Use Config Files
+## Config Files
 
 The plugin will automatically discover config files on your filesystem. Below are the paths that the plugin will look for config files at. When multiple files are found, they are merged into a single config.
 
@@ -56,4 +58,24 @@ Here's an example: You prefer to use Chrome Beta and Firefox Developer Edition, 
   "chromiumBinary": "/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta",
   "firefox": "firefoxdeveloperedition"
 }
+```
+
+## Available Options
+
+See [Mozilla's `web-ext run` CLI reference](https://extensionworkshop.com/documentation/develop/web-ext-command-reference/#web-ext-run) for a list of available options.
+
+Simply convert each `--kebab-case` flag to `camelCase`, and list them in your config.
+
+For example, to use Microsoft Edge, use the default user profile, customize the starting URLs, and change the initial window size, here's what your config file would look like:
+
+<!-- prettier-ignore -->
+```yml
+# ./.webextrc.yml
+chromiumBinary: /absolute/path/to/edge            # from --chromium-binary
+chromiumProfile: /absolute/path/to/edge/profile   # from --chromium-profile
+startUrl:                                         # from --start-url
+  - https://google.com
+  - https://duckduckgo.com
+args:                                             # from --args
+  - --window-size=400x300
 ```

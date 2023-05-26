@@ -135,8 +135,4 @@ If the `manifest` field was a string, it will be added to this list automaticall
 webExtConfig?: any
 ```
 
-Configure the startup behavior of the browser.
-
-See [`web-ext`'s source code](https://github.com/mozilla/web-ext/blob/666886f40a967b515d43cf38fc9aec67ad744d89/src/program.js#L559) for possible options.
-
-See [Configure Browser Startup](/guide/configure-browser-startup.md) for alteratives and more details on how this field is used.
+Pass config into `web-ext` when starting the browser. See [Configure Browser Startup](/guide/configure-browser-startup.md) for more details.
