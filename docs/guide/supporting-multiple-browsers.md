@@ -1,18 +1,18 @@
 ---
 lang: en-US
-title: Support Multiple Browsers
+title: Multibrowser Support
 ---
 
-# Support Multiple Browsers
+# Multibrowser Support
 
-## Overview
+## Introduction
 
-`vite-plugin-web-extension` doesn't have any special logic for supporting multiple browsers **_at runtime_**. Instead, at build-time, it provides a way to create multiple versions of your extension depending on which browser you're targetting.
+`vite-plugin-web-extension` does not suppport multiple browsers **_at runtime_**. However, at build-time, it allows for the creation of different "flavors" of your extension based on the browser you're targeting.
 
 :::info
-For standardizing the behavior of multiple browsers at runtime, consider using [`webextension-polyfill`](https://www.npmjs.com/package/webextension-polyfill). It standardized the `chrome` and `browser` APIs used by Chrome and Firefox, into a single API.
+For standardizing the behavior of multiple browsers **_at runtime_**, consider using [`webextension-polyfill`](https://www.npmjs.com/package/webextension-polyfill).
 
-To use with `vite-plugin-web-extension`, just import the polyfill wherever you need to use an extension API.
+To use it with `vite-plugin-web-extension`, simply import the polyfill wherever you need to use an extension API.
 
 ```ts
 // Works on Chrome, Edge, Firefox, Safari... every browser
@@ -23,11 +23,11 @@ browser.runtime.getURL("/popup.html");
 
 :::
 
-## Manifest Template
+## Manifest Templates
 
-A common pattern is to support both Chrome and Firefox for an extension. However, Chrome pretty much requires you to use MV3 at this point, which firefox doesn't support MV3 in production yet.
+Often, developers want to support both Chrome and Firefox with their extensions. However, Chrome currently requires the use of MV3, which Firefox does not yet fully support.
 
-It's very simple to setup a manifest template that contains certain fields for each target.
+You can easily set up a manifest template that includes specific fields for each target browser.
 
 ```json
 {
@@ -50,9 +50,9 @@ It's very simple to setup a manifest template that contains certain fields for e
 }
 ```
 
-Here, we're telling the plugin to set the manifest_version to 3 for chrome, and 2 for firefox. Same with the `action` field and the `browser_action` field. Those are only available on for MV3 and MV2 respectively, so we add the `{{browser}}.` prefix to specify which fields should be used for each browser.
+Here, the plugin will set the `manifest_version` to 3 for Chrome and 2 for Firefox. The same applies to the `action` and the `browser_action` fields. Since they are only available for MV3 and MV2 respectively, we prefix the `{{browser}}.` to specify which fields should be used for each browser.
 
-To tell the plugin which browser to use, set the `browser` option to one of the values from the template:
+To tell the plugin which browser to build for, set the [`browser` option](/config/plugin-options#browser) to one of the template's values:
 
 ```ts
 // vite.config.ts
@@ -69,7 +69,7 @@ export default defineConfig({
 });
 ```
 
-Then, when you run `TARGET=chrome vite build` or `TARGET=firefox vite build`, you'll end up with two different versions of the manifest:
+Executing `TARGET=chrome vite build` or `TARGET=firefox vite build` will result in two distinct versions of the manifest:
 
 ::: code-group
 
@@ -109,9 +109,9 @@ Then, when you run `TARGET=chrome vite build` or `TARGET=firefox vite build`, yo
 
 :::
 
-## Dynamic Manifest
+## Dynamic Manifests
 
-You can also set the plugin's [`manifest` option](/config/plugin-options#manifest) to a function, and generate your manifest from code. Or use it in combination with the manifest template above to sync the manifest's `version` field with your `package.json`'s `version` field:
+You can also set the plugin's [`manifest` option](/config/plugin-options#manifest) to a function, allowing you to generate your manifest from code. Additionally, you can pair this with the above manifest template to sync the manifest's `version` field with the `version` field in your `package.json`:
 
 ```ts
 // vite.config.ts
@@ -126,7 +126,7 @@ export default defineConfig({
       // ...
       browser: target,
       manifest: () => {
-        // Use `readJsonFile` instead of import/require so it's not cached on rebuild.
+        // Use `readJsonFile` instead of import/require to avoid caching during rebuild.
         const pkg = readJsonFile("package.json");
         const template = readJsonFile("manifest.json");
         return {
@@ -139,11 +139,11 @@ export default defineConfig({
 });
 ```
 
-You can do anything you want when you set the `manifest` option to a function!
+When the manifest option is set to a function, the possibilities are endless. Customize the manifest however you like.
 
-## Multiple Files
+## Separate Files for Each Browser
 
-If you don't like having different browser's manifests in a single file, you could use the `manifest` option to specify different files for each browser:
+If you prefer to maintain separate manifest files for each browser, you can use the [`manifest` option](/config/plugin-options#manifest) to specify different files for each browser:
 
 ```ts
 // vite.config.ts

@@ -1,18 +1,18 @@
 ---
 lang: en-US
-title: Migrate to V3
+title: Upgrading to v3
 ---
 
-# Migrate to V3
+# Upgrading to v3
 
-The only breaking change from v2 &rarr; v3 is Vite 4.
+The transition from v2 to v3 primarily involves the update to Vite 4.
 
-Simply install the latest version of vite and you're good to go.
+To upgrade, you simply need to install the latest version of Vite:
 
 ```sh
 pnpm i vite@latest
 ```
 
-You will likely have to upgrade other Vite plugins you use to versions that also support Vite 4.
+Please note that you will also need to update any other Vite plugins you're using to their respective versions that are compatible with Vite 4.
 
-> If you're migrating from v1, make sure to follow the [v2 migration](https://v2.vite-plugin-web-extension.aklinker1.io/guide/migration-v2.html) first.
+> For users migrating from v1, it is important to first follow the steps outlined in the [v2 migration guide](https://v2.vite-plugin-web-extension.aklinker1.io/guide/migration-v2.html).

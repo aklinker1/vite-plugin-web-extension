@@ -2,11 +2,11 @@
 layout: home
 
 title: Vite Plugin Web Extension
-titleTemplate: Modern Chrome Extension Development
+titleTemplate: Modern Web Extension Development
 
 hero:
   name: Vite Plugin Web Extension
-  tagline: Modern Chrome extension development powered by Vite
+  tagline: Modern web extension development powered by Vite
   image:
     src: /logo-with-shadow.png
     alt: Vite Plugin Web extension
@@ -21,20 +21,20 @@ hero:
 features:
   - icon: 🛠️
     title: Build Files Listed in the Manifest
-    details: Point the plugin towards a manifest.json and the extension will automatically discover and build all the files listed in it.
+    details: Point the plugin to a manifest.json and it will automatically discover and build all the files listed inside it.
   - icon: ⚡
     title: Lightning Fast Dev Mode
-    details: Automatically open Chrome or Firefox with the extension installed. Supports HMR to iterate on your UIs quickly, and watch mode to rebuild content scripts on change.
+    details: Automatically launches Chrome or Firefox with the extension installed. Supports Hot Module Replacement (HMR) for quick UI iterations and a watch mode to rebuild content scripts upon changes.
   - icon: 🖥️
     title: Frontend Framework Support
-    details: Add any frontend framework's vite plugin to use that framework anywhere in your extesion, including content scripts.
+    details: Add any frontend framework's Vite plugin to use the framework anywhere in your extension, including in content scripts.
   - icon: 🌐
-    title: Cross-browser Support
+    title: Cross-browser Compatibility
     details: Easily customize your manifest.json to build for multiple different browsers.
   - icon: ✅
     title: Manifest Validation
-    details: Make sure you've entered all required fields during development.
+    details: Assures all required fields of your manifest.json are present when building.
   - icon: 🤖
     title: TypeScript Support
-    details: First class, out-of-the-box TypeScript support with no additional configuration.
+    details: Offers first-class, out-of-the-box TypeScript support without the need for additional configuration.
 ---

@@ -19,7 +19,7 @@ See [Chrome's documentation](https://developer.chrome.com/docs/extensions/refere
 To accomplish this with `vite-plugin-web-extension`, just put the `_locales` directory in your `<viteRoot>/public` directory. When built, that folder will be copied to the base of your output directory, right where Chrome expects them to be!
 
 ```
-<viteRoot>
+<viteRoot>/
   dist/
     _locales/
       en/

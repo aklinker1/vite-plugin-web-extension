@@ -1,42 +1,45 @@
 ---
 lang: en-US
-title: Development
+title: Development Cycle
 ---
 
-# Development Cycle
+# Understanding the Development Cycle
 
-You have two ways to run the extension during development:
+While developing your browser extension, there are two ways to run it:
 
-- Dev Mode
+- Development Mode
 - Watch Mode
 
-Both will automatically open a browser window and install the extension automatically.
+Both methods will automatically open a new browser window and install the extension for you.
 
 ::: info
-Dev mode is recommended because it will let you iterate faster as your project grows in size.
+For most use cases, Development Mode is recommended as it can significantly speed up the development process, especially as your project scales.
 :::
 
-## Dev Mode
+## Development Mode
+
+To start the extension in development mode, run the following command:
 
 ```sh
 vite dev
 ```
 
-Just run Vite like you would a normal project. This will spin up the dev server, and you'll have HMR for all the HTML pages in your extension!
+This command starts the Vite development server, similar to how you would for any other Vite project. Notably, you will have Hot Module Replacement (HMR) enabled for all HTML pages in your extension!
 
-Unfortunately, content scripts do not work with HMR. Instead, they are built using watch mode, see below. When you save a file used by a content script, it will cause the entire extension to reload once the file has finished building.
+However, please note that content scripts do not support HMR. They are built using [Watch Mode](#watch-mode), see below. Thus, when you modify and save a file associated with a content script, it will trigger a full reload of the extension once the file has finished building.
 
 ::: warning HMR requires Chrome v110 or above
-
-Make sure your browser is up to date, or it won't work. Chrome v110 was released Feb 13, 2023.
+Ensure your browser is up to date. HMR functionality is only supported in Chrome v110 or later versions, which was released on February 13, 2023.
 :::
 
 ## Watch Mode
+
+To start the extension in watch mode, run the following command:
 
 ```sh
 vite build --watch --mode development
 ```
 
-Rather than starting the dev server, using Vite's `--watch` flag will cause it to rebuild the extension when a file is saved.
+Instead of launching the development server, using the `--watch` flag with Vite will instruct it to rebuild the extension each time you save a file.
 
-If you can't use dev mode, watch mode will be easier than installing and reloading the extension by hand. Be aware that, as an extension grows larger, watch mode can get very slow since it's doing a full production build with minimal caching.
+If [Development Mode](#development-mode) does not work for you, Watch Mode can be a convenient alternative. However, be aware that as an extension grows in complexity, Watch Mode may become significantly slower as it completes a full production build with minimal caching, after each change.
