@@ -39,7 +39,9 @@ export function hmrRewritePlugin(config: {
     name: HMR_REWRITE_PLUGIN_NAME,
 
     config(config) {
-      inputIds = Object.values(config.build?.rollupOptions?.input ?? {});
+      inputIds = Object.values(config.build?.rollupOptions?.input ?? {}).map(
+        (inputId) => vite.normalizePath(inputId)
+      );
 
       const hmrConfig: vite.InlineConfig = {
         server: {
