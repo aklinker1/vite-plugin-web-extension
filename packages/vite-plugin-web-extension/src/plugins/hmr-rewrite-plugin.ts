@@ -47,7 +47,7 @@ export function hmrRewritePlugin(config: {
         server: {
           hmr: {
             protocol: "http:",
-            host: "127.0.0.1",
+            host: "localhost",
             port: 5173,
           },
         },

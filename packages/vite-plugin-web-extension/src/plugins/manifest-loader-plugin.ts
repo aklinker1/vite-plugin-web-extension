@@ -162,7 +162,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
             // Set the server origin so assets contain the entire url in dev mode, not just the
             // absolute path. See #79. This does not effect scripts or links. They are updated
             // manually in the hmr-rewrite-plugin
-            origin: "http://127.0.0.1:5173",
+            origin: "http://localhost:5173",
           },
           build: {
             // Since this plugin schedules multiple builds, we can't let any of the builds empty the
@@ -316,7 +316,7 @@ async function applyDevServerCsp(manifest: Manifest) {
       : manifest.content_security_policy ??
         "script-src 'self'; object-src 'self';" // default CSP for MV2
   );
-  csp.add("script-src", "http://localhost:*", "http://127.0.0.1:*");
+  csp.add("script-src", "http://localhost:*");
 
   if (manifest.manifest_version === 3) {
     manifest.content_security_policy ??= {};
