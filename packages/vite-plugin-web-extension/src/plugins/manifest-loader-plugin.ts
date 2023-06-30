@@ -119,7 +119,11 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
     });
 
     // Generate the manifest based on the output files
-    const finalManifest = renderManifest(manifestWithInputs, ctx.getBundles());
+    const renderedManifest = renderManifest(manifestWithInputs, ctx.getBundles());
+
+    const finalManifest = options.transformManifest
+      ? await options.transformManifest(renderedManifest)
+      : renderedManifest;
 
     // Add permissions and CSP for the dev server
     if (mode === BuildMode.DEV) {

@@ -19,6 +19,12 @@ export interface UserOptions {
   manifest?: string | (() => Manifest) | (() => Promise<Manifest>) | undefined;
 
   /**
+   * An optional transform function to modify the manifest just before the plugin writes
+   * it to the output directory.
+   */
+  transformManifest?: ((manifest: Manifest) => Manifest) | ((manifest: Manifest) => Promise<Manifest>);
+
+  /**
    * Used to include additional files, like content scripts, not mentioned in the final
    * `manifest.json`. Paths should be relative to Vite's `root` (or `process.cwd()` if not set)
    */
@@ -82,6 +88,7 @@ export interface UserOptions {
  */
 export interface ResolvedOptions {
   manifest: string | (() => Manifest) | (() => Promise<Manifest>);
+  transformManifest?: ((manifest: Manifest) => Manifest) | ((manifest: Manifest) => Promise<Manifest>);
   additionalInputs: string[];
   disableAutoLaunch: boolean;
   watchFilePaths: string[];
