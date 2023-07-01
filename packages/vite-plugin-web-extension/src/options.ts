@@ -1,4 +1,5 @@
 import * as vite from "vite";
+import type Browser from "webextension-polyfill";
 
 export type Manifest = any;
 
@@ -17,6 +18,16 @@ export interface UserOptions {
    * })
    */
   manifest?: string | (() => Manifest) | (() => Promise<Manifest>) | undefined;
+
+  /**
+   * An optional transform function to modify the manifest just before the plugin writes
+   * it to the output directory.
+   */
+  transformManifest?: (
+    manifest: Browser.Manifest.WebExtensionManifest
+  ) =>
+    | Browser.Manifest.WebExtensionManifest
+    | Promise<Browser.Manifest.WebExtensionManifest>;
 
   /**
    * Used to include additional files, like content scripts, not mentioned in the final
@@ -82,6 +93,11 @@ export interface UserOptions {
  */
 export interface ResolvedOptions {
   manifest: string | (() => Manifest) | (() => Promise<Manifest>);
+  transformManifest?: (
+    manifest: Browser.Manifest.WebExtensionManifest
+  ) =>
+    | Browser.Manifest.WebExtensionManifest
+    | Promise<Browser.Manifest.WebExtensionManifest>;
   additionalInputs: string[];
   disableAutoLaunch: boolean;
   watchFilePaths: string[];

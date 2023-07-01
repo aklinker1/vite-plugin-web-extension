@@ -631,5 +631,75 @@ describe("Vite Plugin Web Extension", () => {
 
       await expect(build).rejects.toMatchSnapshot();
     });
+
+    it("should support transforming the manifest synchronously prior to output via transformManifest", async () => {
+      await expectBuildToMatchSnapshot(
+        {
+          root: "extension",
+          build: {
+            outDir: DIST_DIRECTORY,
+            emptyOutDir: true,
+          },
+          plugins: [
+            webExtension({
+              manifest: () =>
+                manifest({
+                  browser_action: {
+                    default_popup: "page1.html",
+                  },
+                }),
+              transformManifest: (manifest) => ({
+                name: 'Transform Added Name',
+                ...manifest
+              })
+            }),
+          ],
+        },
+        baseOutputs(["dist/page1.html"])
+      );
+      expectManifest(
+        manifest({
+          name: 'Transform Added Name',
+          browser_action: {
+            default_popup: "page1.html",
+          },
+        })
+      );
+    })
+
+    it("should support transforming the manifest asynchronously prior to output via transformManifest", async () => {
+      await expectBuildToMatchSnapshot(
+        {
+          root: "extension",
+          build: {
+            outDir: DIST_DIRECTORY,
+            emptyOutDir: true,
+          },
+          plugins: [
+            webExtension({
+              manifest: () =>
+                manifest({
+                  browser_action: {
+                    default_popup: "page1.html",
+                  },
+                }),
+              transformManifest: (manifest) => Promise.resolve({
+                name: 'Transform Added Name',
+                ...manifest
+              })
+            }),
+          ],
+        },
+        baseOutputs(["dist/page1.html"])
+      );
+      expectManifest(
+        manifest({
+          name: 'Transform Added Name',
+          browser_action: {
+            default_popup: "page1.html",
+          },
+        })
+      );
+    })
   });
 });

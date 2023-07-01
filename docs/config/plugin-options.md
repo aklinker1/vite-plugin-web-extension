@@ -118,6 +118,31 @@ Setting this to `true` skips the validation step.
 
 > The validation process downloads the schema from the given URL. If you are working offline, this step will automatically be skipped.
 
+## `transformManifest`
+
+Since [v3.1.0](https://github.com/aklinker1/vite-plugin-web-extension/releases/tag/v3.1.0)
+
+```ts
+transformManifest?: (manifest: WebExtensionManifest) => WebExtensionManifest | Promise<WebExtensionManifest>
+```
+
+A hook that lets you manipulate the manifest before it is written to the output directory by returning a new manifest.
+
+### Example
+
+Here, `transformManifest` is used to remove all the CSS files from the content scripts.
+
+```ts
+webExtension({
+  transformManifest(manifest) {
+    manifest.content_scripts.forEach((script) => {
+      delete script.css;
+    });
+    return manifest;
+  },
+});
+```
+
 ## `watchFilePaths`
 
 ```ts
