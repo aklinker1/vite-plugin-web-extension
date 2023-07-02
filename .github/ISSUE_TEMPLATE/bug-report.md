@@ -2,7 +2,7 @@
 name: Bug Report
 about: Report an issue with the plugin.
 title: ''
-labels: bug
+labels: pending triage
 assignees: ''
 
 ---
