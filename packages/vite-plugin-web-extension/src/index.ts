@@ -24,6 +24,7 @@ export default function webExtension(
     browser: options.browser,
     htmlViteConfig: options.htmlViteConfig,
     scriptViteConfig: options.scriptViteConfig,
+    transformManifest: options.transformManifest,
     webExtConfig: options.webExtConfig,
     verbose: process.argv.includes("-d") || process.argv.includes("--debug"),
     disableColors:
