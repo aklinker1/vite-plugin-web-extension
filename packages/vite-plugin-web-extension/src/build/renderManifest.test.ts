@@ -129,4 +129,38 @@ describe("renderManifest", () => {
 
     expect(actual).toEqual(expected);
   });
+
+  it("should support rendering the same entrypoint twice", () => {
+    const input = {
+      name: "mv2-html-test",
+      version: "1.0.0",
+      browser_action: {
+        default_popup: "pages/popup.html",
+      },
+      sidebar_action: {
+        default_panel: "pages/popup.html",
+      },
+    };
+    const bundles: BundleMap = {
+      "pages/popup.html": [
+        "pages/popup.html",
+        "pages/popup.css",
+        "pages/popup.js",
+      ],
+    };
+    const expected = {
+      name: "mv2-html-test",
+      version: "1.0.0",
+      browser_action: {
+        default_popup: "pages/popup.html",
+      },
+      sidebar_action: {
+        default_panel: "pages/popup.html",
+      },
+    };
+
+    const actual = renderManifest(input, bundles);
+
+    expect(actual).toEqual(expected);
+  });
 });

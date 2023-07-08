@@ -61,7 +61,10 @@ function findReplacement(entry: string, bundles: BundleMap) {
   if (replacementIndex < 0)
     throw Error(`Entrypoint output for ${entry} (${output}) not found`);
 
-  const [replacement] = generatedFiles.splice(replacementIndex, 1);
+  const [replacement] = generatedFiles.slice(
+    replacementIndex,
+    replacementIndex + 1
+  );
   return {
     replacement,
     generatedFiles,
