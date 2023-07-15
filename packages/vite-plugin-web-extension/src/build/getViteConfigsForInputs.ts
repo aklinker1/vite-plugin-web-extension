@@ -57,18 +57,6 @@ class CombinedViteConfigs {
       [this.html, this.sandbox, this.scripts, this.css, this.other].flat()
     );
   }
-
-  applyBaseConfig(baseConfig: vite.InlineConfig) {
-    if (this.html) this.html = vite.mergeConfig(baseConfig, this.html);
-    if (this.sandbox) this.sandbox = vite.mergeConfig(baseConfig, this.sandbox);
-    this.scripts = this.scripts?.map((config) =>
-      vite.mergeConfig(baseConfig, config)
-    );
-    this.css = this.css?.map((config) => vite.mergeConfig(baseConfig, config));
-    this.other = this.other?.map((config) =>
-      vite.mergeConfig(baseConfig, config)
-    );
-  }
 }
 
 /**
