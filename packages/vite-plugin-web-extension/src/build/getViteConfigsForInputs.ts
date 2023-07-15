@@ -100,7 +100,7 @@ export function getViteConfigsForInputs(options: {
    */
   function getMultiPageConfig(
     entries: string[],
-    baseConfig: vite.InlineConfig
+    userConfig: vite.InlineConfig
   ): vite.InlineConfig | undefined {
     const newEntries = entries.filter((entry) => !hasBeenProcessed(entry));
     newEntries.forEach((entry) => processedInputs.add(entry));
@@ -152,7 +152,7 @@ export function getViteConfigsForInputs(options: {
         },
       },
     };
-    return vite.mergeConfig(baseConfig, inputConfig);
+    return vite.mergeConfig(userConfig, inputConfig);
   }
 
   /**
@@ -160,7 +160,7 @@ export function getViteConfigsForInputs(options: {
    */
   function getIndividualConfig(
     entry: string,
-    baseConfig: vite.InlineConfig
+    userConfig: vite.InlineConfig
   ): vite.InlineConfig | undefined {
     if (hasBeenProcessed(entry)) return;
     processedInputs.add(entry);
@@ -185,7 +185,7 @@ export function getViteConfigsForInputs(options: {
         "process.env.NODE_ENV": `"${options.viteMode}"`,
       },
     };
-    return vite.mergeConfig(baseConfig, inputConfig);
+    return vite.mergeConfig(userConfig, inputConfig);
   }
 
   function getHtmlConfig(entries: string[]): vite.InlineConfig | undefined {
