@@ -43,7 +43,7 @@ export function hmrRewritePlugin(config: {
         (inputId) => vite.normalizePath(inputId)
       );
 
-      const hmrConfig: vite.InlineConfig = {
+      return {
         server: {
           hmr: {
             protocol: "http:",
@@ -74,7 +74,6 @@ export function hmrRewritePlugin(config: {
           __HMR_ENABLE_OVERLAY__: JSON.stringify(hmrOptions?.overlay !== false),
         },
       };
-      return vite.mergeConfig(config, hmrConfig);
     },
     async transform(code, id) {
       // Only transform HTML inputs
