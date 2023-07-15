@@ -118,7 +118,7 @@ export function getViteConfigsForInputs(options: {
           ]
         : [];
 
-    const inputConfig: vite.InlineConfig = {
+    const baseConfig: vite.InlineConfig = {
       plugins,
       build: {
         rollupOptions: {
@@ -152,7 +152,7 @@ export function getViteConfigsForInputs(options: {
         },
       },
     };
-    return vite.mergeConfig(userConfig, inputConfig);
+    return vite.mergeConfig(baseConfig, userConfig);
   }
 
   /**
@@ -170,7 +170,7 @@ export function getViteConfigsForInputs(options: {
      * "some-script" -> ""
      */
     const moduleId = trimExtension(entry);
-    const inputConfig: vite.InlineConfig = {
+    const baseConfig: vite.InlineConfig = {
       build: {
         watch: mode !== BuildMode.BUILD ? {} : undefined,
         lib: {
@@ -185,7 +185,7 @@ export function getViteConfigsForInputs(options: {
         "process.env.NODE_ENV": `"${options.viteMode}"`,
       },
     };
-    return vite.mergeConfig(userConfig, inputConfig);
+    return vite.mergeConfig(baseConfig, userConfig);
   }
 
   function getHtmlConfig(entries: string[]): vite.InlineConfig | undefined {
