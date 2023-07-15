@@ -78,20 +78,22 @@ export function createBuildContext({
     const totalEntries = entryConfigs.count;
 
     // Merge the entrypoint config required to build something with some required config for child builds
-    return entryConfigs.all.map((config, i) =>
-      vite.mergeConfig(config, {
-        // Reapply the mode passed into the top level build
-        mode: viteMode,
-        // We shouldn't clear the screen for these internal builds
-        clearScreen: false,
-        // Don't empty the outDir, this is handled in the parent build process
-        build: { emptyOutDir: false },
-        plugins: [
-          labeledStepPlugin(logger, totalEntries, i, paths),
-          multibuildManager.plugin(),
-        ],
-      })
-    );
+    return entryConfigs.all
+      .map((config, i) =>
+        vite.mergeConfig(config, {
+          // Reapply the mode passed into the top level build
+          mode: viteMode,
+          // We shouldn't clear the screen for these internal builds
+          clearScreen: false,
+          // Don't empty the outDir, this is handled in the parent build process
+          build: { emptyOutDir: false },
+          plugins: [
+            labeledStepPlugin(logger, totalEntries, i, paths),
+            multibuildManager.plugin(),
+          ],
+        })
+      )
+      .map((config) => vite.mergeConfig(config, userConfig));
   }
 
   function printSummary(
