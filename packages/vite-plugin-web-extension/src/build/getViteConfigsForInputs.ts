@@ -207,6 +207,7 @@ export function getViteConfigsForInputs(options: {
     manifest.options_ui?.page,
     manifest.browser_action?.default_popup,
     manifest.page_action?.default_popup,
+    manifest.side_panel?.default_path,
     manifest.sidebar_action?.default_panel,
     manifest.background?.page,
     manifest.chrome_url_overrides?.bookmarks,
