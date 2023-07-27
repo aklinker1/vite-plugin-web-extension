@@ -28,6 +28,7 @@ export function renderManifest(
   replaceEntrypoint(bundles, output.options_ui, "page");
   replaceEntrypoint(bundles, output.browser_action, "default_popup");
   replaceEntrypoint(bundles, output.page_action, "default_popup");
+  replaceEntrypoint(bundles, output.side_panel, "default_path");
   replaceEntrypoint(bundles, output.sidebar_action, "default_panel");
   replaceEntrypointArray(bundles, output.sandbox?.pages);
   replaceEntrypoint(bundles, output.background, "service_worker");

@@ -18,6 +18,9 @@ describe("renderManifest", () => {
       browser_action: {
         default_popup: "browser-popup.html",
       },
+      side_panel: {
+        default_path: "sidebar.html",
+      },
       sidebar_action: {
         default_panel: "sidebar.html",
       },
@@ -67,6 +70,9 @@ describe("renderManifest", () => {
       },
       browser_action: {
         default_popup: "browser-popup.html",
+      },
+      side_panel: {
+        default_path: "sidebar.html",
       },
       sidebar_action: {
         default_panel: "sidebar.html",
