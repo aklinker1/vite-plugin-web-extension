@@ -7,7 +7,7 @@ title: Multibrowser Support
 
 ## Introduction
 
-`vite-plugin-web-extension` does not suppport multiple browsers **_at runtime_**. However, at build-time, it allows for the creation of different "flavors" of your extension based on the browser you're targeting.
+At build-time, `vite-plugin-web-extension` allows for the creation of different "flavors" of your extension based on the browser you're targeting.
 
 :::info
 For standardizing the behavior of multiple browsers **_at runtime_**, consider using [`webextension-polyfill`](https://www.npmjs.com/package/webextension-polyfill).
@@ -162,3 +162,40 @@ export default defineConfig({
   ],
 });
 ```
+
+## Check Browser at Runtime
+
+Sometimes, you need to know which browser is being targeted so you can run different code for each browser.
+
+It's recommended to use [Vite's `define`](https://vitejs.dev/config/shared-options.html#define) option to define a global constant that can be used to check which browser is being targeted at runtime.
+
+```ts
+// vite.config.ts
+const target = process.env.TARGET || "chrome";
+
+export default defineConfig({
+  define: {
+    __BROWSER__: JSON.stringify(target),
+  },
+});
+```
+
+Then, in your code, you can use it to detect the browser.
+
+```ts
+if (__BROWSER__ === "firefox") {
+}
+
+switch (__BROWSER__) {
+  case "chrome":
+    // ...
+    break;
+  case "firefox":
+    // ...
+    break;
+}
+```
+
+:::info
+It's recommended to use `define` instead of an environment variable like `VITE_TARGET` so you can apply a default value, like `process.env.TARGET || "chrome"`, in your config. This will simplify any if statements or conditions inside your code, so you don't need to handle the case where the environment variable is `undefined`.
+:::
