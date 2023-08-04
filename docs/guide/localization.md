@@ -12,7 +12,7 @@ There are two places an extension will need localized:
 1. Fields in your `manifest.json`
 2. Text content at runtime (UIs, notifications, etc)
 
-## Localizing the `manfiest.json`
+## Localizing the `manifest.json`
 
 See [Chrome's documentation](https://developer.chrome.com/docs/extensions/reference/i18n/) about how to localize your `manifest.json`:
 
