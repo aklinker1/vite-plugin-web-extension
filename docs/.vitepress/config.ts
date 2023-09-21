@@ -39,8 +39,8 @@ export default defineConfig({
       {
         async: "",
         defer: "",
-        "data-website-id": "3843019e-a8cb-4609-8e58-a61d69b1c02b",
-        src: "https://stats.aklinker1.io/umami.js",
+        "data-website-id": "c1840c18-a12c-4a45-a848-55ae85ef7915",
+        src: "https://umami.aklinker1.io/script.js",
       },
     ],
   ],
