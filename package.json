@@ -1,6 +1,9 @@
 {
   "private": true,
   "license": "MIT",
+  "engines": {
+    "pnpm": "8"
+  },
   "scripts": {
     "clean": "rm -rf node_modules **/node_modules",
     "docs:dev": "vitepress dev docs",
