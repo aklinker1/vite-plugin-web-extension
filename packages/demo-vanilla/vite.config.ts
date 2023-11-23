@@ -1,7 +1,6 @@
 import path from "path";
 import { defineConfig } from "vite";
 import browserExtension from "vite-plugin-web-extension";
-import inspect from "vite-plugin-inspect";
 
 function root(...paths: string[]): string {
   return path.resolve(__dirname, ...paths);
