@@ -286,7 +286,7 @@ function separateAdditionalInputs(additionalInputs: string[]) {
   additionalInputs?.forEach((input) => {
     if (HTML_ENTRY_REGEX.test(input)) htmlAdditionalInputs.push(input);
     else if (SCRIPT_ENTRY_REGEX.test(input)) scriptAdditionalInputs.push(input);
-    else if (CSS_ENTRY_REGEX.test(input)) scriptAdditionalInputs.push(input);
+    else if (CSS_ENTRY_REGEX.test(input)) cssAdditionalInputs.push(input);
     else scriptAdditionalInputs.push(input);
   });
 
