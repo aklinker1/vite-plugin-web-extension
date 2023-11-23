@@ -56,7 +56,6 @@ export function createWebExtRunner(
     },
 
     async exit() {
-      console.trace("CLOSING");
       return runner.exit();
     },
   };
