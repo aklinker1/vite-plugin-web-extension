@@ -14,10 +14,10 @@
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.6",
     "@vitejs/plugin-vue": "^4.5.0",
-    "@vue/compiler-sfc": "^3.2.25",
+    "@vue/compiler-sfc": "^3.3",
     "typescript": "^4.4.4",
     "vite": "^5.0.0",
     "vite-plugin-web-extension": "workspace:*",
-    "vue": "^3.2.25"
+    "vue": "^3.3"
   }
 }

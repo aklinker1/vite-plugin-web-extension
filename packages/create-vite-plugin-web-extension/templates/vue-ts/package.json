@@ -8,7 +8,7 @@
     "build": "vue-tsc && vite build"
   },
   "dependencies": {
-    "vue": "^3.2.47"
+    "vue": "^3.3"
   },
   "devDependencies": {
     "@types/webextension-polyfill": "^0.10.0",
