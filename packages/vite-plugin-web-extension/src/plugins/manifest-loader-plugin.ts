@@ -86,6 +86,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
     return resolvedManifest;
   }
 
+  let browserOpened = false;
   async function openBrowser() {
     logger.log("\nOpening browser...");
     extensionRunner = createWebExtRunner({
@@ -94,6 +95,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       logger,
     });
     await extensionRunner.openBrowser();
+    browserOpened = true;
     logger.log("Done!");
   }
 
@@ -114,12 +116,15 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       server,
       viteMode: resolvedConfig.mode,
       onSuccess: async () => {
-        if (extensionRunner) await extensionRunner.reload();
+        await extensionRunner?.reload();
       },
     });
 
     // Generate the manifest based on the output files
-    const renderedManifest = renderManifest(manifestWithInputs, ctx.getBundles());
+    const renderedManifest = renderManifest(
+      manifestWithInputs,
+      ctx.getBundles()
+    );
 
     const finalManifest = options.transformManifest
       ? await options.transformManifest(renderedManifest)
@@ -272,6 +277,8 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
 
     // Runs during: watch
     async watchChange(id) {
+      if (!browserOpened) return;
+
       const relativePath = path.relative(paths.rootDir, id);
       logger.log(
         `\n${colorizeFilename(relativePath)} changed, restarting browser`

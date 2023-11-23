@@ -6,7 +6,7 @@
     "build": "pnpm i && tsc && vite build"
   },
   "devDependencies": {
-    "typescript": "^4.4.4",
+    "typescript": "^5.3.2",
     "vite": "^5.0.0",
     "vite-plugin-web-extension": "workspace:*"
   }
