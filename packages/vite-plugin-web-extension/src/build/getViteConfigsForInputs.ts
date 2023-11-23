@@ -32,9 +32,7 @@ class CombinedViteConfigs {
    */
   scripts?: vite.InlineConfig[];
   /**
-   * CSS files cannot be built with vite 5 as the input to lib mode, otherwise you get this error:
-   *
-   * >
+   * CSS files cannot be built with vite 5 as the input to lib mode.
    */
   css?: vite.InlineConfig[];
   /**
