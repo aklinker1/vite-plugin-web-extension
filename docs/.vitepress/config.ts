@@ -10,6 +10,10 @@ const helpSidebar = {
   text: "Help",
   items: [
     {
+      text: "Migrate to V4",
+      link: "/guide/migration-v4",
+    },
+    {
       text: "Migrate to V3",
       link: "/guide/migration-v3",
     },
