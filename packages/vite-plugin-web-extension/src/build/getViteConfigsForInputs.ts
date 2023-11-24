@@ -9,6 +9,7 @@ import { BuildMode } from "./BuildMode";
 
 const HTML_ENTRY_REGEX = /\.(html)$/;
 const SCRIPT_ENTRY_REGEX = /\.(js|ts|mjs|mts)$/;
+const CSS_ENTRY_REGEX = /\.(css|scss|sass|less|stylus)$/;
 
 class CombinedViteConfigs {
   /**
@@ -31,6 +32,10 @@ class CombinedViteConfigs {
    */
   scripts?: vite.InlineConfig[];
   /**
+   * CSS files cannot be built with vite 5 as the input to lib mode.
+   */
+  css?: vite.InlineConfig[];
+  /**
    * Similar to scripts, but for other file "types". Sometimes CSS, SCSS, JSON, images, etc, can be
    * passed into Vite directly. The most common case of this in extensions are CSS files listed for
    * content scripts.
@@ -48,7 +53,9 @@ class CombinedViteConfigs {
    * Return all the configs as an array.
    */
   get all(): vite.InlineConfig[] {
-    return compact([this.html, this.sandbox, this.scripts, this.other].flat());
+    return compact(
+      [this.html, this.sandbox, this.scripts, this.css, this.other].flat()
+    );
   }
 
   applyBaseConfig(baseConfig: vite.InlineConfig) {
@@ -57,6 +64,7 @@ class CombinedViteConfigs {
     this.scripts = this.scripts?.map((config) =>
       vite.mergeConfig(baseConfig, config)
     );
+    this.css = this.css?.map((config) => vite.mergeConfig(baseConfig, config));
     this.other = this.other?.map((config) =>
       vite.mergeConfig(baseConfig, config)
     );
@@ -192,11 +200,15 @@ export function getViteConfigsForInputs(options: {
   function getOtherConfig(entry: string): vite.InlineConfig | undefined {
     return getIndividualConfig(entry, options.baseOtherViteConfig);
   }
+  function getCssConfig(entry: string): vite.InlineConfig | undefined {
+    return getMultiPageConfig([entry], options.baseOtherViteConfig);
+  }
 
   const {
     htmlAdditionalInputs,
     otherAdditionalInputs,
     scriptAdditionalInputs,
+    cssAdditionalInputs,
   } = separateAdditionalInputs(additionalInputs);
 
   // HTML Pages
@@ -236,14 +248,22 @@ export function getViteConfigsForInputs(options: {
     configs.scripts.push(scriptConfig);
   });
 
-  // Other Types
+  // CSS
   compact(
     simplifyEntriesList([
       manifest.content_scripts?.flatMap(
         (cs: browser.Manifest.ContentScript) => cs.css
       ),
-      otherAdditionalInputs,
-    ]).map(getOtherConfig)
+      cssAdditionalInputs,
+    ]).map(getCssConfig)
+  ).forEach((cssConfig) => {
+    configs.css ??= [];
+    configs.css.push(cssConfig);
+  });
+
+  // Other Types
+  compact(
+    simplifyEntriesList([otherAdditionalInputs]).map(getOtherConfig)
   ).forEach((otherConfig) => {
     configs.other ??= [];
     configs.other.push(otherConfig);
@@ -254,19 +274,19 @@ export function getViteConfigsForInputs(options: {
 }
 
 /**
- * `options.additionalInputs` accepts html files, scripts, and other file entry-points. This method
- * breaks those apart into their related groups (html, script, other).
- *
- * All `.html` files are
+ * `options.additionalInputs` accepts html files, scripts, CSS, and other file entry-points. This
+ * method breaks those apart into their related groups (html, script, CSS, other).
  */
 function separateAdditionalInputs(additionalInputs: string[]) {
   const scriptAdditionalInputs: string[] = [];
   const otherAdditionalInputs: string[] = [];
   const htmlAdditionalInputs: string[] = [];
+  const cssAdditionalInputs: string[] = [];
 
   additionalInputs?.forEach((input) => {
     if (HTML_ENTRY_REGEX.test(input)) htmlAdditionalInputs.push(input);
     else if (SCRIPT_ENTRY_REGEX.test(input)) scriptAdditionalInputs.push(input);
+    else if (CSS_ENTRY_REGEX.test(input)) cssAdditionalInputs.push(input);
     else scriptAdditionalInputs.push(input);
   });
 
@@ -274,6 +294,7 @@ function separateAdditionalInputs(additionalInputs: string[]) {
     scriptAdditionalInputs,
     otherAdditionalInputs,
     htmlAdditionalInputs,
+    cssAdditionalInputs,
   };
 }
 

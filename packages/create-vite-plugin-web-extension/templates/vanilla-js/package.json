@@ -8,7 +8,7 @@
     "build": "vite build"
   },
   "devDependencies": {
-    "vite": "^4.1.4",
+    "vite": "^5.0.0",
     "vite-plugin-web-extension": "^3.0.1",
     "webextension-polyfill": "^0.10.0"
   }
