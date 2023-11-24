@@ -1,8 +1,8 @@
 import { ProjectPaths, ResolvedOptions } from "../options";
 import { Logger } from "../logger";
 import { ExtensionRunner } from "./interface";
-import * as webExtLogger from "web-ext/util/logger";
-import webExt, { WebExtRunInstance } from "web-ext";
+import * as webExtLogger from "web-ext-run/util/logger";
+import webExt, { WebExtRunInstance } from "web-ext-run";
 import { inspect } from "node:util";
 import { loadConfig as loadFsConfig } from "../config";
 
