@@ -11,6 +11,13 @@ export default defineConfig({
   build: {
     outDir: root("dist"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        assetFileNames: "base/asset/[name].[ext]",
+        entryFileNames: "base/entry/[name].js",
+        chunkFileNames: "base/chunk/[name].js",
+      },
+    },
   },
   plugins: [
     browserExtension({
@@ -21,28 +28,28 @@ export default defineConfig({
       ],
       watchFilePaths: [root("src/manifest.json")],
       browser: process.env.TARGET || "chrome",
-      //   scriptViteConfig: {
-      //     build: {
-      //       rollupOptions: {
-      //         output: {
-      //           assetFileNames: "script/asset/[name].[ext]",
-      //           entryFileNames: "script/entry/[name].js",
-      //           chunkFileNames: "script/chunk/[name].js",
-      //         },
-      //       },
-      //     },
-      //   },
-      //   htmlViteConfig: {
-      //     build: {
-      //       rollupOptions: {
-      //         output: {
-      //           assetFileNames: "html/asset/[name].[ext]",
-      //           entryFileNames: "html/entry/[name].js",
-      //           chunkFileNames: "html/chunk/[name].js",
-      //         },
-      //       },
-      //     },
-      //   },
+      scriptViteConfig: {
+        build: {
+          rollupOptions: {
+            output: {
+              assetFileNames: "script/asset/[name].[ext]",
+              entryFileNames: "script/entry/[name].js",
+              chunkFileNames: "script/chunk/[name].js",
+            },
+          },
+        },
+      },
+      htmlViteConfig: {
+        build: {
+          rollupOptions: {
+            output: {
+              assetFileNames: "html/asset/[name].[ext]",
+              entryFileNames: "html/entry/[name].js",
+              chunkFileNames: "html/chunk/[name].js",
+            },
+          },
+        },
+      },
     }),
   ],
 });

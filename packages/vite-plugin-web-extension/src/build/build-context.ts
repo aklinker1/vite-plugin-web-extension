@@ -79,8 +79,6 @@ export function createBuildContext({
 
     return (
       entryConfigs.all
-        // Merge user's vite.config.ts options first
-        .map((config) => vite.mergeConfig(config, userConfig))
         // Overwrite some specific options, ignoring the user's config
         .map((config, i) =>
           vite.mergeConfig(config, {
