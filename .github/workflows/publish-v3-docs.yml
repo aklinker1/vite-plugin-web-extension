@@ -1,5 +1,5 @@
 # https://vercel.com/guides/how-can-i-use-github-actions-with-vercel
-name: Publish V2 Docs
+name: Publish V3 Docs
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_V3 }}
