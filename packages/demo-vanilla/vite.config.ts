@@ -21,6 +21,28 @@ export default defineConfig({
       ],
       watchFilePaths: [root("src/manifest.json")],
       browser: process.env.TARGET || "chrome",
+      //   scriptViteConfig: {
+      //     build: {
+      //       rollupOptions: {
+      //         output: {
+      //           assetFileNames: "script/asset/[name].[ext]",
+      //           entryFileNames: "script/entry/[name].js",
+      //           chunkFileNames: "script/chunk/[name].js",
+      //         },
+      //       },
+      //     },
+      //   },
+      //   htmlViteConfig: {
+      //     build: {
+      //       rollupOptions: {
+      //         output: {
+      //           assetFileNames: "html/asset/[name].[ext]",
+      //           entryFileNames: "html/entry/[name].js",
+      //           chunkFileNames: "html/chunk/[name].js",
+      //         },
+      //       },
+      //     },
+      //   },
     }),
   ],
 });
