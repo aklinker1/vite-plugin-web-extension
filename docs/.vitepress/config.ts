@@ -69,7 +69,7 @@ export default defineConfig({
       { text: "Guide", link: "/guide/" },
       { text: "Config", link: "/config/plugin-options" },
       {
-        text: "v3",
+        text: "v4",
         items: [
           { text: "v4 (Latest)", link: "/" },
           {
