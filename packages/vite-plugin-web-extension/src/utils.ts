@@ -191,13 +191,3 @@ export function withTimeout<T>(
       .finally(() => clearTimeout(timeout));
   });
 }
-
-/**
- * Given any kind of entry file (name or path), return the file (name or path) vite will output
- */
-export function getOutputFile(file: string): string {
-  return file
-    .replace(/\.(pug)$/, ".html")
-    .replace(/\.(scss|stylus|sass)$/, ".css")
-    .replace(/\.(jsx|ts|tsx)$/, ".js");
-}

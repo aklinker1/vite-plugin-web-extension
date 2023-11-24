@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import { ProjectPaths } from "./options";
 import {
   getInputPaths,
-  getOutputFile,
   resolveBrowserTagsInObject,
   trimExtension,
 } from "./utils";
@@ -74,33 +73,6 @@ describe("Utils", () => {
         },
         field4: [{ field5: "A", field6: "C" }, { field8: "C" }],
       });
-    });
-  });
-
-  describe("getOutputFile", () => {
-    it.each([
-      ["some/file.html", "some/file.html"],
-      ["some/file.pug", "some/file.html"],
-      // CSS
-      ["some/file.css", "some/file.css"],
-      ["some/file.scss", "some/file.css"],
-      ["some/file.stylus", "some/file.css"],
-      ["some/file.sass", "some/file.css"],
-      // JS
-      ["some/file.js", "some/file.js"],
-      ["some/file.jsx", "some/file.js"],
-      ["some/file.ts", "some/file.js"],
-      ["some/file.tsx", "some/file.js"],
-      // unmodified
-      ["some/file.png", "some/file.png"],
-      ["some/file.jpg", "some/file.jpg"],
-      ["some/file.jpeg", "some/file.jpeg"],
-      ["some/file.webp", "some/file.webp"],
-      ["some/file.webm", "some/file.webm"],
-      ["some/file.svg", "some/file.svg"],
-      ["some/file.ico", "some/file.ico"],
-    ])("should convert %s to %s", (input, expected) => {
-      expect(getOutputFile(input)).toEqual(expected);
     });
   });
 

@@ -1,5 +1,4 @@
 import { Manifest } from "webextension-polyfill";
-import { getOutputFile } from "../utils";
 
 /**
  * A map of the entrypoints listed in the manifest template to their output bundle filenames.
@@ -53,7 +52,8 @@ export function renderManifest(
  * were output.
  */
 function findReplacement(entry: string, bundles: BundleMap) {
-  const output = getOutputFile(entry);
+  const output = getOutputFile(entry, bundles);
+  if (output == null) throw Error(`Cannot find output for ${entry}`);
   const generatedFiles = bundles[entry];
   if (generatedFiles == null)
     throw Error("Render Manifest: Bundle output not found for: " + entry);
@@ -98,4 +98,18 @@ function replaceEntrypointArray<T>(
   for (let i = 0; i < parent.length; i++) {
     replaceEntrypoint(bundles, parent, i, onGeneratedFile);
   }
+}
+
+/**
+ * Given any kind of entry file (name or path), return the file (name or path) vite will output
+ */
+export function getOutputFile(
+  file: string,
+  bundles: BundleMap
+): string | undefined {
+  if (file.endsWith(".html") || file.endsWith(".pug")) {
+    return file.replaceAll(".pug", ".html");
+  }
+
+  return bundles[file]?.[0];
 }
