@@ -107,9 +107,11 @@ export function getOutputFile(
   file: string,
   bundles: BundleMap
 ): string | undefined {
+  // HTML files ignore the rollupOptions.*FileName config, they're always just an HTML file with the same path
   if (file.endsWith(".html") || file.endsWith(".pug")) {
     return file.replaceAll(".pug", ".html");
   }
 
+  // Return the first bundled file for non-html files
   return bundles[file]?.[0];
 }
