@@ -51,7 +51,7 @@
     "vite": "^5.0.0 || ^4.1.4",
     "web-ext": "^7.2.0",
     "webextension-polyfill": "^0.10.0",
-    "yaml": "^2.2.1"
+    "yaml": "^2.3.4"
   },
   "devDependencies": {
     "@types/async-lock": "^1.1.5",
