@@ -277,7 +277,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
 
     // Runs during: watch
     async watchChange(id) {
-      if (!browserOpened) return;
+      if (!browserOpened || id.startsWith(paths.outDir)) return;
 
       const relativePath = path.relative(paths.rootDir, id);
       logger.log(
