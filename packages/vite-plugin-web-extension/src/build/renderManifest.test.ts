@@ -169,4 +169,26 @@ describe("renderManifest", () => {
 
     expect(actual).toEqual(expected);
   });
+
+  it("should not transform 'public:' prefixed paths", () => {
+    const input = {
+      name: "mv2-html-test",
+      version: "1.0.0",
+      browser_action: {
+        default_popup: "public:popup.html",
+      },
+    };
+    const bundles: BundleMap = {};
+    const expected = {
+      name: "mv2-html-test",
+      version: "1.0.0",
+      browser_action: {
+        default_popup: "popup.html",
+      },
+    };
+
+    const actual = renderManifest(input, bundles);
+
+    expect(actual).toEqual(expected);
+  });
 });
