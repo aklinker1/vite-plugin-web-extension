@@ -305,8 +305,8 @@ function separateAdditionalInputs(additionalInputs: string[]) {
 function simplifyEntriesList(
   a: Array<string | string[] | undefined> | undefined
 ): string[] {
-  return compact<string>(a?.flat() ?? []).filter((a) =>
-    a.startsWith("public:")
+  return compact<string>(a?.flat() ?? []).filter(
+    (a) => !a.startsWith("public:")
   );
 }
 
