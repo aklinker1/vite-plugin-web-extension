@@ -81,11 +81,16 @@ function replaceEntrypoint<T>(
   const entry = parent?.[key] as string | undefined;
   if (entry == null) return;
 
-  const { replacement, generatedFiles } = findReplacement(entry, bundles);
-  // @ts-expect-error
-  parent[key] = replacement;
+  if (entry.startsWith("public:")) {
+    // @ts-expect-error
+    parent[key] = entry.replace("public:", "");
+  } else {
+    const { replacement, generatedFiles } = findReplacement(entry, bundles);
+    // @ts-expect-error
+    parent[key] = replacement;
 
-  if (onGeneratedFile) generatedFiles.forEach(onGeneratedFile);
+    if (onGeneratedFile) generatedFiles.forEach(onGeneratedFile);
+  }
 }
 
 function replaceEntrypointArray<T>(

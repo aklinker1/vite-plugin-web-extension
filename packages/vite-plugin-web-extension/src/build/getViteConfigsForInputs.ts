@@ -300,12 +300,14 @@ function separateAdditionalInputs(additionalInputs: string[]) {
 
 /**
  * Take in a list of any combination of single entries, lists of entries, or undefined and return a
- * single, simple list of all the truthy entry-points.
+ * single, simple list of all the truthy, non-public, entry-points
  */
 function simplifyEntriesList(
   a: Array<string | string[] | undefined> | undefined
 ): string[] {
-  return compact<string>(a?.flat() ?? []);
+  return compact<string>(a?.flat() ?? []).filter(
+    (a) => !a.startsWith("public:")
+  );
 }
 
 function validateCombinedViteConfigs(configs: CombinedViteConfigs) {
