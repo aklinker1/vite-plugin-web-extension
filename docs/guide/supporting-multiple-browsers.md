@@ -109,6 +109,15 @@ Executing `TARGET=chrome vite build` or `TARGET=firefox vite build` will result 
 
 :::
 
+:::tip Windows Support
+`TARGET=firefox vite build` will not work on Windows. Install [`cross-env`](https://www.npmjs.com/package/cross-env) and run the following instead:
+
+```sh
+cross-env TARGET=firefox vite build
+```
+
+:::
+
 ## Dynamic Manifests
 
 You can also set the plugin's [`manifest` option](/config/plugin-options#manifest) to a function, allowing you to generate your manifest from code. Additionally, you can pair this with the above manifest template to sync the manifest's `version` field with the `version` field in your `package.json`:
