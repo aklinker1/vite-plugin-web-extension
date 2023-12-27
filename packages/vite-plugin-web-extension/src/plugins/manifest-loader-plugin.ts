@@ -275,9 +275,17 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       noInput.cleanupBundle(bundle);
     },
 
-    // Runs during: watch
+    // Runs during: watch, dev
     async watchChange(id) {
-      if (!browserOpened || id.startsWith(paths.outDir)) return;
+      if (
+        // Only run this hook for `vite build --watch`, not `vite dev`
+        mode === BuildMode.DEV ||
+        // Don't reload if the browser isn't opened yet
+        !browserOpened ||
+        // Don't reload if the change was a file written to the output directory
+        id.startsWith(paths.outDir)
+      )
+        return;
 
       const relativePath = path.relative(paths.rootDir, id);
       logger.log(
