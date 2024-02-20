@@ -12,6 +12,8 @@ While developing your browser extension, there are two ways to run it:
 
 Both methods will automatically open a new browser window and install the extension for you.
 
+You can also open `popup.html` in a separate browser window via `http://localhost:5173/src/popup.html` and conveniently work with the project as if it were a standalone Vue or React application.
+
 ::: info
 For most use cases, Development Mode is recommended as it can significantly speed up the development process, especially as your project scales.
 :::
