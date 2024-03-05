@@ -5,7 +5,7 @@ import { inspect } from "node:util";
 import Ajv from "ajv";
 import { withTimeout } from "./utils";
 
-const SCHEMA_URL = new URL("https://json.schemastore.org/chrome-manifest");
+const SCHEMA_URL = new URL("https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/chrome-manifest.json");
 
 export type ValidateManifest = (manifest: any | undefined) => Promise<void>;
 
