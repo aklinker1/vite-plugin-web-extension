@@ -219,7 +219,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
     // Runs during: Build, dev, watch
     async buildStart() {
       // Empty out directory
-      if (resolvedConfig.build.emptyOutDir) {
+      if (userConfig.build?.emptyOutDir) {
         logger.verbose("Removing build.outDir...");
         await fs.rm(getOutDir(resolvedConfig), {
           recursive: true,
