@@ -49,7 +49,7 @@
     "lodash.uniqby": "^4.7.0",
     "md5": "^2.3.0",
     "vite": "^5.0.0 || ^4.1.4",
-    "web-ext-run": "^0.1.1",
+    "web-ext-run": "^0.2.1",
     "webextension-polyfill": "^0.10.0",
     "yaml": "^2.3.4"
   },
