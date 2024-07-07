@@ -25,24 +25,26 @@ export function createWebExtRunner(
         if (level >= WARN_LOG_LEVEL) logger.warn(msg);
       };
 
-      const config = await loadConfig({ pluginOptions, logger, paths });
-      logger.verbose("web-ext config:" + inspect(config));
+      const initialConfig = await loadConfig({ pluginOptions, logger, paths });
       const target =
         pluginOptions.browser === null || pluginOptions.browser === "firefox"
           ? null
           : "chromium";
 
       const sourceDir = paths.outDir;
+      const config = {
+        ...initialConfig,
+        target,
+        sourceDir,
+        // The plugin handles reloads, so disable auto-reload behaviors in web-ext
+        noReload: true,
+        noInput: true,
+      }
+      logger.verbose("web-ext config:" + inspect(config));
+
 
       runner = await webExt.cmd.run(
-        {
-          ...config,
-          target,
-          sourceDir,
-          // The plugin handles reloads, so disable auto-reload behaviors in web-ext
-          noReload: true,
-          noInput: true,
-        },
+        config,
         {
           // Don't call `process.exit(0)` after starting web-ext
           shouldExitProgram: false,
