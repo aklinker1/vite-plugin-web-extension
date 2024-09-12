@@ -86,6 +86,11 @@ export interface UserOptions {
    * <https://github.com/mozilla/web-ext/blob/666886f40a967b515d43cf38fc9aec67ad744d89/src/program.js#L559>.
    */
   webExtConfig?: any;
+
+  /**
+   * Output path to a JSON file containing information about the generated bundles.
+   */
+  bundleInfoJsonPath?: string;
 }
 
 /**
@@ -109,6 +114,7 @@ export interface ResolvedOptions {
   verbose: boolean;
   disableColors: boolean;
   webExtConfig?: any;
+  bundleInfoJsonPath?: string;
 }
 
 /**

@@ -26,6 +26,7 @@ export default function webExtension(
     scriptViteConfig: options.scriptViteConfig,
     transformManifest: options.transformManifest,
     webExtConfig: options.webExtConfig,
+    bundleInfoJsonPath: options.bundleInfoJsonPath,
     verbose: process.argv.includes("-d") || process.argv.includes("--debug"),
     disableColors:
       process.env.CI === "true" || process.env.DISABLE_COLORS === "true", // TODO: document env var
