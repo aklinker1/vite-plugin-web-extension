@@ -145,6 +145,14 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       name: "manifest.json",
     });
 
+    if (options.bundleInfoJsonPath) {
+      emitFile({
+        type: "asset",
+        source: JSON.stringify(ctx.getBundles()),
+        fileName: options.bundleInfoJsonPath,
+      });
+    }
+
     await copyPublicDirToOutDir({ mode, paths });
 
     // In dev mode, open up the browser immediately after the build context is finished with the

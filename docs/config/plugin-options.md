@@ -160,3 +160,11 @@ webExtConfig?: any
 ```
 
 This option allows you to pass configuration into `web-ext` when launching the browser. For more details, refer to [Browser Startup Configuration](/guide/configure-browser-startup.md).
+
+## `bundleInfoJsonPath`
+
+```ts
+bundleInfoJsonPath?: string
+```
+
+If set, the plugin will write a JSON file containing information about the built bundles to the specified path in the output directory. This can for example be useful for dynamically injecting content scripts/styles from background scripts.
