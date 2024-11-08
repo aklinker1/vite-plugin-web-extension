@@ -168,3 +168,11 @@ bundleInfoJsonPath?: string
 ```
 
 If set, the plugin will write a JSON file containing information about the built bundles to the specified path in the output directory. This can for example be useful for dynamically injecting content scripts/styles from background scripts.
+
+## `onBundleReady`
+
+```ts
+onBundleReady?: () => void | Promise<void>
+```
+
+This callback is invoked after the main (parent) build completes, but not for child builds triggered by different entry points. Use it to perform additional actions when the main extension bundle is ready in both development (serve) and production (build) modes.

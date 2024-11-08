@@ -153,6 +153,10 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       });
     }
 
+    if (options.onBundleReady) {
+      await options.onBundleReady();
+    }
+
     await copyPublicDirToOutDir({ mode, paths });
 
     // In dev mode, open up the browser immediately after the build context is finished with the
