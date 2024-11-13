@@ -13,7 +13,7 @@
   "devDependencies": {
     "@types/webextension-polyfill": "^0.10.0",
     "@vitejs/plugin-vue": "^4.5.0",
-    "typescript": "^5.3.2",
+    "typescript": "~5.6.3",
     "vite": "^5.0.0",
     "vite-plugin-web-extension": "^4.0.0",
     "vue-tsc": "^1.2.0",
