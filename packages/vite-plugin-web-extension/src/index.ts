@@ -27,6 +27,7 @@ export default function webExtension(
     transformManifest: options.transformManifest,
     webExtConfig: options.webExtConfig,
     bundleInfoJsonPath: options.bundleInfoJsonPath,
+    onBundleReady: options.onBundleReady,
     verbose: process.argv.includes("-d") || process.argv.includes("--debug"),
     disableColors:
       process.env.CI === "true" || process.env.DISABLE_COLORS === "true", // TODO: document env var

@@ -91,6 +91,11 @@ export interface UserOptions {
    * Output path to a JSON file containing information about the generated bundles.
    */
   bundleInfoJsonPath?: string;
+
+  /**
+   * Action to be executed after build ends.
+   */
+  onBundleReady?: () => void | Promise<void>;
 }
 
 /**
@@ -115,6 +120,7 @@ export interface ResolvedOptions {
   disableColors: boolean;
   webExtConfig?: any;
   bundleInfoJsonPath?: string;
+  onBundleReady?: () => void | Promise<void>;
 }
 
 /**
