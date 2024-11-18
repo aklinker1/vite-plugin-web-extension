@@ -153,11 +153,13 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       });
     }
 
-    if (options.onBundleReady) {
+    await copyPublicDirToOutDir({ mode, paths });
+
+    // Handle the onBundleReady callback in dev mode here, as writeBundle is not called in dev mode
+    if (mode === BuildMode.DEV && options.onBundleReady) {
+      logger.verbose("Running onBundleReady");
       await options.onBundleReady();
     }
-
-    await copyPublicDirToOutDir({ mode, paths });
 
     // In dev mode, open up the browser immediately after the build context is finished with the
     // first build.
@@ -285,6 +287,14 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
     // Runs during: build, watch
     generateBundle(_, bundle) {
       noInput.cleanupBundle(bundle);
+    },
+
+    // Runs during: build, watch
+    async writeBundle() {
+      if (options.onBundleReady) {
+        logger.verbose("Running onBundleReady");
+        await options.onBundleReady();
+      }
     },
 
     // Runs during: watch, dev
