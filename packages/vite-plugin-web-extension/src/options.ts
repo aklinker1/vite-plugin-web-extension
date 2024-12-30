@@ -1,4 +1,5 @@
 import * as vite from "vite";
+import type * as webext from "web-ext-option-types";
 import type Browser from "webextension-polyfill";
 
 export type Manifest = any;
@@ -85,7 +86,7 @@ export interface UserOptions {
    * Optional startup configuration for web-ext. For list of options, see
    * <https://github.com/mozilla/web-ext/blob/666886f40a967b515d43cf38fc9aec67ad744d89/src/program.js#L559>.
    */
-  webExtConfig?: any;
+  webExtConfig?: webext.RunOptions;
 
   /**
    * Output path to a JSON file containing information about the generated bundles.
