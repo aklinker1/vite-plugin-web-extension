@@ -27,9 +27,12 @@ export function createWebExtRunner(
 
       const initialConfig = await loadConfig({ pluginOptions, logger, paths });
       const target =
-        pluginOptions.browser === null || pluginOptions.browser === "firefox"
-          ? null
-          : "chromium";
+        pluginOptions.browser === "chrome"
+          ? "chromium"
+          : pluginOptions.browser === null ||
+            pluginOptions.browser === "firefox"
+          ? "firefox-desktop"
+          : initialConfig.target ?? "chromium";
 
       const sourceDir = paths.outDir;
       const config = {
