@@ -4,6 +4,13 @@ import type Browser from "webextension-polyfill";
 
 export type Manifest = any;
 
+export type WebExtConfig = Omit<webext.RunOptions, "reload"> & {
+  /**
+   * @deprecated Use `firefoxBinary` instead.
+   */
+  firefox?: string;
+}
+
 export interface UserOptions {
   /**
    * The path to your manifest.json or a  function that returns your manifest as a JS object. It's a
@@ -86,7 +93,7 @@ export interface UserOptions {
    * Optional startup configuration for web-ext. For list of options, see
    * <https://github.com/mozilla/web-ext/blob/666886f40a967b515d43cf38fc9aec67ad744d89/src/program.js#L559>.
    */
-  webExtConfig?: webext.RunOptions;
+  webExtConfig?: WebExtConfig;
 
   /**
    * Output path to a JSON file containing information about the generated bundles.
@@ -119,7 +126,7 @@ export interface ResolvedOptions {
   scriptViteConfig?: vite.InlineConfig;
   verbose: boolean;
   disableColors: boolean;
-  webExtConfig?: any;
+  webExtConfig?: WebExtConfig;
   bundleInfoJsonPath?: string;
   onBundleReady?: () => void | Promise<void>;
 }
