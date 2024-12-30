@@ -212,6 +212,9 @@ importers:
       vite:
         specifier: ^5.0.0 || ^4.1.4
         version: 5.0.2(@types/node@18.11.18)(sass@1.54.8)
+      web-ext-option-types:
+        specifier: 8.3.0
+        version: 8.3.0
       web-ext-run:
         specifier: ^0.2.1
         version: 0.2.1
@@ -4517,6 +4520,10 @@ packages:
     dependencies:
       glob-to-regexp: 0.4.1
       graceful-fs: 4.2.10
+    dev: false
+
+  /web-ext-option-types@8.3.0:
+    resolution: {integrity: sha512-ZjePdOX7bfNGCaGNgNa0oCnzuGIx1oNT5/scGdgL4gAboQ/j6O0AjR7ivpYof3PTTyWgBkxNzjCWnHE0abmzHw==}
     dev: false
 
   /web-ext-run@0.2.1:
