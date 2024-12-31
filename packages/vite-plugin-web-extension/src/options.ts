@@ -62,7 +62,7 @@ export interface UserOptions {
    *
    * @default "chrome"
    */
-  browser?: string;
+  browser?: 'chrome' | 'firefox' | (string & {}) | null;
 
   /**
    * Do not validate your manifest to make sure it can be loaded by browsers.
@@ -119,7 +119,7 @@ export interface ResolvedOptions {
   additionalInputs: string[];
   disableAutoLaunch: boolean;
   watchFilePaths: string[];
-  browser?: string;
+  browser?: 'chrome' | 'firefox' | (string & {}) | null;
   skipManifestValidation: boolean;
   printSummary: boolean;
   htmlViteConfig?: vite.InlineConfig;
