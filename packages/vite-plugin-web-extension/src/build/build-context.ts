@@ -154,29 +154,35 @@ export function createBuildContext({
       // Print configs deep enough to include rollup inputs
       logger.verbose("Final configs: " + inspect(buildConfigs, undefined, 7));
 
-      for (const config of buildConfigs) {
-        const bundleTracker = bundleTrackerPlugin();
-        (config.plugins ??= []).push(bundleTracker);
+      process.env.VITE_PLUGIN_WEB_EXTENSION_CHILD_BUILD = "true";
+      try {
+        for (const config of buildConfigs) {
+          const bundleTracker = bundleTrackerPlugin();
+          (config.plugins ??= []).push(bundleTracker);
 
-        const output = await vite.build(config);
-        if ("on" in output) {
-          activeWatchers.push(output);
-          // In watch mode, wait until it's built once
-          await waitForWatchBuildComplete(output);
-        }
+          const output = await vite.build(config);
+          if ("on" in output) {
+            activeWatchers.push(output);
+            // In watch mode, wait until it's built once
+            await waitForWatchBuildComplete(output);
+          }
 
-        // Save the bundle chunks
-        const input = config.build?.lib ?? config.build?.rollupOptions?.input;
-        if (input) {
-          const chunks = bundleTracker.getChunks() ?? [];
-          for (const file of getInputPaths(paths, input)) {
-            bundles[file] = chunks;
+          // Save the bundle chunks
+          const input = config.build?.lib ?? config.build?.rollupOptions?.input;
+          if (input) {
+            const chunks = bundleTracker.getChunks() ?? [];
+            for (const file of getInputPaths(paths, input)) {
+              bundles[file] = chunks;
+            }
           }
         }
-      }
-      // This prints before the manifest plugin continues in build mode
-      if (mode === BuildMode.BUILD) {
-        printCompleted();
+        // This prints before the manifest plugin continues in build mode
+        if (mode === BuildMode.BUILD) {
+          printCompleted();
+        }
+      } finally {
+        // Allow the parent build to rerun its config file (i.e. for a dev server restart)
+        process.env.VITE_PLUGIN_WEB_EXTENSION_CHILD_BUILD = "";
       }
     },
     getBundles() {
