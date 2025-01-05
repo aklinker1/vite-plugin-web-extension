@@ -2,9 +2,6 @@
   "private": true,
   "license": "MIT",
   "packageManager": "pnpm@8.15.9",
-  "engines": {
-    "pnpm": "8"
-  },
   "type": "module",
   "scripts": {
     "clean": "rm -rf node_modules **/node_modules",
