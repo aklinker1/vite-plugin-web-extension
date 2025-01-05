@@ -12,7 +12,6 @@ export default function webExtension(
   if (process.env.VITE_PLUGIN_WEB_EXTENSION_CHILD_BUILD === "true") {
     return [];
   }
-  process.env.VITE_PLUGIN_WEB_EXTENSION_CHILD_BUILD = "true";
 
   const internalOptions: ResolvedOptions = {
     additionalInputs: options.additionalInputs ?? [],
