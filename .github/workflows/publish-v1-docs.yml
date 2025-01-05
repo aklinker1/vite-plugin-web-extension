@@ -14,8 +14,6 @@ jobs:
           ref: v1
 
       - uses: pnpm/action-setup@v2
-        with:
-          version: 8
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
