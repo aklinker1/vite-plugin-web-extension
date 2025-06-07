@@ -15,7 +15,7 @@ on:
 jobs:
   validate-templates:
     name: Validate Templates
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -33,7 +33,7 @@ jobs:
 
   publish:
     name: Publish
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: [validate-templates]
     steps:
       - name: Checkout Repo
