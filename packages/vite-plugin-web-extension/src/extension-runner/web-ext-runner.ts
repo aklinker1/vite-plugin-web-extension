@@ -43,6 +43,8 @@ export function createWebExtRunner(
         noReload: true,
         noInput: true,
       }
+      config.args ??= []
+      config.args.push("--disable-features=DisableLoadExtensionCommandLineSwitch")
       logger.verbose("web-ext config:" + inspect(config));
 
 
