@@ -13,6 +13,7 @@ To get started quickly, bootstrap a new project!
 npm create vite-plugin-web-extension
 pnpm create vite-plugin-web-extension
 yarn create vite-plugin-web-extension
+bun create vite-plugin-web-extension
 ```
 
 ### Features
