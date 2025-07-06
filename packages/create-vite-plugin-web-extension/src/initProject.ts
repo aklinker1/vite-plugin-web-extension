@@ -19,6 +19,7 @@ const START_COMMANDS: Record<PackageManager, string> = {
   npm: "npm run dev",
   pnpm: "pnpm dev",
   yarn: "yarn dev",
+  bun: "bun dev",
 };
 
 export async function initProject(
@@ -110,6 +111,8 @@ async function resolveOptions(
       choices.push({ title: "PNPM", value: "pnpm" });
     if (commandExists.sync("yarn"))
       choices.push({ title: "Yarn", value: "yarn" });
+    if (commandExists.sync("bun"))
+      choices.push({ title: "Bun", value: "bun" });
 
     if (choices.length > 1) {
       const res = await prompt({
