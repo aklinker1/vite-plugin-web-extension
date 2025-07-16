@@ -1,7 +1,7 @@
 > [!IMPORTANT]
 > `vite-plugin-web-extension` will soon be deprecated in favor of [WXT](https://wxt.dev), it's successor. While WXT is still in pre-release, it already supports everything this plugin does, [is significantly more popular](https://api.star-history.com/svg?repos=wxt-dev/wxt,aklinker1/vite-plugin-web-extension&type=Date), and includes more features and bug fixes that aren't (and won't) be added to `vite-plugin-web-extension`.
 >
-> If you're starting a new project, I'd recommend you [use WXT instead](https://wxt.dev/guide/installation.html#bootstrap-project). Once WXT v1.0 is released within the next few months, [I'll provide a more in-depth migration guide](https://wxt.dev/guide/resources/migrate.html#vite-plugin-web-extension) for existing projects and `vite-plugin-web-extension` will enter maintainence mode.
+> If you're starting a new project, I'd recommend you [use WXT instead](https://wxt.dev/guide/installation.html#bootstrap-project). Once WXT v1.0 is released, [I'll provide a more in-depth migration guide](https://wxt.dev/guide/resources/migrate.html#vite-plugin-web-extension) for existing projects and `vite-plugin-web-extension` will enter maintainence mode.
 
 <img src="./.github/assets/social-banner.png">
 
@@ -40,3 +40,4 @@ Special thanks to the contributors!
 </a>
 
 See the [contributing docs](CONTRIBUTING.md) to setup the project for development.
+
