@@ -108,7 +108,7 @@ export function createBuildContext({
       const inputs = getInputPaths(paths, input);
       if (inputs.length === 1) {
         lines.push(
-          `  ${i + 1}. Building ${colorizeFilename(inputs[0])} indvidually`
+          `  ${i + 1}. Building ${colorizeFilename(inputs[0])} individually`
         );
       } else {
         lines.push(
