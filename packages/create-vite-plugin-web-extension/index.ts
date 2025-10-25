@@ -10,7 +10,7 @@ import { initProject } from "./src/initProject";
 program
   .argument("[project-name]")
   .option("-t, --template <template>")
-  .option("-p, --package-manager <package-manager>", "npm, pnpm, or yarn")
+  .option("-p, --package-manager <package-manager>", "npm, pnpm, yarn, or bun")
   .option(
     "--repo <remote-url>",
     "The repo to get templates from. Set this if working off a fork.",
