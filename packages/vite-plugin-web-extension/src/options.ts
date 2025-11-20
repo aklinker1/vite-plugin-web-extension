@@ -90,6 +90,11 @@ export interface UserOptions {
   scriptViteConfig?: vite.InlineConfig;
 
   /**
+   * Custom vite config to be merged with when building manifest.json
+   */
+  manifestViteConfig?: vite.InlineConfig;
+
+  /**
    * Optional startup configuration for web-ext. For list of options, see
    * <https://github.com/mozilla/web-ext/blob/666886f40a967b515d43cf38fc9aec67ad744d89/src/program.js#L559>.
    */
@@ -124,6 +129,7 @@ export interface ResolvedOptions {
   printSummary: boolean;
   htmlViteConfig?: vite.InlineConfig;
   scriptViteConfig?: vite.InlineConfig;
+  manifestViteConfig?: vite.InlineConfig;
   verbose: boolean;
   disableColors: boolean;
   webExtConfig?: WebExtConfig;

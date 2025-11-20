@@ -65,6 +65,7 @@ export function createBuildContext({
       server,
       additionalInputs: pluginOptions.additionalInputs,
       baseHtmlViteConfig: pluginOptions.htmlViteConfig ?? {},
+      baseManifestViteConfig: pluginOptions.manifestViteConfig ?? {},
       baseSandboxViteConfig: {},
       baseScriptViteConfig: pluginOptions.scriptViteConfig ?? {},
       baseOtherViteConfig: {},

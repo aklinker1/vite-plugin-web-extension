@@ -179,7 +179,7 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
       configureBuildMode(config, env);
       userConfig = config;
 
-      return vite.mergeConfig(
+      const emptyConfig = vite.mergeConfig(
         {
           server: {
             // Set the server origin so assets contain the entire url in dev mode, not just the
@@ -196,6 +196,8 @@ export function manifestLoaderPlugin(options: ResolvedOptions): vite.Plugin {
         // We only want to output the manifest.json, so we don't need an input.
         noInput.config
       );
+
+      return vite.mergeConfig(emptyConfig, options.manifestViteConfig ?? {});
     },
 
     // Runs during: Build, dev, watch

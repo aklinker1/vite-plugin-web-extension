@@ -23,6 +23,7 @@ export default function webExtension(
     browser: options.browser,
     htmlViteConfig: options.htmlViteConfig,
     scriptViteConfig: options.scriptViteConfig,
+    manifestViteConfig: options.manifestViteConfig,
     transformManifest: options.transformManifest,
     webExtConfig: options.webExtConfig,
     bundleInfoJsonPath: options.bundleInfoJsonPath,
