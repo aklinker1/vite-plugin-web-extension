@@ -77,5 +77,6 @@ jobs:
       - name: Publish to NPM
         working-directory: packages/create-vite-plugin-web-extension
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
-          pnpm publish
+          pnpm pack
+          sudo npm i -g npm@latest
+          /usr/local/bin/npm publish *.tgz
