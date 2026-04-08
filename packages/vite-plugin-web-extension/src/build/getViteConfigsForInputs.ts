@@ -86,6 +86,7 @@ export function getViteConfigsForInputs(options: {
   baseSandboxViteConfig: vite.InlineConfig;
   baseScriptViteConfig: vite.InlineConfig;
   baseOtherViteConfig: vite.InlineConfig;
+  baseManifestViteConfig: vite.InlineConfig;
   viteMode: string;
 }): CombinedViteConfigs {
   const { paths, additionalInputs, manifest, mode, logger, server } = options;
